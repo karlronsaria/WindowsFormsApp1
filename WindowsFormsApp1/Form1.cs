@@ -22,7 +22,7 @@ namespace WindowsFormsApp1
         public Form1()
         {
             InitializeComponent();
-            PopulateTreeView(STARTING_DIRECTORY);
+            treeView1_Load(STARTING_DIRECTORY);
         }
 
         private Control NewPdfPreview(string filePath)
@@ -46,11 +46,11 @@ namespace WindowsFormsApp1
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                PopulateTreeView(dialog.SelectedPath);
+                treeView1_Load(dialog.SelectedPath);
             }
         }
 
-        private void PopulateTreeView(string directoryPath)
+        private void treeView1_Load(string directoryPath)
         {
             treeView1.Nodes.Clear();
             TreeNode rootNode;
@@ -187,55 +187,6 @@ namespace WindowsFormsApp1
             listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
-        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            listView1_Load(e.Node);
-        }
-
-        private void treeView1_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Enter:
-                case Keys.Space:
-                    if (treeView1.SelectedNode is TreeNode n)
-                    {
-                        listView1_Load(n);
-                    }
-
-                    // link: https://stackoverflow.com/questions/13952932/disable-beep-of-enter-and-escape-key-c-sharp
-                    // retrieved: 2021_12_13
-                    e.Handled = e.SuppressKeyPress = true;
-                    break;
-                case Keys.Up:
-                    if (e.KeyData.HasFlag(Keys.Alt))
-                    {
-                        var parent = _currentDirectory.Parent;
-                        PopulateTreeView(parent.FullName);
-                        listView1_Load(parent);
-                    }
-                    break;
-            }
-        }
-
-        private void listView1_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Enter:
-                    GoToSelectedDirectory();
-                    break;
-                case Keys.Up:
-                    if (e.KeyData.HasFlag(Keys.Alt))
-                    {
-                        var parent = _currentDirectory.Parent;
-                        PopulateTreeView(parent.FullName);
-                        listView1_Load(parent);
-                    }
-                    break;
-            }
-        }
-
         private void SetPreviewPane(Control myControl)
         {
             splitContainer1.Panel2.Controls.Remove(_panelControl);
@@ -261,46 +212,8 @@ namespace WindowsFormsApp1
 
             if (type == "Directory")
             {
-                PopulateTreeView(fullName);
+                treeView1_Load(fullName);
                 listView1_Load((DirectoryInfo)modelItem);
-            }
-        }
-
-        private void listView1_DoubleClick(object sender, System.EventArgs e)
-        {
-            GoToSelectedDirectory();
-        }
-
-        private void listView1_SelectedIndexChanged_UsingItems(object sender, System.EventArgs e)
-        {
-            if (listView1.SelectedItems.Count == 0)
-            {
-                return;
-            }
-
-            var indices = listView1.SelectedIndices;
-            var lastIndex = indices[indices.Count - 1];
-            var viewItem = listView1.Items[lastIndex];
-            var modelItem = _items[lastIndex];
-
-            var fullName = modelItem.FullName;
-            var extension = modelItem.Extension;
-            var type = viewItem.SubItems[1].Text;
-
-            switch (type)
-            {
-                case "File":
-                    switch (extension)
-                    {
-                        case ".pdf":
-                            SetPreviewPane(NewPdfPreview(fullName));
-                            break;
-                        default:
-                            SetPreviewPane(NewPlainTextPreview(fullName));
-                            break;
-                    }
-
-                    break;
             }
         }
     }

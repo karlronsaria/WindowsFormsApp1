@@ -12,6 +12,16 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
+        private void openDirectoryStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new FolderBrowserDialog();
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                treeView1_Load(dialog.SelectedPath);
+            }
+        }
+
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             listView1_Load(e.Node);

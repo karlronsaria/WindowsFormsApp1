@@ -40,16 +40,6 @@ namespace WindowsFormsApp1
             return myRenderer;
         }
 
-        private void openDirectoryStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new FolderBrowserDialog();
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                treeView1_Load(dialog.SelectedPath);
-            }
-        }
-
         private void treeView1_Load(string directoryPath)
         {
             treeView1.Nodes.Clear();

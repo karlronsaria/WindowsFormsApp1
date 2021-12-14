@@ -35,7 +35,6 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.menuStrip1.SuspendLayout();
@@ -94,8 +93,7 @@
             this.listView1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
+            this.columnHeader2});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.ForeColor = System.Drawing.SystemColors.Window;
             this.listView1.HideSelection = false;
@@ -115,12 +113,8 @@
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Type";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Last Modified";
-            this.columnHeader3.Width = 87;
+            this.columnHeader2.Text = "Last Modified";
+            this.columnHeader2.Width = 87;
             // 
             // treeView1
             // 
@@ -187,7 +181,6 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.SplitContainer splitContainer2;
     }

@@ -78,6 +78,8 @@ namespace WindowsFormsApp1
 
         private void listView1_SelectedIndexChanged_UsingItems(object sender, System.EventArgs e)
         {
+            ClearPreviewPane();
+
             if (listView1.SelectedItems.Count == 0)
             {
                 return;
@@ -85,27 +87,23 @@ namespace WindowsFormsApp1
 
             var indices = listView1.SelectedIndices;
             var lastIndex = indices[indices.Count - 1];
-            var viewItem = listView1.Items[lastIndex];
             var modelItem = _items[lastIndex];
 
             var fullName = modelItem.FullName;
             var extension = modelItem.Extension;
-            var type = viewItem.SubItems[1].Text;
+            bool isDirectory = modelItem.Attributes.HasFlag(FileAttributes.Directory);
 
-            switch (type)
+            if (!isDirectory)
             {
-                case "File":
-                    switch (extension)
-                    {
-                        case ".pdf":
-                            SetPreviewPane(NewPdfPreview(fullName));
-                            break;
-                        default:
-                            SetPreviewPane(NewPlainTextPreview(fullName));
-                            break;
-                    }
-
-                    break;
+                switch (extension)
+                {
+                    case ".pdf":
+                        SetPreviewPane(NewPdfPreview(fullName));
+                        break;
+                    default:
+                        SetPreviewPane(NewPlainTextPreview(fullName));
+                        break;
+                }
             }
         }
     }

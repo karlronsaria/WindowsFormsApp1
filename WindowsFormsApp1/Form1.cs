@@ -135,10 +135,9 @@ namespace WindowsFormsApp1
 
                     subItems = new ListViewItem.ListViewSubItem[]
                     {
-                        new ListViewItem.ListViewSubItem(item, "Directory"),
                         new ListViewItem.ListViewSubItem(
                             item,
-                            dir.LastAccessTime.ToShortDateString()
+                            dir.LastWriteTime.ToShortDateString()
                         )
                     };
 
@@ -160,10 +159,9 @@ namespace WindowsFormsApp1
 
                     subItems = new ListViewItem.ListViewSubItem[]
                     {
-                        new ListViewItem.ListViewSubItem(item, "File"),
                         new ListViewItem.ListViewSubItem(
                             item,
-                            file.LastAccessTime.ToShortDateString()
+                            file.LastWriteTime.ToShortDateString()
                         )
                     };
 
@@ -180,9 +178,13 @@ namespace WindowsFormsApp1
             listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
-        private void SetPreviewPane(Control myControl)
+        private void ClearPreviewPane()
         {
             splitContainer1.Panel2.Controls.Remove(_panelControl);
+        }
+
+        private void SetPreviewPane(Control myControl)
+        {
             _panelControl = myControl;
             splitContainer1.Panel2.Controls.Add(_panelControl);
             _panelControl.Dock = DockStyle.Fill;
@@ -197,13 +199,11 @@ namespace WindowsFormsApp1
 
             var indices = listView1.SelectedIndices;
             var lastIndex = indices[indices.Count - 1];
-            var viewItem = listView1.Items[lastIndex];
             var modelItem = _items[lastIndex];
+            string fullName = modelItem.FullName;
+            bool isDirectory = modelItem.Attributes.HasFlag(FileAttributes.Directory);
 
-            var fullName = modelItem.FullName;
-            var type = viewItem.SubItems[1].Text;
-
-            if (type == "Directory")
+            if (isDirectory)
             {
                 treeView1_Load(fullName);
                 listView1_Load((DirectoryInfo)modelItem);

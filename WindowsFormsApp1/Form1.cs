@@ -200,7 +200,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void SetRightPanelControl(Control myControl)
+        private void SetPreviewPane(Control myControl)
         {
             splitContainer1.Panel2.Controls.Remove(_panelControl);
             _panelControl = myControl;
@@ -231,10 +231,10 @@ namespace WindowsFormsApp1
                     switch (extension)
                     {
                         case ".pdf":
-                            SetRightPanelControl(NewPdfPreview(fullName));
+                            SetPreviewPane(NewPdfPreview(fullName));
                             break;
                         default:
-                            SetRightPanelControl(NewPlainTextPreview(fullName));
+                            SetPreviewPane(NewPlainTextPreview(fullName));
                             break;
                     }
 

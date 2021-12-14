@@ -36,13 +36,11 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.pdfRenderer1 = new PdfiumViewer.PdfRenderer();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -87,10 +85,6 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.listView1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.pdfRenderer1);
             this.splitContainer1.Size = new System.Drawing.Size(567, 350);
             this.splitContainer1.SplitterDistance = 289;
             this.splitContainer1.TabIndex = 4;
@@ -125,19 +119,6 @@
             // 
             this.columnHeader3.Text = "Last Modified";
             this.columnHeader3.Width = 87;
-            // 
-            // pdfRenderer1
-            // 
-            this.pdfRenderer1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pdfRenderer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pdfRenderer1.Location = new System.Drawing.Point(0, 0);
-            this.pdfRenderer1.Name = "pdfRenderer1";
-            this.pdfRenderer1.Page = 0;
-            this.pdfRenderer1.Rotation = PdfiumViewer.PdfRotation.Rotate0;
-            this.pdfRenderer1.Size = new System.Drawing.Size(274, 350);
-            this.pdfRenderer1.TabIndex = 2;
-            this.pdfRenderer1.Text = "pdfRenderer1";
-            this.pdfRenderer1.ZoomMode = PdfiumViewer.PdfViewerZoomMode.FitHeight;
             // 
             // treeView1
             // 
@@ -184,7 +165,6 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
@@ -206,7 +186,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
-        private PdfiumViewer.PdfRenderer pdfRenderer1;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.SplitContainer splitContainer2;
     }

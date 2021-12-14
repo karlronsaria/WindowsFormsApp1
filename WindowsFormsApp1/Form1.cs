@@ -15,21 +15,28 @@ namespace WindowsFormsApp1
         const string STARTING_DIRECTORY = @"C:\Users\karlr\OneDrive\__POOL";
         // const string STARTING_DIRECTORY = @"C:\";
 
-        private readonly PdfiumViewer.PdfViewer _pdf;
         private IList<FileSystemInfo> _items;
+        private Control _panelControl;
 
         public Form1()
         {
             InitializeComponent();
             PopulateTreeView(STARTING_DIRECTORY);
-            _pdf = new PdfViewer();
-            this.Controls.Add(_pdf);
         }
 
-        public void PreviewPdf(string filePath)
+        private Control NewPdfPreview(string filePath)
         {
+            var myRenderer = new PdfRenderer();
             byte[] bytes = System.IO.File.ReadAllBytes(filePath);
-            pdfRenderer1.Load(PdfDocument.Load(new MemoryStream(bytes)));
+            myRenderer.Load(PdfDocument.Load(new MemoryStream(bytes)));
+            return myRenderer;
+        }
+
+        private Control NewPlainTextPreview(string filePath)
+        {
+            var myRenderer = new RichTextBox();
+            myRenderer.LoadFile(filePath, RichTextBoxStreamType.PlainText);
+            return myRenderer;
         }
 
         private void openDirectoryStripMenuItem_Click(object sender, EventArgs e)
@@ -45,7 +52,6 @@ namespace WindowsFormsApp1
         private void PopulateTreeView(string directoryPath)
         {
             treeView1.Nodes.Clear();
-
             TreeNode rootNode;
             DirectoryInfo info = new DirectoryInfo(directoryPath);
 
@@ -194,6 +200,14 @@ namespace WindowsFormsApp1
             }
         }
 
+        private void SetRightPanelControl(Control myControl)
+        {
+            splitContainer1.Panel2.Controls.Remove(_panelControl);
+            _panelControl = myControl;
+            splitContainer1.Panel2.Controls.Add(_panelControl);
+            _panelControl.Dock = DockStyle.Fill;
+        }
+
         private void listView1_SelectedIndexChanged_UsingItems(
             object sender, System.EventArgs e)
         {
@@ -217,7 +231,10 @@ namespace WindowsFormsApp1
                     switch (extension)
                     {
                         case ".pdf":
-                            PreviewPdf(fullName);
+                            SetRightPanelControl(NewPdfPreview(fullName));
+                            break;
+                        default:
+                            SetRightPanelControl(NewPlainTextPreview(fullName));
                             break;
                     }
 

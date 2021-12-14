@@ -17,6 +17,7 @@ namespace WindowsFormsApp1
 
         private IList<FileSystemInfo> _items;
         private Control _panelControl;
+        private DirectoryInfo _currentDirectory;
 
         public Form1()
         {
@@ -57,6 +58,8 @@ namespace WindowsFormsApp1
 
             if (info.Exists)
             {
+                _currentDirectory = info;
+
                 rootNode = new TreeNode
                 {
                     Text = info.Name,
@@ -119,21 +122,26 @@ namespace WindowsFormsApp1
 
         private void listView1_Load(TreeNode newSelected)
         {
+            listView1_Load((DirectoryInfo)newSelected.Tag);
+        }
+
+        private void listView1_Load(DirectoryInfo newDirectory)
+        {
             listView1.Items.Clear();
-            DirectoryInfo nodeDirInfo = (DirectoryInfo)newSelected.Tag;
+            _currentDirectory = newDirectory;
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item;
 
             _items = new List<FileSystemInfo>();
 
-            foreach (DirectoryInfo dir in nodeDirInfo.GetDirectories())
+            foreach (DirectoryInfo dir in _currentDirectory.GetDirectories())
             {
                 try
                 {
-                    _items.Add(dir);
                     item = new ListViewItem(dir.Name, 0);
 
-                    subItems = new ListViewItem.ListViewSubItem[] {
+                    subItems = new ListViewItem.ListViewSubItem[]
+                    {
                         new ListViewItem.ListViewSubItem(item, "Directory"),
                         new ListViewItem.ListViewSubItem(
                             item,
@@ -141,6 +149,7 @@ namespace WindowsFormsApp1
                         )
                     };
 
+                    _items.Add(dir);
                     item.SubItems.AddRange(subItems);
                     listView1.Items.Add(item);
                 }
@@ -150,14 +159,14 @@ namespace WindowsFormsApp1
                 }
             }
 
-            foreach (FileInfo file in nodeDirInfo.GetFiles()) 
+            foreach (FileInfo file in _currentDirectory.GetFiles()) 
             {
                 try
                 {
-                    _items.Add(file);
                     item = new ListViewItem(file.Name, 1);
 
-                    subItems = new ListViewItem.ListViewSubItem[] {
+                    subItems = new ListViewItem.ListViewSubItem[]
+                    {
                         new ListViewItem.ListViewSubItem(item, "File"),
                         new ListViewItem.ListViewSubItem(
                             item,
@@ -165,6 +174,7 @@ namespace WindowsFormsApp1
                         )
                     };
 
+                    _items.Add(file);
                     item.SubItems.AddRange(subItems);
                     listView1.Items.Add(item);
                 }
@@ -197,6 +207,32 @@ namespace WindowsFormsApp1
                     // retrieved: 2021_12_13
                     e.Handled = e.SuppressKeyPress = true;
                     break;
+                case Keys.Up:
+                    if (e.KeyData.HasFlag(Keys.Alt))
+                    {
+                        var parent = _currentDirectory.Parent;
+                        PopulateTreeView(parent.FullName);
+                        listView1_Load(parent);
+                    }
+                    break;
+            }
+        }
+
+        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Enter:
+                    GoToSelectedDirectory();
+                    break;
+                case Keys.Up:
+                    if (e.KeyData.HasFlag(Keys.Alt))
+                    {
+                        var parent = _currentDirectory.Parent;
+                        PopulateTreeView(parent.FullName);
+                        listView1_Load(parent);
+                    }
+                    break;
             }
         }
 
@@ -208,8 +244,34 @@ namespace WindowsFormsApp1
             _panelControl.Dock = DockStyle.Fill;
         }
 
-        private void listView1_SelectedIndexChanged_UsingItems(
-            object sender, System.EventArgs e)
+        private void GoToSelectedDirectory()
+        {
+            if (listView1.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            var indices = listView1.SelectedIndices;
+            var lastIndex = indices[indices.Count - 1];
+            var viewItem = listView1.Items[lastIndex];
+            var modelItem = _items[lastIndex];
+
+            var fullName = modelItem.FullName;
+            var type = viewItem.SubItems[1].Text;
+
+            if (type == "Directory")
+            {
+                PopulateTreeView(fullName);
+                listView1_Load((DirectoryInfo)modelItem);
+            }
+        }
+
+        private void listView1_DoubleClick(object sender, System.EventArgs e)
+        {
+            GoToSelectedDirectory();
+        }
+
+        private void listView1_SelectedIndexChanged_UsingItems(object sender, System.EventArgs e)
         {
             if (listView1.SelectedItems.Count == 0)
             {

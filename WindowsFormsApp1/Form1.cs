@@ -38,6 +38,8 @@ namespace WindowsFormsApp1
             var myRenderer = new RichTextBox();
             myRenderer.LoadFile(filePath, RichTextBoxStreamType.PlainText);
             myRenderer.Font = new Font("Consolas", 10);
+            myRenderer.BackColor = Color.Black;
+            myRenderer.ForeColor = Color.Purple;
             return myRenderer;
         }
 

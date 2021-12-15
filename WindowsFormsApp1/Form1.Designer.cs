@@ -30,7 +30,6 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.openDirectoryStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -65,15 +64,6 @@
             this.openDirectoryStripMenuItem.Size = new System.Drawing.Size(99, 20);
             this.openDirectoryStripMenuItem.Text = "Open Directory";
             this.openDirectoryStripMenuItem.Click += new System.EventHandler(this.openDirectoryStripMenuItem_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(588, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(360, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Hi! This stupid white line ends here for some reason, and I can\'t get rid of it.";
             // 
             // splitContainer1
             // 
@@ -152,7 +142,6 @@
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(740, 389);
             this.Controls.Add(this.splitContainer2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
             this.ForeColor = System.Drawing.Color.White;
             this.MainMenuStrip = this.menuStrip1;
@@ -176,7 +165,6 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem openDirectoryStripMenuItem;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;

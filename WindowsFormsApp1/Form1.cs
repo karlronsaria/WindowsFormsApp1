@@ -10,19 +10,37 @@ using System.IO;
 
 namespace WindowsFormsApp1
 {
+    public class Record
+    {
+        public int RecordId { get; }
+        public string RecordName { get; }
+        public string[] Tags { get; set; }
+        public DateTime[] Dates { get; set; }
+        public string Description { get; set; }
+    }
+
+    public interface IRecordContext
+    {
+        ICollection<Record> Records { get; set; }
+    }
+
     public partial class Form1 : Form
     {
         const string STARTING_DIRECTORY = @"C:\Users\karlr\OneDrive\__POOL";
         // const string STARTING_DIRECTORY = @"C:\";
+        const string PLAIN_TEXT_FONT_FAMILY = "Consolas";
+        const int PLAIN_TEXT_POINT = 10;
 
         private IList<FileSystemInfo> _items;
         private Control _panelControl;
         private DirectoryInfo _currentDirectory;
+        private IRecordContext _database;
 
-        public Form1()
+        public Form1(IRecordContext myDatabase)
         {
             InitializeComponent();
             treeView1_Load(STARTING_DIRECTORY);
+            _database = myDatabase;
         }
 
         private Control NewPdfPreview(string filePath)
@@ -37,31 +55,10 @@ namespace WindowsFormsApp1
         {
             var myRenderer = new RichTextBox();
             myRenderer.LoadFile(filePath, RichTextBoxStreamType.PlainText);
-            myRenderer.Font = new Font("Consolas", 10);
+            myRenderer.Font = new Font(PLAIN_TEXT_FONT_FAMILY, PLAIN_TEXT_POINT);
             myRenderer.BackColor = Color.Black;
             myRenderer.ForeColor = Color.Violet;
             return myRenderer;
-        }
-
-        private void treeView1_Load(string directoryPath)
-        {
-            treeView1.Nodes.Clear();
-            TreeNode rootNode;
-            DirectoryInfo info = new DirectoryInfo(directoryPath);
-
-            if (info.Exists)
-            {
-                _currentDirectory = info;
-
-                rootNode = new TreeNode
-                {
-                    Text = info.Name,
-                    Tag = info
-                };
-                
-                GetDirectories(info.GetDirectories(), rootNode);
-                treeView1.Nodes.Add(rootNode);
-            }
         }
 
         private void GetDirectories(DirectoryInfo[] subDirs, TreeNode nodeToAddTo)
@@ -113,6 +110,27 @@ namespace WindowsFormsApp1
             // this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         }
 
+        private void treeView1_Load(string directoryPath)
+        {
+            treeView1.Nodes.Clear();
+            TreeNode rootNode;
+            DirectoryInfo info = new DirectoryInfo(directoryPath);
+
+            if (info.Exists)
+            {
+                _currentDirectory = info;
+
+                rootNode = new TreeNode
+                {
+                    Text = info.Name,
+                    Tag = info
+                };
+                
+                GetDirectories(info.GetDirectories(), rootNode);
+                treeView1.Nodes.Add(rootNode);
+            }
+        }
+
         private void listView1_Load(TreeNode newSelected)
         {
             listView1_Load((DirectoryInfo)newSelected.Tag);
@@ -122,10 +140,9 @@ namespace WindowsFormsApp1
         {
             listView1.Items.Clear();
             _currentDirectory = newDirectory;
+            _items = new List<FileSystemInfo>();
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item;
-
-            _items = new List<FileSystemInfo>();
 
             foreach (DirectoryInfo dir in _currentDirectory.GetDirectories())
             {
@@ -136,8 +153,8 @@ namespace WindowsFormsApp1
                     subItems = new ListViewItem.ListViewSubItem[]
                     {
                         new ListViewItem.ListViewSubItem(
-                            item,
-                            dir.LastWriteTime.ToShortDateString()
+                            owner: item,
+                            text: dir.LastWriteTime.ToShortDateString()
                         )
                     };
 
@@ -160,8 +177,8 @@ namespace WindowsFormsApp1
                     subItems = new ListViewItem.ListViewSubItem[]
                     {
                         new ListViewItem.ListViewSubItem(
-                            item,
-                            file.LastWriteTime.ToShortDateString()
+                            owner: item,
+                            text: file.LastWriteTime.ToShortDateString()
                         )
                     };
 
@@ -178,15 +195,36 @@ namespace WindowsFormsApp1
             listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
+        private Control TagsLayoutPanel
+        {
+            get
+            {
+                return flowLayoutPanel1 as Control;
+            }
+        }
+
+        private Control PreviewPane
+        {
+            get
+            {
+                return splitContainer2.Panel2 as Control;
+            }
+        }
+
         private void ClearPreviewPane()
         {
-            splitContainer2.Panel2.Controls.Remove(_panelControl);
+            PreviewPane.Controls.Remove(_panelControl);
+        }
+
+        private void SetTagsLayout()
+        {
+            
         }
 
         private void SetPreviewPane(Control myControl)
         {
             _panelControl = myControl;
-            splitContainer2.Panel2.Controls.Add(_panelControl);
+            PreviewPane.Controls.Add(_panelControl);
             _panelControl.Dock = DockStyle.Fill;
         }
 
@@ -209,17 +247,6 @@ namespace WindowsFormsApp1
                 listView1_Load((DirectoryInfo)modelItem);
             }
         }
-    }
-}
-
-public class MySR : ToolStripSystemRenderer
-{
-    public MySR() { }
-
-    protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
-    {
-        base.OnRenderToolStripBorder(e);
-        e.Graphics.FillRectangle(Brushes.White, e.ConnectedArea);
     }
 }
 

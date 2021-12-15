@@ -74,6 +74,10 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.listView1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.splitContainer1.Size = new System.Drawing.Size(567, 350);
             this.splitContainer1.SplitterDistance = 289;
             this.splitContainer1.TabIndex = 4;

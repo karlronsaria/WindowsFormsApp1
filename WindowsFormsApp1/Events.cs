@@ -106,5 +106,17 @@ namespace WindowsFormsApp1
                 }
             }
         }
+
+        private void previewPane_Paint(object sender, PaintEventArgs e)
+        {
+            ControlPaint.DrawBorder(
+                e.Graphics,
+                splitContainer1.Panel2.ClientRectangle,
+                Color.Purple, 1, ButtonBorderStyle.Solid, // left
+                Color.Purple, 1, ButtonBorderStyle.Solid, // top
+                Color.Purple, 1, ButtonBorderStyle.Solid, // right
+                Color.Purple, 1, ButtonBorderStyle.Solid  // bottom
+            );
+        }
     }
 }

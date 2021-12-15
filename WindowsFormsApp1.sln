@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "Windows
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonData", "JsonData\JsonData.csproj", "{EAB7CF74-CA0F-4F8D-87AE-6467B43AC008}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugConsole", "DebugConsole\DebugConsole.csproj", "{08F6F764-7D68-499E-8F72-477063818F0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EAB7CF74-CA0F-4F8D-87AE-6467B43AC008}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAB7CF74-CA0F-4F8D-87AE-6467B43AC008}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAB7CF74-CA0F-4F8D-87AE-6467B43AC008}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08F6F764-7D68-499E-8F72-477063818F0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08F6F764-7D68-499E-8F72-477063818F0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08F6F764-7D68-499E-8F72-477063818F0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08F6F764-7D68-499E-8F72-477063818F0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

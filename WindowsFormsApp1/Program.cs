@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PdfiumViewer;
 using System.IO;
+using Application;
 
 namespace WindowsFormsApp1
 {
@@ -23,9 +24,9 @@ namespace WindowsFormsApp1
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1(new ExampleDatabase()));
+            System.Windows.Forms.Application.EnableVisualStyles();
+            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+            System.Windows.Forms.Application.Run(new Form1(new ExampleDatabase()));
         }
     }
 }

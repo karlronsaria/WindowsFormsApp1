@@ -7,18 +7,10 @@ using System.Linq;
 using System.Windows.Forms;
 using PdfiumViewer;
 using System.IO;
+using Application;
 
 namespace WindowsFormsApp1
 {
-    public class Record
-    {
-        public int RecordId { get; }
-        public string RecordName { get; }
-        public string[] Tags { get; set; }
-        public DateTime[] Dates { get; set; }
-        public string Description { get; set; }
-    }
-
     public interface IRecordContext
     {
         ICollection<Record> Records { get; set; }

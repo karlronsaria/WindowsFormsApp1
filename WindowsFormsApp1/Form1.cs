@@ -180,13 +180,13 @@ namespace WindowsFormsApp1
 
         private void ClearPreviewPane()
         {
-            splitContainer1.Panel2.Controls.Remove(_panelControl);
+            splitContainer2.Panel2.Controls.Remove(_panelControl);
         }
 
         private void SetPreviewPane(Control myControl)
         {
             _panelControl = myControl;
-            splitContainer1.Panel2.Controls.Add(_panelControl);
+            splitContainer2.Panel2.Controls.Add(_panelControl);
             _panelControl.Dock = DockStyle.Fill;
         }
 

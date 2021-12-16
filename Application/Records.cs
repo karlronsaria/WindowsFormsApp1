@@ -8,10 +8,15 @@ namespace Application
 {
     public class Record
     {
-        public int RecordId { get; }
-        public string RecordName { get; }
+        public int RecordId { get; set; }
+        public string RecordName { get; set; }
         public string[] Tags { get; set; }
         public DateTime[] Dates { get; set; }
         public string Description { get; set; }
+    }
+
+    public class RecordContext
+    {
+
     }
 }

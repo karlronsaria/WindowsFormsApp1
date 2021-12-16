@@ -13,7 +13,17 @@ namespace WindowsFormsApp1
 {
     public interface IRecordContext
     {
-        ICollection<Record> Records { get; set; }
+        string[] GetTagsMatchingSubstring(string substring);
+
+        string[] GetTagsMatchingPattern(string pattern);
+
+        string[] GetTagsMatchingRecord(Record myRecord);
+
+        Record GetRecordMatchingName(string name);
+
+        Record[] GetRecordsMatchingTag(string tag);
+
+        void SetTags(Record[] records, string[] tags);
     }
 
     public partial class Form1 : Form
@@ -32,6 +42,7 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             treeView1_Load(STARTING_DIRECTORY);
+            SetTagsLayout("");
             _database = myDatabase;
         }
 
@@ -191,7 +202,7 @@ namespace WindowsFormsApp1
         {
             get
             {
-                return flowLayoutPanel1 as Control;
+                return tableLayoutPanel1 as Control;
             }
         }
 
@@ -208,9 +219,57 @@ namespace WindowsFormsApp1
             PreviewPane.Controls.Remove(_panelControl);
         }
 
-        private void SetTagsLayout()
+        private void SetTagsLayout(string str)
         {
-            
+            var panel = TagsLayoutPanel as FlowLayoutPanel;
+            // panel.RowStyles.Clear();
+            // panel.ColumnStyles.Clear();
+
+            for (int i = 1; i <= 5; i++)
+            {
+                SplitContainer myControl = new SplitContainer()
+                {
+                    Orientation = Orientation.Horizontal,
+                    Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                    AutoSize = true,
+                    // Dock = DockStyle.Fill,
+                };
+
+                // myControl.Panel1.AutoSize = true;
+                myControl.Panel2.AutoSize = true;
+
+                myControl.Panel1.Controls.Add(
+                    new Label()
+                    {
+                        Text = $"Panel {i}",
+                        // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
+                        Dock = DockStyle.Fill,
+                        AutoSize = true,
+                    }
+                );
+
+                FlowLayoutPanel myFlowLayoutPanel = new FlowLayoutPanel()
+                {
+                    FlowDirection = FlowDirection.LeftToRight,
+                    WrapContents = true,
+                    AutoSize = true,
+                    // AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    Dock = DockStyle.Fill,
+                };
+
+                for (int j = 1; j <= 37; j++)
+                {
+                    myFlowLayoutPanel.Controls.Add(
+                        new Button()
+                        {
+                            Text = $"foobar {j}",
+                        }
+                    );
+                }
+
+                myControl.Panel2.Controls.Add(myFlowLayoutPanel);
+                TagsLayoutPanel.Controls.Add(myControl);
+            }
         }
 
         private void SetPreviewPane(Control myControl)

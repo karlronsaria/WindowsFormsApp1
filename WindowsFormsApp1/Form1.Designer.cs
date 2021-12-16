@@ -181,6 +181,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.Size = new System.Drawing.Size(421, 107);
             this.tableLayoutPanel1.TabIndex = 6;
+            this.tableLayoutPanel1.WrapContents = false;
             // 
             // textBox1
             // 

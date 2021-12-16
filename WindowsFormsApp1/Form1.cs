@@ -42,7 +42,7 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             treeView1_Load(STARTING_DIRECTORY);
-            SetTagsLayout("");
+            SetSampleListLayout("");
             _database = myDatabase;
         }
 
@@ -219,61 +219,67 @@ namespace WindowsFormsApp1
             PreviewPane.Controls.Remove(_panelControl);
         }
 
-        private void SetTagsLayout(string str)
+        private void AddListLayout(string label, IEnumerable<string> list)
         {
-            var panel = TagsLayoutPanel as FlowLayoutPanel;
+            TagsLayoutPanel.Controls.Add(
+                new Panel()
+                {
+                    Height = 10
+                }
+            );
+
+            TagsLayoutPanel.Controls.Add(
+                new Label()
+                {
+                    Text = $"{label}",
+                    // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
+                    // Dock = DockStyle.Fill,
+                    // Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                    // AutoSize = true,
+                }
+            );
+
+            FlowLayoutPanel myFlowLayoutPanel = new FlowLayoutPanel()
+            {
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = true,
+                AutoSize = true,
+                // Dock = DockStyle.Fill,
+            };
+
+            foreach (string item in list)
+            {
+                myFlowLayoutPanel.Controls.Add(
+                    new Button()
+                    {
+                        Text = $"{item}",
+                        AutoSize = true,
+                    }
+                );
+            }
+
+            TagsLayoutPanel.Controls.Add(myFlowLayoutPanel);
+        }
+
+        private void SetSampleListLayout(string str)
+        {
             int numPanels = 5;
 
             for (int i = 1; i <= numPanels; i++)
             {
-                TagsLayoutPanel.Controls.Add(
-                    new Label()
-                    {
-                        Text = $"Panel {i}:",
-                        // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
-                        // Dock = DockStyle.Fill,
-                        // Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                        // AutoSize = true,
-                    }
-                );
+                string label = $"Panel {i}:";
 
-                FlowLayoutPanel myFlowLayoutPanel = new FlowLayoutPanel()
-                {
-                    FlowDirection = FlowDirection.LeftToRight,
-                    WrapContents = true,
-                    AutoSize = true,
-                    // Dock = DockStyle.Fill,
-                };
+                string c = "";
 
-                for (int j = 1; j <= 37; j++)
-                {
-                    string s = "";
+                var someList = from b in Enumerable.Range(0, 37)
+                               where (c = String.Join(
+                                    "",
+                                    from a in Enumerable.Range(1, b)
+                                    select "A"
+                                )).Count() > 0
+                               select $"foobar {b}: {c}";
 
-                    for (int k = 1; k <= j; k++)
-                    {
-                        s += "A";
-                    }
-
-                    myFlowLayoutPanel.Controls.Add(
-                        new Button()
-                        {
-                            Text = $"foobar {j}: {s}",
-                            AutoSize = true,
-                        }
-                    );
-                }
-
-                TagsLayoutPanel.Controls.Add(myFlowLayoutPanel);
-
-                if (i < numPanels)
-                {
-                    TagsLayoutPanel.Controls.Add(
-                        new Panel()
-                        {
-                            Height = 10
-                        }
-                    );
-                }
+                AddListLayout(label, someList);
             }
         }
 

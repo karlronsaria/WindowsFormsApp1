@@ -222,29 +222,30 @@ namespace WindowsFormsApp1
         private void SetTagsLayout(string str)
         {
             var panel = TagsLayoutPanel as FlowLayoutPanel;
-            // panel.RowStyles.Clear();
-            // panel.ColumnStyles.Clear();
+            int numPanels = 5;
 
-            for (int i = 1; i <= 5; i++)
+            for (int i = 1; i <= numPanels; i++)
             {
-                SplitContainer myControl = new SplitContainer()
-                {
-                    Orientation = Orientation.Horizontal,
-                    Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                    AutoSize = true,
-                    // Dock = DockStyle.Fill,
-                };
+                // SplitContainer myControl = new SplitContainer()
+                // {
+                //     Orientation = Orientation.Horizontal,
+                //     Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                //     AutoSize = true,
+                //     // Dock = DockStyle.Fill,
+                // };
 
                 // myControl.Panel1.AutoSize = true;
-                myControl.Panel2.AutoSize = true;
+                // myControl.Panel2.AutoSize = true;
 
-                myControl.Panel1.Controls.Add(
+                // myControl.Panel1.Controls.Add(
+                TagsLayoutPanel.Controls.Add(
                     new Label()
                     {
-                        Text = $"Panel {i}",
+                        Text = $"Panel {i}:",
                         // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
-                        Dock = DockStyle.Fill,
-                        AutoSize = true,
+                        // Dock = DockStyle.Fill,
+                        // Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                        // AutoSize = true,
                     }
                 );
 
@@ -253,8 +254,7 @@ namespace WindowsFormsApp1
                     FlowDirection = FlowDirection.LeftToRight,
                     WrapContents = true,
                     AutoSize = true,
-                    // AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                    Dock = DockStyle.Fill,
+                    // Dock = DockStyle.Fill,
                 };
 
                 for (int j = 1; j <= 37; j++)
@@ -267,8 +267,17 @@ namespace WindowsFormsApp1
                     );
                 }
 
-                myControl.Panel2.Controls.Add(myFlowLayoutPanel);
-                TagsLayoutPanel.Controls.Add(myControl);
+                TagsLayoutPanel.Controls.Add(myFlowLayoutPanel);
+
+                if (i < numPanels)
+                {
+                    TagsLayoutPanel.Controls.Add(
+                        new Panel()
+                        {
+                            Height = 10
+                        }
+                    );
+                }
             }
         }
 

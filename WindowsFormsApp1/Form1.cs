@@ -226,18 +226,6 @@ namespace WindowsFormsApp1
 
             for (int i = 1; i <= numPanels; i++)
             {
-                // SplitContainer myControl = new SplitContainer()
-                // {
-                //     Orientation = Orientation.Horizontal,
-                //     Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                //     AutoSize = true,
-                //     // Dock = DockStyle.Fill,
-                // };
-
-                // myControl.Panel1.AutoSize = true;
-                // myControl.Panel2.AutoSize = true;
-
-                // myControl.Panel1.Controls.Add(
                 TagsLayoutPanel.Controls.Add(
                     new Label()
                     {
@@ -259,10 +247,18 @@ namespace WindowsFormsApp1
 
                 for (int j = 1; j <= 37; j++)
                 {
+                    string s = "";
+
+                    for (int k = 1; k <= j; k++)
+                    {
+                        s += "A";
+                    }
+
                     myFlowLayoutPanel.Controls.Add(
                         new Button()
                         {
-                            Text = $"foobar {j}",
+                            Text = $"foobar {j}: {s}",
+                            AutoSize = true,
                         }
                     );
                 }

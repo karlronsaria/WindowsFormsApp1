@@ -145,5 +145,30 @@ namespace WindowsFormsApp1
                 AddListLayout("Tags:", tagsMatchingSubstring, TagButton_Click);
             }
         }
+
+        private void TagButton_Click(object sender, EventArgs e)
+        {
+            string text = (sender as Button).Text;
+            TagsLayoutPanel.Controls.Clear();
+            AddListLayout(
+                $"Documents with the tag '{text}':",
+                from record in _database.GetRecordsMatchingTag(text)
+                select record.RecordName,
+                DocumentButton_Click
+            );
+        }
+
+        private void DocumentButton_Click(object sender, EventArgs e)
+        {
+            string text = (sender as Button).Text;
+            TagsLayoutPanel.Controls.Clear();
+            AddListLayout(
+                $"Tags for the document '{text}':",
+                _database.GetTagsMatchingRecord(
+                    _database.GetRecordMatchingName(text)
+                ),
+                TagButton_Click
+            );
+        }
     }
 }

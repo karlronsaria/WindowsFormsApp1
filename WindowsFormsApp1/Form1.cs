@@ -40,7 +40,7 @@ namespace WindowsFormsApp1
         private IList<FileSystemInfo> _items;
         private Control _panelControl;
         private DirectoryInfo _currentDirectory;
-        private IRecordContext _database;
+        private readonly IRecordContext _database;
 
         public Form1(IRecordContext myDatabase)
         {

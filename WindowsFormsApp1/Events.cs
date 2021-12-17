@@ -122,10 +122,15 @@ namespace WindowsFormsApp1
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             string text = textBox1.Text;
+            TagsLayoutPanel.Controls.Clear();
+
+            if (text.Length == 0)
+            {
+                return;
+            }
+
             var tagsMatchingSubstring = _database.GetTagsMatchingSubstring(text);
             var recordsMatchingSubstring = _database.GetRecordsMatchingSubstring(text);
-
-            TagsLayoutPanel.Controls.Clear();
 
             if (recordsMatchingSubstring != null && recordsMatchingSubstring.Any())
             {

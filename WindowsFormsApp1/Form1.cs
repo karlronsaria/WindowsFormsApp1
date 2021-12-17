@@ -13,17 +13,21 @@ namespace WindowsFormsApp1
 {
     public interface IRecordContext
     {
-        string[] GetTagsMatchingSubstring(string substring);
+        IEnumerable<string> GetTagsMatchingSubstring(string substring);
 
-        string[] GetTagsMatchingPattern(string pattern);
+        IEnumerable<string> GetTagsMatchingPattern(string pattern);
 
-        string[] GetTagsMatchingRecord(Record myRecord);
+        IEnumerable<string> GetTagsMatchingRecord(Record myRecord);
 
         Record GetRecordMatchingName(string name);
 
-        Record[] GetRecordsMatchingTag(string tag);
+        IEnumerable<Record> GetRecordsMatchingSubstring(string substring);
 
-        void SetTags(Record[] records, string[] tags);
+        IEnumerable<Record> GetRecordsMatchingPattern(string pattern);
+
+        IEnumerable<Record> GetRecordsMatchingTag(string tag);
+
+        void SetTags(IEnumerable<Record> records, IEnumerable<string> tags);
     }
 
     public partial class Form1 : Form
@@ -42,7 +46,6 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             treeView1_Load(STARTING_DIRECTORY);
-            SetSampleListLayout("");
             _database = myDatabase;
         }
 
@@ -219,7 +222,7 @@ namespace WindowsFormsApp1
             PreviewPane.Controls.Remove(_panelControl);
         }
 
-        private void AddListLayout(string label, IEnumerable<string> list)
+        private void AddListLayout(string label, IEnumerable<string> list, EventHandler buttonClick)
         {
             TagsLayoutPanel.Controls.Add(
                 new Panel()
@@ -234,8 +237,8 @@ namespace WindowsFormsApp1
                     Text = $"{label}",
                     // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
                     // Dock = DockStyle.Fill,
-                    // Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                    // AutoSize = true,
+                    Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                    AutoSize = true,
                 }
             );
 
@@ -249,16 +252,42 @@ namespace WindowsFormsApp1
 
             foreach (string item in list)
             {
-                myFlowLayoutPanel.Controls.Add(
-                    new Button()
-                    {
-                        Text = $"{item}",
-                        AutoSize = true,
-                    }
-                );
+                Button btn = new Button()
+                {
+                    Text = $"{item}",
+                    AutoSize = true,
+                };
+
+                btn.Click += buttonClick;
+                myFlowLayoutPanel.Controls.Add(btn);
             }
 
             TagsLayoutPanel.Controls.Add(myFlowLayoutPanel);
+        }
+
+        private void TagButton_Click(object sender, EventArgs e)
+        {
+            string text = (sender as Button).Text;
+            TagsLayoutPanel.Controls.Clear();
+            AddListLayout(
+                $"Documents with the tag '{text}':",
+                from record in _database.GetRecordsMatchingTag(text)
+                select record.RecordName,
+                DocumentButton_Click
+            );
+        }
+
+        private void DocumentButton_Click(object sender, EventArgs e)
+        {
+            string text = (sender as Button).Text;
+            TagsLayoutPanel.Controls.Clear();
+            AddListLayout(
+                $"Tags for the document '{text}':",
+                _database.GetTagsMatchingRecord(
+                    _database.GetRecordMatchingName(text)
+                ),
+                TagButton_Click
+            );
         }
 
         private void SetSampleListLayout(string str)
@@ -279,7 +308,7 @@ namespace WindowsFormsApp1
                                 )).Count() > 0
                                select $"foobar {b}: {c}";
 
-                AddListLayout(label, someList);
+                AddListLayout(label, someList, (s, e) => { });
             }
         }
 

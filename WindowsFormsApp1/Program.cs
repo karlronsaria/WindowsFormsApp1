@@ -20,12 +20,10 @@ namespace WindowsFormsApp1
             "resource",
             "tangential",
             "resource",
-            "tangential",
             "charity",
             "auto",
             "claim",
             "insurance",
-            "auto",
             "Code-a-thon",
             "Lightsys",
             "event",
@@ -182,46 +180,70 @@ namespace WindowsFormsApp1
                     where record.RecordName == name
                     select record
                 )
-                .FirstOrDefault();
+                .FirstOrDefault()
+                ;
             }
 
-            public Record[] GetRecordsMatchingTag(string tag)
+            public IEnumerable<Record> GetRecordsMatchingPattern(string pattern)
             {
-                return (Record[])(
+                return (
+                    from record in MySampleData.MyRecords
+                    where Regex.IsMatch(record.RecordName, pattern)
+                    select record
+                )
+                ;
+            }
+
+            public IEnumerable<Record> GetRecordsMatchingSubstring(string substring)
+            {
+                return (
+                    from record in MySampleData.MyRecords
+                    where record.RecordName.Contains(substring)
+                    select record
+                )
+                ;
+            }
+
+            public IEnumerable<Record> GetRecordsMatchingTag(string tag)
+            {
+                return (
                     from record in MySampleData.MyRecords
                     where record.Tags.Contains(tag)
                     select record
-                );
+                )
+                ;
             }
 
-            public string[] GetTagsMatchingPattern(string pattern)
+            public IEnumerable<string> GetTagsMatchingPattern(string pattern)
             {
-                return (string[])(
+                return (
                     from tag in MySampleData.MyTags
                     where Regex.IsMatch(tag, pattern)
                     select tag
-                );
+                )
+                ;
             }
 
-            public string[] GetTagsMatchingRecord(Record myRecord)
+            public IEnumerable<string> GetTagsMatchingRecord(Record myRecord)
             {
                 return myRecord.Tags;
             }
 
-            public string[] GetTagsMatchingSubstring(string substring)
+            public IEnumerable<string> GetTagsMatchingSubstring(string substring)
             {
-                return (string[])(
+                return (
                     from tag in MySampleData.MyTags
                     where tag.Contains(substring)
                     select tag
-                );
+                )
+                ;
             }
 
-            public void SetTags(Record[] records, string[] tags)
+            public void SetTags(IEnumerable<Record> records, IEnumerable<string> tags)
             {
                 foreach (var record in records)
                 {
-                    record.Tags = tags;
+                    record.Tags = tags.ToArray<string>();
                 }
             }
         }

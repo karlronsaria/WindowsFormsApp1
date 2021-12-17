@@ -118,5 +118,27 @@ namespace WindowsFormsApp1
                 Color.Purple, 1, ButtonBorderStyle.Solid  // bottom
             );
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            string text = textBox1.Text;
+            var tagsMatchingSubstring = _database.GetTagsMatchingSubstring(text);
+            var recordsMatchingSubstring = _database.GetRecordsMatchingSubstring(text);
+
+            TagsLayoutPanel.Controls.Clear();
+
+            if (recordsMatchingSubstring != null && recordsMatchingSubstring.Any())
+            {
+                var names = from record in recordsMatchingSubstring
+                            select record.RecordName;
+
+                AddListLayout("Documents:", names, DocumentButton_Click);
+            }
+
+            if (tagsMatchingSubstring != null && tagsMatchingSubstring.Any())
+            {
+                AddListLayout("Tags:", tagsMatchingSubstring, TagButton_Click);
+            }
+        }
     }
 }

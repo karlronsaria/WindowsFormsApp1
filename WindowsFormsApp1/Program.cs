@@ -12,7 +12,7 @@ namespace WindowsFormsApp1
 {
     public static class MySampleData
     {
-        public static string[] MyTags => new string[]
+        public static IList<string> MyTags => new List<string>
         {
             "case",
             "court",
@@ -29,7 +29,7 @@ namespace WindowsFormsApp1
             "event",
         };
 
-        public static Record[] MyRecords => new Record[]
+        public static IList<Record> MyRecords => new List<Record>
         {
             new Record
             {
@@ -173,7 +173,7 @@ namespace WindowsFormsApp1
         {
             public ExampleDatabase() { }
 
-            public Record GetRecordMatchingName(string name)
+            private Record GetRecordMatchingName(string name)
             {
                 return (
                     from record in MySampleData.MyRecords
@@ -184,7 +184,7 @@ namespace WindowsFormsApp1
                 ;
             }
 
-            public IEnumerable<Record> GetRecordsMatchingPattern(string pattern)
+            private IEnumerable<Record> GetRecordsMatchingPattern(string pattern)
             {
                 return (
                     from record in MySampleData.MyRecords
@@ -194,7 +194,7 @@ namespace WindowsFormsApp1
                 ;
             }
 
-            public IEnumerable<Record> GetRecordsMatchingSubstring(string substring)
+            private IEnumerable<Record> GetRecordsMatchingSubstring(string substring)
             {
                 return (
                     from record in MySampleData.MyRecords
@@ -204,12 +204,47 @@ namespace WindowsFormsApp1
                 ;
             }
 
-            public IEnumerable<Record> GetRecordsMatchingTag(string tag)
+            private IEnumerable<Record> GetRecordsMatchingTag(string tag)
             {
                 return (
                     from record in MySampleData.MyRecords
                     where record.Tags.Contains(tag)
                     select record
+                )
+                ;
+            }
+
+            private IEnumerable<string> GetTagsMatchingRecord(Record myRecord)
+            {
+                return myRecord.Tags;
+            }
+
+            public IEnumerable<string> GetNamesMatchingPattern(string pattern)
+            {
+                return (
+                    from record in MySampleData.MyRecords
+                    where Regex.IsMatch(record.RecordName, pattern)
+                    select record.RecordName
+                )
+                ;
+            }
+
+            public IEnumerable<string> GetNamesMatchingSubstring(string substring)
+            {
+                return (
+                    from record in MySampleData.MyRecords
+                    where record.RecordName.Contains(substring)
+                    select record.RecordName
+                )
+                ;
+            }
+
+            public IEnumerable<string> GetNamesMatchingTag(string tag)
+            {
+                return (
+                    from record in MySampleData.MyRecords
+                    where record.Tags.Contains(tag)
+                    select record.RecordName
                 )
                 ;
             }
@@ -224,11 +259,6 @@ namespace WindowsFormsApp1
                 ;
             }
 
-            public IEnumerable<string> GetTagsMatchingRecord(Record myRecord)
-            {
-                return myRecord.Tags;
-            }
-
             public IEnumerable<string> GetTagsMatchingSubstring(string substring)
             {
                 return (
@@ -239,11 +269,36 @@ namespace WindowsFormsApp1
                 ;
             }
 
-            public void SetTags(IEnumerable<Record> records, IEnumerable<string> tags)
+            public IEnumerable<string> GetTagsMatchingName(string tag)
             {
-                foreach (var record in records)
+                return GetTagsMatchingRecord(GetRecordMatchingName(tag));
+            }
+
+            public void SetTags(IEnumerable<string> names, IEnumerable<string> tags)
+            {
+                foreach (var name in names)
                 {
-                    record.Tags = tags.ToArray<string>();
+                    var records = from record in MySampleData.MyRecords
+                                  where record.RecordName == name
+                                  select record;
+
+                    if (!records.Any())
+                    {
+                        MySampleData.MyRecords.Add(
+                            new Record
+                            {
+                                RecordName = name,
+                                Tags = tags,
+                            }
+                        );
+
+                        return;
+                    }
+
+                    foreach (var record in records)
+                    {
+                        record.Tags = tags.ToArray<string>();
+                    }
                 }
             }
         }

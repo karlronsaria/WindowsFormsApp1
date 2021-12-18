@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using PdfiumViewer;
 using System.IO;
 
 namespace WindowsFormsApp1
@@ -129,20 +128,16 @@ namespace WindowsFormsApp1
                 return;
             }
 
-            var tagsMatchingSubstring = _database.GetTagsMatchingSubstring(text);
-            var recordsMatchingSubstring = _database.GetRecordsMatchingSubstring(text);
+            var names = _database.GetNamesMatchingSubstring(text);
 
-            if (recordsMatchingSubstring != null && recordsMatchingSubstring.Any())
+            if (names.Any())
             {
-                var names = from record in recordsMatchingSubstring
-                            select record.RecordName;
-
                 AddListLayout("Documents:", names, DocumentButton_Click);
             }
 
-            if (tagsMatchingSubstring != null && tagsMatchingSubstring.Any())
+            if (_database.GetTagsMatchingSubstring(text) is IEnumerable<string> tags && tags.Any())
             {
-                AddListLayout("Tags:", tagsMatchingSubstring, TagButton_Click);
+                AddListLayout("Tags:", tags, TagButton_Click);
             }
         }
 
@@ -152,8 +147,7 @@ namespace WindowsFormsApp1
             TagsLayoutPanel.Controls.Clear();
             AddListLayout(
                 $"Documents with the tag '{text}':",
-                from record in _database.GetRecordsMatchingTag(text)
-                select record.RecordName,
+                _database.GetNamesMatchingTag(text),
                 DocumentButton_Click
             );
         }
@@ -164,9 +158,7 @@ namespace WindowsFormsApp1
             TagsLayoutPanel.Controls.Clear();
             AddListLayout(
                 $"Tags for the document '{text}':",
-                _database.GetTagsMatchingRecord(
-                    _database.GetRecordMatchingName(text)
-                ),
+                _database.GetTagsMatchingName(text),
                 TagButton_Click
             );
         }

@@ -10,8 +10,8 @@ namespace Application
     {
         public int RecordId { get; set; }
         public string RecordName { get; set; }
-        public string[] Tags { get; set; }
-        public DateTime[] Dates { get; set; }
+        public IEnumerable<string> Tags { get; set; }
+        public IEnumerable<DateTime>[] Dates { get; set; }
         public string Description { get; set; }
     }
 

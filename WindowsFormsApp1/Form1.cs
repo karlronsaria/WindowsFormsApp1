@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows.Forms;
 using PdfiumViewer;
 using System.IO;
-using Application;
 
 namespace WindowsFormsApp1
 {
@@ -17,17 +16,15 @@ namespace WindowsFormsApp1
 
         IEnumerable<string> GetTagsMatchingPattern(string pattern);
 
-        IEnumerable<string> GetTagsMatchingRecord(Record myRecord);
+        IEnumerable<string> GetNamesMatchingSubstring(string substrting);
 
-        Record GetRecordMatchingName(string name);
+        IEnumerable<string> GetNamesMatchingPattern(string pattern);
 
-        IEnumerable<Record> GetRecordsMatchingSubstring(string substring);
+        IEnumerable<string> GetNamesMatchingTag(string tag);
 
-        IEnumerable<Record> GetRecordsMatchingPattern(string pattern);
+        IEnumerable<string> GetTagsMatchingName(string tag);
 
-        IEnumerable<Record> GetRecordsMatchingTag(string tag);
-
-        void SetTags(IEnumerable<Record> records, IEnumerable<string> tags);
+        void SetTags(IEnumerable<string> names, IEnumerable<string> tags);
     }
 
     public partial class Form1 : Form

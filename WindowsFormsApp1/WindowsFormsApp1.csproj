@@ -73,6 +73,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WatermarkTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Events.cs">
       <SubType>Form</SubType>
     </Compile>

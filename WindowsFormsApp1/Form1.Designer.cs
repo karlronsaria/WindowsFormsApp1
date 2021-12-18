@@ -38,7 +38,7 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox1 = new external.WaterMarkTextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -191,6 +191,7 @@
             this.textBox1.Size = new System.Drawing.Size(421, 20);
             this.textBox1.TabIndex = 7;
             this.textBox1.TextChanged += new System.EventHandler(textBox1_TextChanged);
+            this.textBox1.WaterMarkText = "Search";
             // 
             // Form1
             // 
@@ -232,7 +233,7 @@
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer3;
-        private System.Windows.Forms.TextBox textBox1;
+        private external.WaterMarkTextBox textBox1;
         private System.Windows.Forms.FlowLayoutPanel tableLayoutPanel1;
     }
 }

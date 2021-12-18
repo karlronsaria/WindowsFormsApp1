@@ -94,9 +94,9 @@ namespace WindowsFormsApp1
 
             if (!isDirectory)
             {
-                switch (extension)
+                switch (extension.ToUpper())
                 {
-                    case ".pdf":
+                    case ".PDF":
                         SetPreviewPane(NewPdfPreview(fullName));
                         break;
                     default:

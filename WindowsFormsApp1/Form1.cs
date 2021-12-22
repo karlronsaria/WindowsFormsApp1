@@ -10,13 +10,13 @@ using System.IO;
 
 namespace WindowsFormsApp1
 {
-    public interface IRecordContext
+    public interface IDataContext
     {
         IEnumerable<string> GetTagsMatchingSubstring(string substring);
 
         IEnumerable<string> GetTagsMatchingPattern(string pattern);
 
-        IEnumerable<string> GetNamesMatchingSubstring(string substrting);
+        IEnumerable<string> GetNamesMatchingSubstring(string substring);
 
         IEnumerable<string> GetNamesMatchingPattern(string pattern);
 
@@ -37,9 +37,9 @@ namespace WindowsFormsApp1
         private IList<FileSystemInfo> _items;
         private Control _panelControl;
         private DirectoryInfo _currentDirectory;
-        private readonly IRecordContext _database;
+        private readonly IDataContext _database;
 
-        public Form1(IRecordContext myDatabase)
+        public Form1(IDataContext myDatabase)
         {
             InitializeComponent();
             treeView1_Load(STARTING_DIRECTORY);

@@ -6,17 +6,49 @@ using System.Threading.Tasks;
 
 namespace Application
 {
-    public class Record
+    /*
+    public class Document
     {
-        public int RecordId { get; set; }
-        public string RecordName { get; set; }
-        public IEnumerable<string> Tags { get; set; }
-        public IEnumerable<DateTime>[] Dates { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<string> Tags { get; set; }
+        public List<DateTime> Dates { get; set; }
         public string Description { get; set; }
     }
 
-    public class RecordContext
+    public class Tag
     {
-
+        public string Name { get; set; }
+        public List<int> DocumentIds { get; set; }
     }
+
+    public class Root
+    {
+        public List<Document> Documents { get; set; }
+        public List<Tag> Tags { get; set; }
+    }
+    */
+
+
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
+
+    public class Document
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<string> Tags { get; set; }
+    }
+
+    public class Tag
+    {
+        public string Name { get; set; }
+        public List<int> DocumentIds { get; set; }
+    }
+
+    public class Root
+    {
+        public List<Document> Documents { get; set; }
+        public List<Tag> Tags { get; set; }
+    }
+
 }

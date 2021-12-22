@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonData", "JsonData\JsonDa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugConsole", "DebugConsole\DebugConsole.csproj", "{D4314D28-DC96-4AED-A00D-D9089F589B17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewtonsoftJsonData", "NewtonsoftJsonData\NewtonsoftJsonData.csproj", "{CDF718A1-4911-401F-9B42-DFD3B1FD50EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{D4314D28-DC96-4AED-A00D-D9089F589B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4314D28-DC96-4AED-A00D-D9089F589B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4314D28-DC96-4AED-A00D-D9089F589B17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDF718A1-4911-401F-9B42-DFD3B1FD50EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDF718A1-4911-401F-9B42-DFD3B1FD50EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDF718A1-4911-401F-9B42-DFD3B1FD50EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDF718A1-4911-401F-9B42-DFD3B1FD50EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

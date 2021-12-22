@@ -52,12 +52,12 @@ namespace external
             this.Text = _watermarkText;
             this.ForeColor = Color.Gray;
 
-            GotFocus += (source, e) =>
+            GotFocus += (sender, e) =>
             {
                 RemoveWatermak();
             };
 
-            LostFocus += (source, e) =>
+            LostFocus += (sender, e) =>
             {
                 ApplyWatermark();
             };

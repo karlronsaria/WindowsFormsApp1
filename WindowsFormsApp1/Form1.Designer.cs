@@ -1,5 +1,13 @@
 ﻿namespace WindowsFormsApp1
 {
+    class SystemTextBox : System.Windows.Forms.TextBox
+    {
+        public string WatermarkText { get; set; }
+    }
+
+    // class MyTextBox : SystemTextBox { }
+    class MyTextBox : external.WatermarkTextBox { }
+
     partial class Form1
     {
         /// <summary>
@@ -38,7 +46,7 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.textBox1 = new external.WatermarkTextBox();
+            this.textBox1 = new MyTextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -234,7 +242,7 @@
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer3;
-        private external.WatermarkTextBox textBox1;
+        private MyTextBox textBox1;
         private System.Windows.Forms.FlowLayoutPanel tableLayoutPanel1;
     }
 }

@@ -128,16 +128,24 @@ namespace WindowsFormsApp1
                 return;
             }
 
-            var names = _database.GetNamesMatchingSubstring(text);
+            Control documentResultsPanel = null;
 
-            if (names.Any())
+            foreach (string item in _database.GetNamesMatchingSubstring(text))
             {
-                AddListLayout(SearchResultsPanel, "Documents:", names, DocumentButton_Click);
+                if (documentResultsPanel == null)
+                    documentResultsPanel = LoadListSublayout(SearchResultsPanel, "Documents:");
+
+                AddLayoutButton(documentResultsPanel, item, DocumentButton_Click);
             }
 
-            if (_database.GetTagsMatchingSubstring(text) is IEnumerable<string> tags && tags.Any())
+            Control tagResultsPanel = null;
+
+            foreach (string item in _database.GetTagsMatchingSubstring(text))
             {
-                AddListLayout(SearchResultsPanel, "Tags:", tags, TagButton_Click);
+                if (tagResultsPanel == null)
+                    tagResultsPanel = LoadListSublayout(SearchResultsPanel, "Tags:");
+
+                AddLayoutButton(tagResultsPanel, item, TagButton_Click);
             }
         }
 

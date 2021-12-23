@@ -231,7 +231,7 @@ namespace WindowsFormsApp1
             parent.Controls.Add(btn);
         }
 
-        private static Control NewListSublayout(Control parent, string labelText)
+        private static Control LoadListSublayout(Control parent, string labelText)
         {
             parent.Controls.Add(
                 new Panel()
@@ -265,7 +265,7 @@ namespace WindowsFormsApp1
 
         private void AddListLayout(Control parent, string label, IEnumerable<string> list, EventHandler buttonClick)
         {
-            Control myFlowLayoutPanel = NewListSublayout(parent, label);
+            Control myFlowLayoutPanel = LoadListSublayout(parent, label);
 
             foreach (string item in list)
             {

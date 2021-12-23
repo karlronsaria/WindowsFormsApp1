@@ -76,6 +76,9 @@
     <Compile Include="ExampleDatabase.cs" />
     <Compile Include="JsonFileDatabase.cs" />
     <Compile Include="MySampleData.cs" />
+    <Compile Include="SearchResultLayout.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WatermarkTextBox.cs">
       <SubType>Component</SubType>
     </Compile>

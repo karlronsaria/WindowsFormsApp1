@@ -198,7 +198,7 @@ namespace WindowsFormsApp1
             listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
-        private Control TagsLayoutPanel
+        private Control SearchResultsPanel
         {
             get
             {
@@ -219,19 +219,31 @@ namespace WindowsFormsApp1
             PreviewPane.Controls.Remove(_panelControl);
         }
 
-        private void AddListLayout(string label, IEnumerable<string> list, EventHandler buttonClick)
+        private static void AddLayoutButton(Control parent, string text, EventHandler buttonClick)
         {
-            TagsLayoutPanel.Controls.Add(
+            Button btn = new Button()
+            {
+                Text = $"{text}",
+                AutoSize = true,
+            };
+
+            btn.Click += buttonClick;
+            parent.Controls.Add(btn);
+        }
+
+        private static Control NewListSublayout(Control parent, string labelText)
+        {
+            parent.Controls.Add(
                 new Panel()
                 {
                     Height = 10
                 }
             );
 
-            TagsLayoutPanel.Controls.Add(
+            parent.Controls.Add(
                 new Label()
                 {
-                    Text = $"{label}",
+                    Text = $"{labelText}",
                     // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
                     // Dock = DockStyle.Fill,
                     Anchor = AnchorStyles.Left | AnchorStyles.Right,
@@ -247,19 +259,18 @@ namespace WindowsFormsApp1
                 // Dock = DockStyle.Fill,
             };
 
+            parent.Controls.Add(myFlowLayoutPanel);
+            return myFlowLayoutPanel;
+        }
+
+        private void AddListLayout(Control parent, string label, IEnumerable<string> list, EventHandler buttonClick)
+        {
+            Control myFlowLayoutPanel = NewListSublayout(parent, label);
+
             foreach (string item in list)
             {
-                Button btn = new Button()
-                {
-                    Text = $"{item}",
-                    AutoSize = true,
-                };
-
-                btn.Click += buttonClick;
-                myFlowLayoutPanel.Controls.Add(btn);
+                AddLayoutButton(myFlowLayoutPanel, item, buttonClick);
             }
-
-            TagsLayoutPanel.Controls.Add(myFlowLayoutPanel);
         }
 
         private void SetSampleListLayout(string str)
@@ -269,7 +280,6 @@ namespace WindowsFormsApp1
             for (int i = 1; i <= numPanels; i++)
             {
                 string label = $"Panel {i}:";
-
                 string c = "";
 
                 var someList = from b in Enumerable.Range(0, 37)
@@ -280,7 +290,7 @@ namespace WindowsFormsApp1
                                 )).Count() > 0
                                select $"foobar {b}: {c}";
 
-                AddListLayout(label, someList, (s, e) => { });
+                AddListLayout(SearchResultsPanel, label, someList, (s, e) => { });
             }
         }
 

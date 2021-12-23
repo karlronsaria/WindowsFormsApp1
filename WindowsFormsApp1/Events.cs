@@ -121,7 +121,7 @@ namespace WindowsFormsApp1
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             string text = textBox1.Text;
-            TagsLayoutPanel.Controls.Clear();
+            SearchResultsPanel.Controls.Clear();
 
             if (text.Length == 0)
             {
@@ -132,20 +132,21 @@ namespace WindowsFormsApp1
 
             if (names.Any())
             {
-                AddListLayout("Documents:", names, DocumentButton_Click);
+                AddListLayout(SearchResultsPanel, "Documents:", names, DocumentButton_Click);
             }
 
             if (_database.GetTagsMatchingSubstring(text) is IEnumerable<string> tags && tags.Any())
             {
-                AddListLayout("Tags:", tags, TagButton_Click);
+                AddListLayout(SearchResultsPanel, "Tags:", tags, TagButton_Click);
             }
         }
 
         private void TagButton_Click(object sender, EventArgs e)
         {
             string text = (sender as Button).Text;
-            TagsLayoutPanel.Controls.Clear();
+            SearchResultsPanel.Controls.Clear();
             AddListLayout(
+                SearchResultsPanel,
                 $"Documents with the tag '{text}':",
                 _database.GetNamesMatchingTag(text),
                 DocumentButton_Click
@@ -155,8 +156,9 @@ namespace WindowsFormsApp1
         private void DocumentButton_Click(object sender, EventArgs e)
         {
             string text = (sender as Button).Text;
-            TagsLayoutPanel.Controls.Clear();
+            SearchResultsPanel.Controls.Clear();
             AddListLayout(
+                SearchResultsPanel,
                 $"Tags for the document '{text}':",
                 _database.GetTagsMatchingName(text),
                 TagButton_Click

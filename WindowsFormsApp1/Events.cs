@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace WindowsFormsApp1
 {
@@ -120,111 +114,40 @@ namespace WindowsFormsApp1
             );
         }
 
-        CancellationTokenSource searchBoxChanged;
-
         private async void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if (searchBoxChanged == null)
-            {
-                searchBoxChanged = new CancellationTokenSource();
-            }
-            else
-            {
-                searchBoxChanged.Cancel();
-                searchBoxChanged.Dispose();
-                searchBoxChanged = null;
-                searchBoxChanged = new CancellationTokenSource();
-            }
-
-            await ChangeSearchResultsAsync(searchBoxChanged.Token);
-        }
-
-        private async Task ChangeSearchResultsAsync(CancellationToken cancellationToken)
-        {
+            _searchBoxChanged = NewCancellationSource(_searchBoxChanged);
             SearchResultsPanel.Controls.Clear();
-            string text = textBox1.Text;
-
-            if (text.Length == 0)
-                return;
-
-            Control documentResultsPanel = null;
-            Control tagResultsPanel = null;
-
-            try
-            {
-                foreach (string item in _database.GetNamesMatchingSubstring(text))
-                {
-                    if (documentResultsPanel == null)
-                        documentResultsPanel = LoadListSublayout(SearchResultsPanel, "Documents:");
-
-                    cancellationToken.ThrowIfCancellationRequested();
-                    await Task.Run(() => AddLayoutButton(documentResultsPanel, item, DocumentButton_Click));
-                }
-
-                foreach (string item in _database.GetTagsMatchingSubstring(text))
-                {
-                    if (tagResultsPanel == null)
-                        tagResultsPanel = LoadListSublayout(SearchResultsPanel, "Tags:");
-
-                    cancellationToken.ThrowIfCancellationRequested();
-                    await Task.Run(() => AddLayoutButton(tagResultsPanel, item, TagButton_Click));
-                }
-            }
-            catch (OperationCanceledException) { }
+            await ChangeSearchResultsAsync(_searchBoxChanged.Token);
         }
 
-        private void textBox1_TextChanged_2(object sender, EventArgs e)
+        private async void TagButton_ClickAsync(object sender, EventArgs e)
         {
-            string text = textBox1.Text;
+            _searchBoxChanged = NewCancellationSource(_searchBoxChanged);
             SearchResultsPanel.Controls.Clear();
-
-            if (text.Length == 0)
-            {
-                return;
-            }
-
-            Control documentResultsPanel = null;
-
-            foreach (string item in _database.GetNamesMatchingSubstring(text))
-            {
-                if (documentResultsPanel == null)
-                    documentResultsPanel = LoadListSublayout(SearchResultsPanel, "Documents:");
-
-                AddLayoutButton(documentResultsPanel, item, DocumentButton_Click);
-            }
-
-            Control tagResultsPanel = null;
-
-            foreach (string item in _database.GetTagsMatchingSubstring(text))
-            {
-                if (tagResultsPanel == null)
-                    tagResultsPanel = LoadListSublayout(SearchResultsPanel, "Tags:");
-
-                AddLayoutButton(tagResultsPanel, item, TagButton_Click);
-            }
-        }
-
-        private void TagButton_Click(object sender, EventArgs e)
-        {
             string text = (sender as Button).Text;
-            SearchResultsPanel.Controls.Clear();
-            AddListLayout(
+
+            await AddListLayoutAsync(
                 SearchResultsPanel,
                 $"Documents with the tag '{text}':",
                 _database.GetNamesMatchingTag(text),
-                DocumentButton_Click
+                DocumentButton_ClickAsync,
+                _searchBoxChanged.Token
             );
         }
 
-        private void DocumentButton_Click(object sender, EventArgs e)
+        private async void DocumentButton_ClickAsync(object sender, EventArgs e)
         {
-            string text = (sender as Button).Text;
+            _searchBoxChanged = NewCancellationSource(_searchBoxChanged);
             SearchResultsPanel.Controls.Clear();
-            AddListLayout(
+            string text = (sender as Button).Text;
+
+            await AddListLayoutAsync(
                 SearchResultsPanel,
                 $"Tags for the document '{text}':",
                 _database.GetTagsMatchingName(text),
-                TagButton_Click
+                TagButton_ClickAsync,
+                _searchBoxChanged.Token
             );
         }
     }

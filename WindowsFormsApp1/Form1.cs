@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PdfiumViewer;
 using System.IO;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace WindowsFormsApp1
 {
@@ -44,6 +45,25 @@ namespace WindowsFormsApp1
             InitializeComponent();
             treeView1_Load(STARTING_DIRECTORY);
             _database = myDatabase;
+        }
+
+        private CancellationTokenSource _searchBoxChanged;
+
+        private CancellationTokenSource NewCancellationSource(CancellationTokenSource mySource)
+        {
+            if (mySource == null)
+            {
+                mySource = new CancellationTokenSource();
+            }
+            else
+            {
+                mySource.Cancel();
+                mySource.Dispose();
+                mySource = null;
+                mySource = new CancellationTokenSource();
+            }
+
+            return mySource;
         }
 
         private Control NewPdfPreview(string filePath)
@@ -270,15 +290,55 @@ namespace WindowsFormsApp1
             return myFlowLayoutPanel;
         }
 
-        private void AddListLayout(Control parent, string label, IEnumerable<string> list, EventHandler buttonClick)
+        private async Task AddListLayoutAsync(Control parent, string label, IEnumerable<string> list, EventHandler buttonClick, CancellationToken myCancellationToken)
         {
             Control myFlowLayoutPanel = LoadListSublayout(parent, label);
 
-            foreach (string item in list)
-                AddLayoutButton(myFlowLayoutPanel, item, buttonClick);
+            try
+            {
+                foreach (string item in list)
+                {
+                    myCancellationToken.ThrowIfCancellationRequested();
+                    await Task.Run(() => AddLayoutButton(myFlowLayoutPanel, item, buttonClick));
+                }
+            }
+            catch (OperationCanceledException) { }
         }
 
-        private void SetSampleListLayout(string str)
+        private async Task ChangeSearchResultsAsync(CancellationToken myCancellationToken)
+        {
+            string text = textBox1.Text;
+
+            if (text.Length == 0)
+                return;
+
+            Control documentResultsPanel = null;
+            Control tagResultsPanel = null;
+
+            try
+            {
+                foreach (string item in _database.GetNamesMatchingSubstring(text))
+                {
+                    if (documentResultsPanel == null)
+                        documentResultsPanel = LoadListSublayout(SearchResultsPanel, "Documents:");
+
+                    myCancellationToken.ThrowIfCancellationRequested();
+                    await Task.Run(() => AddLayoutButton(documentResultsPanel, item, DocumentButton_ClickAsync));
+                }
+
+                foreach (string item in _database.GetTagsMatchingSubstring(text))
+                {
+                    if (tagResultsPanel == null)
+                        tagResultsPanel = LoadListSublayout(SearchResultsPanel, "Tags:");
+
+                    myCancellationToken.ThrowIfCancellationRequested();
+                    await Task.Run(() => AddLayoutButton(tagResultsPanel, item, TagButton_ClickAsync));
+                }
+            }
+            catch (OperationCanceledException) { }
+        }
+
+        private async Task SetSampleListLayoutAsync(string str)
         {
             int numPanels = 5;
 
@@ -295,7 +355,7 @@ namespace WindowsFormsApp1
                                 )).Count() > 0
                                select $"foobar {b}: {c}";
 
-                AddListLayout(SearchResultsPanel, label, someList, (s, e) => { });
+                await AddListLayoutAsync(SearchResultsPanel, label, someList, (s, e) => { }, _searchBoxChanged.Token);
             }
         }
 

@@ -5,21 +5,9 @@ using Application;
 
 namespace WindowsFormsApp1
 {
-    internal interface IDataSource
+    public class SimpleDataContext : IDataContext
     {
-        IList<Document> Documents { get; set; }
-        IList<Tag> Tags { get; set; }
-    }
-
-    internal class SimpleDataContext<DataSourceT> : IDataContext
-        where DataSourceT : IDataSource
-    {
-        protected DataSourceT _data;
-
-        protected SimpleDataContext(DataSourceT data)
-        {
-            _data = data;
-        }
+        protected Root _data;
 
         protected Document GetDocumentMatchingName(string name)
         {

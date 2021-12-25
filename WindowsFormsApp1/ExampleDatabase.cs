@@ -1,119 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Application;
 
 namespace WindowsFormsApp1
 {
-    class ExampleDatabase : IDataContext
+    class ExampleDatabase : SimpleDataContext
     {
-        public ExampleDatabase() { }
-
-        private Document GetDocumentMatchingName(string name)
+        public ExampleDatabase()
         {
-            return (
-                from document in MySampleData.MyDocuments
-                where document.Name == name
-                select document
-            )
-            .FirstOrDefault()
-            ;
-        }
-
-        private IEnumerable<Document> GetDocumentsMatchingPattern(string pattern)
-        {
-            return (
-                from document in MySampleData.MyDocuments
-                where Regex.IsMatch(document.Name, pattern)
-                select document
-            )
-            ;
-        }
-
-        private IEnumerable<Document> GetDocumentsMatchingSubstring(string substring)
-        {
-            return (
-                from document in MySampleData.MyDocuments
-                where document.Name.Contains(substring)
-                select document
-            )
-            ;
-        }
-
-        private IEnumerable<Document> GetDocumentsMatchingTag(string tag)
-        {
-            return (
-                from document in MySampleData.MyDocuments
-                where document.Tags.Contains(tag)
-                select document
-            )
-            ;
-        }
-
-        private IEnumerable<string> GetTagsMatchingDocument(Document myDocument)
-        {
-            return myDocument.Tags;
-        }
-
-        public IEnumerable<string> GetNamesMatchingPattern(string pattern)
-        {
-            return (
-                from document in MySampleData.MyDocuments
-                where Regex.IsMatch(document.Name, pattern)
-                select document.Name
-            )
-            ;
-        }
-
-        public IEnumerable<string> GetNamesMatchingSubstring(string substring)
-        {
-            return (
-                from document in MySampleData.MyDocuments
-                where document.Name.Contains(substring)
-                select document.Name
-            )
-            ;
-        }
-
-        public IEnumerable<string> GetNamesMatchingTag(string tag)
-        {
-            return (
-                from document in MySampleData.MyDocuments
-                where document.Tags.Contains(tag)
-                select document.Name
-            )
-            ;
-        }
-
-        public IEnumerable<string> GetTagsMatchingPattern(string pattern)
-        {
-            return (
+            IEnumerable<Tag> tags = (
                 from tag in MySampleData.MyTags
-                where Regex.IsMatch(tag, pattern)
-                select tag
-            )
-            ;
-        }
+                select new Tag { Name = tag, DocumentIds = new MyEnumerable<int>(), }
+            );
 
-        public IEnumerable<string> GetTagsMatchingSubstring(string substring)
-        {
-            return (
-                from tag in MySampleData.MyTags
-                where tag.Contains(substring)
-                select tag
-            )
-            ;
-        }
+            foreach (Tag tag in tags)
+                foreach (int documentId in (
+                    from document in MySampleData.MyDocuments
+                    where document.Tags.Contains(tag.Name)
+                    select document.Id
+                ))
+                    tag.DocumentIds.Add(documentId);
 
-        public IEnumerable<string> GetTagsMatchingName(string tag)
-        {
-            return GetTagsMatchingDocument(GetDocumentMatchingName(tag));
-        }
+            _data = new Root()
+            {
+                Documents = new MyEnumerable<Document>(),
+                Tags = new MyEnumerable<Tag>(),
+            };
 
-        public void SetTags(IEnumerable<string> names, IEnumerable<string> tags)
-        {
-            throw new NotImplementedException();
+            foreach (Document document in MySampleData.MyDocuments)
+                _data.Documents.Add(document);
+
+            foreach (Tag tag in tags)
+                _data.Tags.Add(tag);
         }
     }
 }

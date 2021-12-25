@@ -5,19 +5,23 @@ using Application;
 
 namespace WindowsFormsApp1
 {
-    public class JsonFileDatabase : IDataContext
+    internal interface IDataSource
     {
-        private readonly Root _data;
+        IList<Document> Documents { get; set; }
+        IList<Tag> Tags { get; set; }
+    }
 
-        public JsonFileDatabase(string filePath)
+    internal class SimpleDataContext<DataSourceT> : IDataContext
+        where DataSourceT : IDataSource
+    {
+        protected DataSourceT _data;
+
+        protected SimpleDataContext(DataSourceT data)
         {
-            _data = new NewtonsoftJsonData.Db<Root>(filePath).Data; 
-
-            if (_data == null)
-                _data = new Root();
+            _data = data;
         }
 
-        private Document GetDocumentMatchingName(string name)
+        protected Document GetDocumentMatchingName(string name)
         {
             return (
                 from document in _data.Documents
@@ -28,7 +32,7 @@ namespace WindowsFormsApp1
             ;
         }
 
-        private IEnumerable<Document> GetDocumentsMatchingPattern(string pattern)
+        protected IEnumerable<Document> GetDocumentsMatchingPattern(string pattern)
         {
             return (
                 from document in _data.Documents
@@ -38,7 +42,7 @@ namespace WindowsFormsApp1
             ;
         }
 
-        private IEnumerable<Document> GetDocumentsMatchingSubstring(string substring)
+        protected IEnumerable<Document> GetDocumentsMatchingSubstring(string substring)
         {
             return (
                 from document in _data.Documents
@@ -48,7 +52,7 @@ namespace WindowsFormsApp1
             ;
         }
 
-        private IEnumerable<Document> GetDocumentsMatchingTag(string tag)
+        protected IEnumerable<Document> GetDocumentsMatchingTag(string tag)
         {
             return (
                 from document in _data.Documents
@@ -58,7 +62,7 @@ namespace WindowsFormsApp1
             ;
         }
 
-        private IEnumerable<string> GetTagsMatchingDocument(Document myDocument)
+        protected IEnumerable<string> GetTagsMatchingDocument(Document myDocument)
         {
             return myDocument.Tags;
         }

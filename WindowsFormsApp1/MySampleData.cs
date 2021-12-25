@@ -22,7 +22,7 @@ namespace WindowsFormsApp1
             "event",
         };
 
-        public static IEnumerable<Document> MyRecords => new MyEnumerable<Document>
+        public static IEnumerable<Document> MyDocuments => new MyEnumerable<Document>
         {
             new Document
             {

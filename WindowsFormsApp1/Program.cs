@@ -16,10 +16,12 @@ namespace WindowsFormsApp1
             const string JSON_FILE_PATH =
                 @"C:\Users\karlr\OneDrive\__POOL\__NEW_2021_12_11_153848\db.json";
 
+            // IDataContext myDatabase = new ExampleDatabase();
+            IDataContext myDatabase = new JsonFileDatabase(JSON_FILE_PATH);
+
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            // System.Windows.Forms.Application.Run(new Form1(new ExampleDatabase()));
-            System.Windows.Forms.Application.Run(new Form1(new JsonFileDatabase(JSON_FILE_PATH)));
+            System.Windows.Forms.Application.Run(new Form1(myDatabase));
         }
     }
 }

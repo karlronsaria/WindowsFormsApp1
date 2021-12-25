@@ -59,7 +59,6 @@ namespace WindowsFormsApp1
             {
                 mySource.Cancel();
                 mySource.Dispose();
-                mySource = null;
                 mySource = new CancellationTokenSource();
             }
 
@@ -261,7 +260,6 @@ namespace WindowsFormsApp1
                 FlowDirection = FlowDirection.LeftToRight,
                 WrapContents = true,
                 AutoSize = true,
-                // Dock = DockStyle.Fill,
             };
 
             parent.Invoke((MethodInvoker)delegate
@@ -307,7 +305,7 @@ namespace WindowsFormsApp1
 
         private async Task ChangeSearchResultsAsync(CancellationToken myCancellationToken)
         {
-            string text = textBox1.Text;
+            string text = searchBox.Text;
 
             if (text.Length == 0)
                 return;
@@ -369,9 +367,7 @@ namespace WindowsFormsApp1
         private void GoToSelectedDirectory()
         {
             if (listView1.SelectedItems.Count == 0)
-            {
                 return;
-            }
 
             var indices = listView1.SelectedIndices;
             var lastIndex = indices[indices.Count - 1];

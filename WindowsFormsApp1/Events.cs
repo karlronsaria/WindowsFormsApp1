@@ -12,9 +12,7 @@ namespace WindowsFormsApp1
             var dialog = new FolderBrowserDialog();
 
             if (dialog.ShowDialog() == DialogResult.OK)
-            {
                 treeView1_Load(dialog.SelectedPath);
-            }
         }
 
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -76,9 +74,7 @@ namespace WindowsFormsApp1
             ClearPreviewPane();
 
             if (listView1.SelectedItems.Count == 0)
-            {
                 return;
-            }
 
             var indices = listView1.SelectedIndices;
             var lastIndex = indices[indices.Count - 1];
@@ -102,19 +98,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void previewPane_Paint(object sender, PaintEventArgs e)
-        {
-            ControlPaint.DrawBorder(
-                e.Graphics,
-                splitContainer1.Panel2.ClientRectangle,
-                Color.Purple, 1, ButtonBorderStyle.Solid, // left
-                Color.Purple, 1, ButtonBorderStyle.Solid, // top
-                Color.Purple, 1, ButtonBorderStyle.Solid, // right
-                Color.Purple, 1, ButtonBorderStyle.Solid  // bottom
-            );
-        }
-
-        private async void textBox1_TextChanged(object sender, EventArgs e)
+        private async void searchBox_TextChanged(object sender, EventArgs e)
         {
             _searchBoxChanged = NewCancellationSource(_searchBoxChanged);
             SearchResultsPanel.Controls.Clear();

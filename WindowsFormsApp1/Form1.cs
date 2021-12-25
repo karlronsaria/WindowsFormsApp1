@@ -221,36 +221,21 @@ namespace WindowsFormsApp1
 
         private static void AddLayoutButton(Control parent, string text, EventHandler buttonClick)
         {
-            Button btn = new Button()
+            parent.Invoke((MethodInvoker)delegate
             {
-                Text = $"{text}",
-                AutoSize = true,
-            };
+                Button btn = new Button()
+                {
+                    Text = text,
+                    AutoSize = true,
+                };
 
-            btn.Click += buttonClick;
-            parent.Controls.Add(btn);
+                btn.Click += buttonClick;
+                parent.Controls.Add(btn);
+            });
         }
 
         private static Control LoadListSublayout(Control parent, string labelText)
         {
-            parent.Controls.Add(
-                new Panel()
-                {
-                    Height = 10
-                }
-            );
-
-            parent.Controls.Add(
-                new Label()
-                {
-                    Text = $"{labelText}",
-                    // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
-                    // Dock = DockStyle.Fill,
-                    Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                    AutoSize = true,
-                }
-            );
-
             FlowLayoutPanel myFlowLayoutPanel = new FlowLayoutPanel()
             {
                 FlowDirection = FlowDirection.LeftToRight,
@@ -259,7 +244,29 @@ namespace WindowsFormsApp1
                 // Dock = DockStyle.Fill,
             };
 
-            parent.Controls.Add(myFlowLayoutPanel);
+            parent.Invoke((MethodInvoker)delegate
+            {
+                parent.Controls.Add(
+                    new Panel()
+                    {
+                        Height = 10
+                    }
+                );
+
+                parent.Controls.Add(
+                    new Label()
+                    {
+                        Text = $"{labelText}",
+                        // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
+                        // Dock = DockStyle.Fill,
+                        Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                        AutoSize = true,
+                    }
+                );
+
+                parent.Controls.Add(myFlowLayoutPanel);
+            });
+
             return myFlowLayoutPanel;
         }
 
@@ -268,9 +275,7 @@ namespace WindowsFormsApp1
             Control myFlowLayoutPanel = LoadListSublayout(parent, label);
 
             foreach (string item in list)
-            {
                 AddLayoutButton(myFlowLayoutPanel, item, buttonClick);
-            }
         }
 
         private void SetSampleListLayout(string str)

@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace WindowsFormsApp1
 {
@@ -118,7 +120,60 @@ namespace WindowsFormsApp1
             );
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        CancellationTokenSource searchBoxChanged;
+
+        private async void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (searchBoxChanged == null)
+            {
+                searchBoxChanged = new CancellationTokenSource();
+            }
+            else
+            {
+                searchBoxChanged.Cancel();
+                searchBoxChanged.Dispose();
+                searchBoxChanged = null;
+                searchBoxChanged = new CancellationTokenSource();
+            }
+
+            await ChangeSearchResultsAsync(searchBoxChanged.Token);
+        }
+
+        private async Task ChangeSearchResultsAsync(CancellationToken cancellationToken)
+        {
+            SearchResultsPanel.Controls.Clear();
+            string text = textBox1.Text;
+
+            if (text.Length == 0)
+                return;
+
+            Control documentResultsPanel = null;
+            Control tagResultsPanel = null;
+
+            try
+            {
+                foreach (string item in _database.GetNamesMatchingSubstring(text))
+                {
+                    if (documentResultsPanel == null)
+                        documentResultsPanel = LoadListSublayout(SearchResultsPanel, "Documents:");
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await Task.Run(() => AddLayoutButton(documentResultsPanel, item, DocumentButton_Click));
+                }
+
+                foreach (string item in _database.GetTagsMatchingSubstring(text))
+                {
+                    if (tagResultsPanel == null)
+                        tagResultsPanel = LoadListSublayout(SearchResultsPanel, "Tags:");
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await Task.Run(() => AddLayoutButton(tagResultsPanel, item, TagButton_Click));
+                }
+            }
+            catch (OperationCanceledException) { }
+        }
+
+        private void textBox1_TextChanged_2(object sender, EventArgs e)
         {
             string text = textBox1.Text;
             SearchResultsPanel.Controls.Clear();

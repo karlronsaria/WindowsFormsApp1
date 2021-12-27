@@ -2,9 +2,9 @@
 
 namespace Infrastructure
 {
-    public class JsonFileDatabase : SimpleDataContext
+    public class JsonFileContext : SimpleDataContext
     {
-        public JsonFileDatabase(string filePath)
+        public JsonFileContext(string filePath)
         {
             _data = new NewtonsoftJsonData.Db<Root>(filePath).Data;
 

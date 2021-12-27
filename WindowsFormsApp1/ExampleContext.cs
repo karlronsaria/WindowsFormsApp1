@@ -4,9 +4,9 @@ using Application;
 
 namespace Infrastructure
 {
-    class ExampleDatabase : SimpleDataContext
+    class ExampleContext : SimpleDataContext
     {
-        public ExampleDatabase()
+        public ExampleContext()
         {
             IEnumerable<Tag> tags = (
                 from tag in MySampleData.MyTags

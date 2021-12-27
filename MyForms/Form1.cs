@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using PdfiumViewer;
 using System.IO;
@@ -13,40 +11,29 @@ namespace MyForms
 {
     public partial class Form1 : Form
     {
-        const string STARTING_DIRECTORY = @"C:\Users\karlr\OneDrive\__POOL";
-        // const string STARTING_DIRECTORY = @"C:\";
-        const string PLAIN_TEXT_FONT_FAMILY = "Consolas";
-        const int PLAIN_TEXT_POINT = 10;
+        public const string PLAIN_TEXT_FONT_FAMILY = "Consolas";
+        public const int PLAIN_TEXT_POINT = 10;
 
-        private IList<FileSystemInfo> _items;
         private Control _panelControl;
         private DirectoryInfo _currentDirectory;
+        private readonly List<FileSystemInfo> _listViewItems = new List<FileSystemInfo>();
         private readonly IDataContext _database;
+        private readonly string _startingDirectory;
 
-        public Form1(IDataContext myDatabase)
+        public IList<FileSystemInfo> ActiveListItems
         {
-            InitializeComponent();
-            treeView1_Load(STARTING_DIRECTORY);
+            get { return _listViewItems; }
+        }
+
+        public Form1(IDataContext myDatabase, string startingDirectory)
+        {
             _database = myDatabase;
+            _startingDirectory = startingDirectory;
+            InitializeComponent();
+            treeView1_Load(_startingDirectory);
         }
 
         private CancellationTokenSource _searchBoxChanged;
-
-        private CancellationTokenSource NewCancellationSource(CancellationTokenSource mySource)
-        {
-            if (mySource == null)
-            {
-                mySource = new CancellationTokenSource();
-            }
-            else
-            {
-                mySource.Cancel();
-                mySource.Dispose();
-                mySource = new CancellationTokenSource();
-            }
-
-            return mySource;
-        }
 
         private Control NewPdfPreview(string filePath)
         {
@@ -144,8 +131,8 @@ namespace MyForms
         private void listView1_Load(DirectoryInfo newDirectory)
         {
             listView1.Items.Clear();
+            ActiveListItems.Clear();
             _currentDirectory = newDirectory;
-            _items = new List<FileSystemInfo>();
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item;
 
@@ -163,9 +150,9 @@ namespace MyForms
                         )
                     };
 
-                    _items.Add(dir);
                     item.SubItems.AddRange(subItems);
                     listView1.Items.Add(item);
+                    ActiveListItems.Add(dir);
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -187,9 +174,9 @@ namespace MyForms
                         )
                     };
 
-                    _items.Add(file);
                     item.SubItems.AddRange(subItems);
                     listView1.Items.Add(item);
+                    ActiveListItems.Add(file);
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -221,74 +208,9 @@ namespace MyForms
             PreviewPane.Controls.Remove(_panelControl);
         }
 
-        private static void AddLayoutButton(Control parent, string text, EventHandler buttonClick)
-        {
-            parent.Invoke((MethodInvoker)delegate
-            {
-                Button btn = new Button()
-                {
-                    Text = text,
-                    AutoSize = true,
-                };
-
-                btn.Click += buttonClick;
-                parent.Controls.Add(btn);
-            });
-        }
-
-        private static Control LoadListSublayout(Control parent, string labelText)
-        {
-            FlowLayoutPanel myFlowLayoutPanel = new FlowLayoutPanel()
-            {
-                FlowDirection = FlowDirection.LeftToRight,
-                WrapContents = true,
-                AutoSize = true,
-            };
-
-            parent.Invoke((MethodInvoker)delegate
-            {
-                parent.Controls.Add(
-                    new Panel()
-                    {
-                        Height = 10
-                    }
-                );
-
-                parent.Controls.Add(
-                    new Label()
-                    {
-                        Text = $"{labelText}",
-                        // Text = "It's all I have to bring today, this and my heart beside, this and my heart and all the fields, and all the meadows wide. Be sure you count, should I forget, someone the sum could tell, this and my heart and all the bees, which in the clover dwell.",
-                        // Dock = DockStyle.Fill,
-                        Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                        AutoSize = true,
-                    }
-                );
-
-                parent.Controls.Add(myFlowLayoutPanel);
-            });
-
-            return myFlowLayoutPanel;
-        }
-
-        private async Task AddListLayoutAsync(Control parent, string label, IEnumerable<string> list, EventHandler buttonClick, CancellationToken myCancellationToken)
-        {
-            Control myFlowLayoutPanel = LoadListSublayout(parent, label);
-
-            try
-            {
-                foreach (string item in list)
-                {
-                    myCancellationToken.ThrowIfCancellationRequested();
-                    await Task.Run(() => AddLayoutButton(myFlowLayoutPanel, item, buttonClick));
-                }
-            }
-            catch (OperationCanceledException) { }
-        }
-
         private async Task ChangeSearchResultsAsync(CancellationToken myCancellationToken)
         {
-            string text = searchBox.Text;
+            string text = searchBox1.Text;
 
             if (text.Length == 0)
                 return;
@@ -301,43 +223,38 @@ namespace MyForms
                 foreach (string item in _database.GetNamesMatchingSubstring(text))
                 {
                     if (documentResultsPanel == null)
-                        documentResultsPanel = LoadListSublayout(SearchResultsPanel, "Documents:");
+                        documentResultsPanel = Forms.LoadListSublayout(
+                            parent: SearchResultsPanel,
+                            labelText: "Documents:"
+                        );
 
                     myCancellationToken.ThrowIfCancellationRequested();
-                    await Task.Run(() => AddLayoutButton(documentResultsPanel, item, DocumentButton_ClickAsync));
+
+                    await Task.Run(() => Forms.AddLayoutButton(
+                        parent: documentResultsPanel,
+                        buttonClick: DocumentButton_ClickAsync,
+                        text: item
+                    ));
                 }
 
                 foreach (string item in _database.GetTagsMatchingSubstring(text))
                 {
                     if (tagResultsPanel == null)
-                        tagResultsPanel = LoadListSublayout(SearchResultsPanel, "Tags:");
+                        tagResultsPanel = Forms.LoadListSublayout(
+                            parent: SearchResultsPanel,
+                            labelText: "Tags:"
+                        );
 
                     myCancellationToken.ThrowIfCancellationRequested();
-                    await Task.Run(() => AddLayoutButton(tagResultsPanel, item, TagButton_ClickAsync));
+
+                    await Task.Run(() => Forms.AddLayoutButton(
+                        parent: tagResultsPanel,
+                        buttonClick: TagButton_ClickAsync,
+                        text: item
+                    ));
                 }
             }
             catch (OperationCanceledException) { }
-        }
-
-        private async Task SetSampleListLayoutAsync(string str)
-        {
-            int numPanels = 5;
-
-            for (int i = 1; i <= numPanels; i++)
-            {
-                string label = $"Panel {i}:";
-                string c = "";
-
-                var someList = from b in Enumerable.Range(0, 37)
-                               where (c = String.Join(
-                                    "",
-                                    from a in Enumerable.Range(1, b)
-                                    select "A"
-                                )).Count() > 0
-                               select $"foobar {b}: {c}";
-
-                await AddListLayoutAsync(SearchResultsPanel, label, someList, (s, e) => { }, _searchBoxChanged.Token);
-            }
         }
 
         private void SetPreviewPane(Control myControl)
@@ -347,14 +264,14 @@ namespace MyForms
             _panelControl.Dock = DockStyle.Fill;
         }
 
-        private void GoToSelectedDirectory()
+        private void SetSelectedDirectoryTree()
         {
             if (listView1.SelectedItems.Count == 0)
                 return;
 
             var indices = listView1.SelectedIndices;
             var lastIndex = indices[indices.Count - 1];
-            var modelItem = _items[lastIndex];
+            var modelItem = ActiveListItems[lastIndex];
             string fullName = modelItem.FullName;
             bool isDirectory = modelItem.Attributes.HasFlag(FileAttributes.Directory);
 

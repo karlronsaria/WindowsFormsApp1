@@ -38,7 +38,7 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.searchBox = new MyTextBox();
+            this.searchBox1 = new MyTextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -70,7 +70,7 @@
             this.openDirectoryStripMenuItem.Name = "openDirectoryStripMenuItem";
             this.openDirectoryStripMenuItem.Size = new System.Drawing.Size(99, 20);
             this.openDirectoryStripMenuItem.Text = "Open Directory";
-            this.openDirectoryStripMenuItem.Click += new System.EventHandler(this.openDirectoryStripMenuItem_Click);
+            this.openDirectoryStripMenuItem.Click += new System.EventHandler(this.OpenDirectoryStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -100,7 +100,7 @@
             this.treeView1.Size = new System.Drawing.Size(123, 140);
             this.treeView1.TabIndex = 6;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
-            this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView1_KeyDown);
+            this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TreeView1_KeyDown);
             // 
             // listView1
             // 
@@ -117,9 +117,9 @@
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged_UsingItems);
-            this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
-            this.listView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listView1_KeyDown);
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.ListView1_SelectedIndexChanged_UsingItems);
+            this.listView1.DoubleClick += new System.EventHandler(this.ListView1_DoubleClick);
+            this.listView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ListView1_KeyDown);
             this.listView1.FullRowSelect = true;
             // 
             // columnHeader1
@@ -164,7 +164,7 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.tableLayoutPanel1);
-            this.splitContainer3.Panel2.Controls.Add(this.searchBox);
+            this.splitContainer3.Panel2.Controls.Add(this.searchBox1);
             this.splitContainer3.Size = new System.Drawing.Size(421, 280);
             this.splitContainer3.SplitterDistance = 140;
             this.splitContainer3.TabIndex = 8;
@@ -184,15 +184,15 @@
             // 
             // searchBox
             // 
-            this.searchBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.searchBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.searchBox.Location = new System.Drawing.Point(0, 3);
-            this.searchBox.Name = "textBox1";
-            this.searchBox.Size = new System.Drawing.Size(421, 20);
-            this.searchBox.TabIndex = 7;
-            this.searchBox.TextChanged += new System.EventHandler(searchBox_TextChanged);
-            this.searchBox.WatermarkText = "Search";
+            this.searchBox1.Location = new System.Drawing.Point(0, 3);
+            this.searchBox1.Name = "textBox1";
+            this.searchBox1.Size = new System.Drawing.Size(421, 20);
+            this.searchBox1.TabIndex = 7;
+            this.searchBox1.TextChanged += new System.EventHandler(SearchBox_TextChangedAsync);
+            this.searchBox1.WatermarkText = "Search";
             // 
             // Form1
             // 
@@ -234,7 +234,7 @@
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer3;
-        private MyTextBox searchBox;
+        private MyTextBox searchBox1;
         private System.Windows.Forms.FlowLayoutPanel tableLayoutPanel1;
     }
 }

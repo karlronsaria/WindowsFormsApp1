@@ -73,8 +73,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExampleDatabase.cs" />
-    <Compile Include="JsonFileDatabase.cs" />
+    <Compile Include="ExampleContext.cs" />
+    <Compile Include="JsonFileContext.cs" />
     <Compile Include="MySampleData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

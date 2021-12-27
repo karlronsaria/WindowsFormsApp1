@@ -3,9 +3,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Application;
 
-namespace WindowsFormsApp1
+namespace Infrastructure
 {
-    public class SimpleDataContext : IDataContext
+    public class SimpleDataContext : WindowsFormsApp1.IDataContext
     {
         protected Root _data;
 

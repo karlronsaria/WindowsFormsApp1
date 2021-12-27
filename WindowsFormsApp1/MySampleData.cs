@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Application;
 
-namespace WindowsFormsApp1
+namespace Infrastructure
 {
     public static class MySampleData
     {

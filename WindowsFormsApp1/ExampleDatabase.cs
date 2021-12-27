@@ -2,7 +2,7 @@
 using System.Linq;
 using Application;
 
-namespace WindowsFormsApp1
+namespace Infrastructure
 {
     class ExampleDatabase : SimpleDataContext
     {

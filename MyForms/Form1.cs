@@ -9,7 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace WindowsFormsApp1
+namespace MyForms
 {
     public interface IDataContext
     {

@@ -5,7 +5,7 @@ using Application;
 
 namespace Infrastructure
 {
-    public class SimpleDataContext : WindowsFormsApp1.IDataContext
+    public class SimpleDataContext : MyForms.IDataContext
     {
         protected Root _data;
 

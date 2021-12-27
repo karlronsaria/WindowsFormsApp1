@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 
-namespace WindowsFormsApp1
+namespace MyForms
 {
     public partial class Form1 : Form
     {

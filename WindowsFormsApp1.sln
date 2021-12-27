@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "Windows
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{44E11874-E70E-4257-BABF-3EFC84E6ABE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonData", "JsonData\JsonData.csproj", "{2D6234CF-2B4F-4C3A-90A3-3E9E8EC8FC58}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugConsole", "DebugConsole\DebugConsole.csproj", "{D4314D28-DC96-4AED-A00D-D9089F589B17}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewtonsoftJsonData", "NewtonsoftJsonData\NewtonsoftJsonData.csproj", "{CDF718A1-4911-401F-9B42-DFD3B1FD50EA}"
@@ -27,10 +25,6 @@ Global
 		{44E11874-E70E-4257-BABF-3EFC84E6ABE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44E11874-E70E-4257-BABF-3EFC84E6ABE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44E11874-E70E-4257-BABF-3EFC84E6ABE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D6234CF-2B4F-4C3A-90A3-3E9E8EC8FC58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D6234CF-2B4F-4C3A-90A3-3E9E8EC8FC58}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D6234CF-2B4F-4C3A-90A3-3E9E8EC8FC58}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D6234CF-2B4F-4C3A-90A3-3E9E8EC8FC58}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D4314D28-DC96-4AED-A00D-D9089F589B17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D4314D28-DC96-4AED-A00D-D9089F589B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4314D28-DC96-4AED-A00D-D9089F589B17}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExampleDatabase.cs" />
-    <Compile Include="JsonFileDatabaseBase.cs" />
     <Compile Include="SimpleDataContext.cs" />
     <Compile Include="JsonFileDatabase.cs" />
     <Compile Include="MySampleData.cs" />

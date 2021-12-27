@@ -11,23 +11,6 @@ using System.Threading;
 
 namespace MyForms
 {
-    public interface IDataContext
-    {
-        IEnumerable<string> GetTagsMatchingSubstring(string substring);
-
-        IEnumerable<string> GetTagsMatchingPattern(string pattern);
-
-        IEnumerable<string> GetNamesMatchingSubstring(string substring);
-
-        IEnumerable<string> GetNamesMatchingPattern(string pattern);
-
-        IEnumerable<string> GetNamesMatchingTag(string tag);
-
-        IEnumerable<string> GetTagsMatchingName(string tag);
-
-        void SetTags(IEnumerable<string> names, IEnumerable<string> tags);
-    }
-
     public partial class Form1 : Form
     {
         const string STARTING_DIRECTORY = @"C:\Users\karlr\OneDrive\__POOL";

@@ -10,6 +10,8 @@ namespace MyForms
 {
     public static class Forms
     {
+        public class SearchResult : System.Windows.Forms.TextBox { }
+
         internal const string SAMPLE_TEXT =
             "It's all I have to bring today, " +
             "this and my heart beside, " +
@@ -40,9 +42,9 @@ namespace MyForms
         }
 
         public static void
-        AddLayoutButton(
+        AddSearchResult(
                 Control parent,
-                EventHandler buttonClick,
+                EventHandler onDoubleClick,
                 string text = SAMPLE_TEXT
             )
         {
@@ -57,7 +59,7 @@ namespace MyForms
 
                 btn.Size = TextRenderer.MeasureText(btn.Text, btn.Font);
                 btn.Cursor = Cursors.Arrow;
-                btn.DoubleClick += buttonClick;
+                btn.DoubleClick += onDoubleClick;
                 parent.Controls.Add(btn);
             });
         }
@@ -103,7 +105,7 @@ namespace MyForms
         AddListLayoutAsync(
                 Control parent,
                 IEnumerable<string> list,
-                EventHandler buttonClick,
+                EventHandler onDoubleClick,
                 CancellationToken myCancellationToken,
                 string labelText = SAMPLE_TEXT
             )
@@ -116,10 +118,10 @@ namespace MyForms
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
 
-                    await Task.Run(() => AddLayoutButton(
+                    await Task.Run(() => AddSearchResult(
                         parent: myFlowLayoutPanel,
                         text: item,
-                        buttonClick: buttonClick
+                        onDoubleClick: onDoubleClick
                     ));
                 }
             }
@@ -151,7 +153,7 @@ namespace MyForms
                 await AddListLayoutAsync(
                     parent: parent,
                     list: someList,
-                    buttonClick: (s, e) => { },
+                    onDoubleClick: (s, e) => { },
                     myCancellationToken: myCancellationToken,
                     labelText: label
                 );

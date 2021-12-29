@@ -9,8 +9,6 @@ using System.Threading;
 
 namespace MyForms
 {
-    public class SearchResult : System.Windows.Forms.TextBox { }
-
     public partial class Form1 : Form
     {
         public const string PLAIN_TEXT_FONT_FAMILY = "Consolas";
@@ -232,9 +230,9 @@ namespace MyForms
 
                     myCancellationToken.ThrowIfCancellationRequested();
 
-                    await Task.Run(() => Forms.AddLayoutButton(
+                    await Task.Run(() => Forms.AddSearchResult(
                         parent: documentResultsPanel,
-                        buttonClick: DocumentButton_DoubleClickAsync,
+                        onDoubleClick: DocumentButton_DoubleClickAsync,
                         text: item
                     ));
                 }
@@ -249,9 +247,9 @@ namespace MyForms
 
                     myCancellationToken.ThrowIfCancellationRequested();
 
-                    await Task.Run(() => Forms.AddLayoutButton(
+                    await Task.Run(() => Forms.AddSearchResult(
                         parent: tagResultsPanel,
-                        buttonClick: TagButton_DoubleClickAsync,
+                        onDoubleClick: TagButton_DoubleClickAsync,
                         text: item
                     ));
                 }

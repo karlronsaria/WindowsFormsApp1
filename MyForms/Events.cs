@@ -120,12 +120,12 @@ namespace MyForms
         {
             _searchBoxChanged = Forms.NewCancellationSource(_searchBoxChanged);
             SearchResultsPanel.Controls.Clear();
-            string text = (sender as SearchResult)?.Text;
+            string text = (sender as Forms.SearchResult)?.Text;
 
             await Forms.AddListLayoutAsync(
                 parent: SearchResultsPanel,
                 list: _database.GetNamesMatchingTag(text),
-                buttonClick: DocumentButton_DoubleClickAsync,
+                onDoubleClick: DocumentButton_DoubleClickAsync,
                 myCancellationToken: _searchBoxChanged.Token,
                 labelText: $"Documents with the tag \"{text}\":"
             );
@@ -135,12 +135,12 @@ namespace MyForms
         {
             _searchBoxChanged = Forms.NewCancellationSource(_searchBoxChanged);
             SearchResultsPanel.Controls.Clear();
-            string text = (sender as SearchResult)?.Text;
+            string text = (sender as Forms.SearchResult)?.Text;
 
             await Forms.AddListLayoutAsync(
                 parent: SearchResultsPanel,
                 list: _database.GetTagsMatchingName(text),
-                buttonClick: TagButton_DoubleClickAsync,
+                onDoubleClick: TagButton_DoubleClickAsync,
                 myCancellationToken: _searchBoxChanged.Token,
                 labelText: $"Tags for the document \"{text}\":"
             );

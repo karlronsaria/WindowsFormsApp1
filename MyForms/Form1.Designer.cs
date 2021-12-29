@@ -38,7 +38,7 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.searchBox1 = new MyTextBox();
+            this.searchBox1 = new MyForms.MyTextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -60,7 +60,7 @@
             this.openDirectoryStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(755, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(836, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -86,8 +86,8 @@
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.splitContainer1.Panel2.Controls.Add(this.listView1);
-            this.splitContainer1.Size = new System.Drawing.Size(421, 140);
-            this.splitContainer1.SplitterDistance = 123;
+            this.splitContainer1.Size = new System.Drawing.Size(467, 199);
+            this.splitContainer1.SplitterDistance = 135;
             this.splitContainer1.TabIndex = 4;
             // 
             // treeView1
@@ -97,7 +97,7 @@
             this.treeView1.ForeColor = System.Drawing.SystemColors.Window;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(123, 140);
+            this.treeView1.Size = new System.Drawing.Size(135, 199);
             this.treeView1.TabIndex = 6;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TreeView1_KeyDown);
@@ -110,17 +110,17 @@
             this.columnHeader2});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.ForeColor = System.Drawing.SystemColors.Window;
+            this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(294, 140);
+            this.listView1.Size = new System.Drawing.Size(328, 199);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.ListView1_SelectedIndexChanged_UsingItems);
             this.listView1.DoubleClick += new System.EventHandler(this.ListView1_DoubleClick);
             this.listView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ListView1_KeyDown);
-            this.listView1.FullRowSelect = true;
             // 
             // columnHeader1
             // 
@@ -133,8 +133,8 @@
             // 
             // splitContainer2
             // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer2.Location = new System.Drawing.Point(12, 27);
             this.splitContainer2.Name = "splitContainer2";
@@ -146,8 +146,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.splitContainer2.Size = new System.Drawing.Size(731, 280);
-            this.splitContainer2.SplitterDistance = 421;
+            this.splitContainer2.Size = new System.Drawing.Size(812, 567);
+            this.splitContainer2.SplitterDistance = 467;
             this.splitContainer2.TabIndex = 7;
             // 
             // splitContainer3
@@ -165,39 +165,42 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer3.Panel2.Controls.Add(this.searchBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(421, 280);
-            this.splitContainer3.SplitterDistance = 140;
+            this.splitContainer3.Size = new System.Drawing.Size(467, 567);
+            this.splitContainer3.SplitterDistance = 199;
             this.splitContainer3.TabIndex = 8;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.AutoScroll = true;
             this.tableLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 29);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(421, 107);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(467, 335);
             this.tableLayoutPanel1.TabIndex = 6;
             this.tableLayoutPanel1.WrapContents = false;
             // 
-            // searchBox
+            // searchBox1
             // 
-            this.searchBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.searchBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.searchBox1.ForeColor = System.Drawing.Color.Gray;
             this.searchBox1.Location = new System.Drawing.Point(0, 3);
-            this.searchBox1.Name = "textBox1";
-            this.searchBox1.Size = new System.Drawing.Size(421, 20);
+            this.searchBox1.Name = "searchBox1";
+            this.searchBox1.Size = new System.Drawing.Size(467, 20);
             this.searchBox1.TabIndex = 7;
-            this.searchBox1.TextChanged += new System.EventHandler(SearchBox_TextChangedAsync);
+            this.searchBox1.Text = "Search";
+            this.searchBox1.WatermarkActive = true;
             this.searchBox1.WatermarkText = "Search";
+            this.searchBox1.TextChanged += new System.EventHandler(this.SearchBox_TextChangedAsync);
             // 
             // Form1
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(755, 319);
+            this.ClientSize = new System.Drawing.Size(836, 606);
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.menuStrip1);
             this.ForeColor = System.Drawing.Color.White;

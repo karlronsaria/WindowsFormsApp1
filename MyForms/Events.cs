@@ -14,7 +14,7 @@ namespace MyForms
                 treeView1_Load(dialog.SelectedPath);
         }
 
-        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             listView1_Load(e.Node);
         }

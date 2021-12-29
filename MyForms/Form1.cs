@@ -191,7 +191,7 @@ namespace MyForms
         {
             get
             {
-                return tableLayoutPanel1 as Control;
+                return searchResultLayoutPanel1 as Control;
             }
         }
 

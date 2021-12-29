@@ -57,7 +57,7 @@ namespace MyForms
 
                 btn.Size = TextRenderer.MeasureText(btn.Text, btn.Font);
                 btn.Cursor = Cursors.Arrow;
-                btn.Click += buttonClick;
+                btn.DoubleClick += buttonClick;
                 parent.Controls.Add(btn);
             });
         }

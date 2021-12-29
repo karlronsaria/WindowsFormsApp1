@@ -234,7 +234,7 @@ namespace MyForms
 
                     await Task.Run(() => Forms.AddLayoutButton(
                         parent: documentResultsPanel,
-                        buttonClick: DocumentButton_ClickAsync,
+                        buttonClick: DocumentButton_DoubleClickAsync,
                         text: item
                     ));
                 }
@@ -251,7 +251,7 @@ namespace MyForms
 
                     await Task.Run(() => Forms.AddLayoutButton(
                         parent: tagResultsPanel,
-                        buttonClick: TagButton_ClickAsync,
+                        buttonClick: TagButton_DoubleClickAsync,
                         text: item
                     ));
                 }

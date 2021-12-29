@@ -48,12 +48,15 @@ namespace MyForms
         {
             parent.Invoke((MethodInvoker)delegate
             {
-                var btn = new Button()
+                var btn = new SearchResult()
                 {
                     Text = text,
                     AutoSize = true,
+                    ReadOnly = true,
                 };
 
+                btn.Size = TextRenderer.MeasureText(btn.Text, btn.Font);
+                btn.Cursor = Cursors.Arrow;
                 btn.Click += buttonClick;
                 parent.Controls.Add(btn);
             });

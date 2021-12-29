@@ -9,6 +9,8 @@ using System.Threading;
 
 namespace MyForms
 {
+    public class SearchResult : System.Windows.Forms.TextBox { }
+
     public partial class Form1 : Form
     {
         public const string PLAIN_TEXT_FONT_FAMILY = "Consolas";

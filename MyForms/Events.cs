@@ -116,7 +116,7 @@ namespace MyForms
             await ChangeSearchResultsAsync(_searchBoxChanged.Token);
         }
 
-        private async void TagButton_ClickAsync(object sender, EventArgs e)
+        private async void TagButton_DoubleClickAsync(object sender, EventArgs e)
         {
             _searchBoxChanged = Forms.NewCancellationSource(_searchBoxChanged);
             SearchResultsPanel.Controls.Clear();
@@ -125,13 +125,13 @@ namespace MyForms
             await Forms.AddListLayoutAsync(
                 parent: SearchResultsPanel,
                 list: _database.GetNamesMatchingTag(text),
-                buttonClick: DocumentButton_ClickAsync,
+                buttonClick: DocumentButton_DoubleClickAsync,
                 myCancellationToken: _searchBoxChanged.Token,
                 labelText: $"Documents with the tag \"{text}\":"
             );
         }
 
-        private async void DocumentButton_ClickAsync(object sender, EventArgs e)
+        private async void DocumentButton_DoubleClickAsync(object sender, EventArgs e)
         {
             _searchBoxChanged = Forms.NewCancellationSource(_searchBoxChanged);
             SearchResultsPanel.Controls.Clear();
@@ -140,7 +140,7 @@ namespace MyForms
             await Forms.AddListLayoutAsync(
                 parent: SearchResultsPanel,
                 list: _database.GetTagsMatchingName(text),
-                buttonClick: TagButton_ClickAsync,
+                buttonClick: TagButton_DoubleClickAsync,
                 myCancellationToken: _searchBoxChanged.Token,
                 labelText: $"Tags for the document \"{text}\":"
             );

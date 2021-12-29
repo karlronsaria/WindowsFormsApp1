@@ -30,7 +30,7 @@ namespace MyForms
             _database = myDatabase;
             _startingDirectory = startingDirectory;
             InitializeComponent();
-            treeView1_Load(_startingDirectory);
+            TreeView1_Load(_startingDirectory);
         }
 
         private CancellationTokenSource _searchBoxChanged;
@@ -102,7 +102,7 @@ namespace MyForms
             // this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         }
 
-        private void treeView1_Load(string directoryPath)
+        private void TreeView1_Load(string directoryPath)
         {
             treeView1.Nodes.Clear();
             TreeNode rootNode;
@@ -123,12 +123,12 @@ namespace MyForms
             }
         }
 
-        private void listView1_Load(TreeNode newSelected)
+        private void ListView1_Load(TreeNode newSelected)
         {
-            listView1_Load((DirectoryInfo)newSelected.Tag);
+            ListView1_Load((DirectoryInfo)newSelected.Tag);
         }
 
-        private void listView1_Load(DirectoryInfo newDirectory)
+        private void ListView1_Load(DirectoryInfo newDirectory)
         {
             listView1.Items.Clear();
             ActiveListItems.Clear();
@@ -277,8 +277,8 @@ namespace MyForms
 
             if (isDirectory)
             {
-                treeView1_Load(fullName);
-                listView1_Load((DirectoryInfo)modelItem);
+                TreeView1_Load(fullName);
+                ListView1_Load((DirectoryInfo)modelItem);
             }
         }
     }

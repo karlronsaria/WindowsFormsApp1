@@ -279,7 +279,9 @@
             this.ForeColor = System.Drawing.Color.White;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
+            this.KeyPreview = true;
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);

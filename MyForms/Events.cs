@@ -11,12 +11,23 @@ namespace MyForms
             var dialog = new FolderBrowserDialog();
 
             if (dialog.ShowDialog() == DialogResult.OK)
-                treeView1_Load(dialog.SelectedPath);
+                TreeView1_Load(dialog.SelectedPath);
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            // if (e.KeyCode == Keys.Escape)
+            switch (e.KeyCode)
+            {
+                case Keys.ControlKey | Keys.OemQuestion:
+                    searchBox1.Focus();
+                    break;
+            }
         }
 
         private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            listView1_Load(e.Node);
+            ListView1_Load(e.Node);
         }
 
         private void TreeView1_KeyDown(object sender, KeyEventArgs e)
@@ -26,9 +37,7 @@ namespace MyForms
                 case Keys.Enter:
                 case Keys.Space:
                     if (treeView1.SelectedNode is TreeNode n)
-                    {
-                        listView1_Load(n);
-                    }
+                        ListView1_Load(n);
 
                     // link: https://stackoverflow.com/questions/13952932/disable-beep-of-enter-and-escape-key-c-sharp
                     // retrieved: 2021_12_13
@@ -38,9 +47,10 @@ namespace MyForms
                     if (e.KeyData.HasFlag(Keys.Alt))
                     {
                         var parent = _currentDirectory.Parent;
-                        treeView1_Load(parent.FullName);
-                        listView1_Load(parent);
+                        TreeView1_Load(parent.FullName);
+                        ListView1_Load(parent);
                     }
+
                     break;
             }
         }
@@ -56,8 +66,8 @@ namespace MyForms
                     if (e.KeyData.HasFlag(Keys.Alt))
                     {
                         var parent = _currentDirectory.Parent;
-                        treeView1_Load(parent.FullName);
-                        listView1_Load(parent);
+                        TreeView1_Load(parent.FullName);
+                        ListView1_Load(parent);
                     }
                     break;
             }

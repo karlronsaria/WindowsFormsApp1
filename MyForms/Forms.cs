@@ -48,7 +48,7 @@ namespace MyForms
         {
             parent.Invoke((MethodInvoker)delegate
             {
-                Button btn = new Button()
+                var btn = new Button()
                 {
                     Text = text,
                     AutoSize = true,

@@ -19,8 +19,10 @@ namespace MyForms
             // if (e.KeyCode == Keys.Escape)
             switch (e.KeyCode)
             {
-                case Keys.ControlKey | Keys.OemQuestion:
-                    searchBox1.Focus();
+                case Keys.OemQuestion:
+                    if (e.Modifiers == Keys.Control)
+                        searchBox1.Focus();
+
                     break;
             }
         }

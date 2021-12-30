@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
-using PdfiumViewer;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
@@ -11,80 +8,47 @@ namespace MyForms
 {
     public partial class Form1 : Form
     {
-        public const string PLAIN_TEXT_FONT_FAMILY = "Consolas";
-        public const int PLAIN_TEXT_POINT = 10;
-
-        private Control _panelControl;
-        private DirectoryInfo _currentDirectory;
-        private readonly List<FileSystemInfo> _listViewItems = new List<FileSystemInfo>();
         private readonly IDataContext _database;
-        private readonly string _startingDirectory;
-
-        public IList<FileSystemInfo> ActiveListItems
-        {
-            get { return _listViewItems; }
-        }
+        private readonly PreviewPane _myPreviewPane;
+        private readonly TreeViewPane _myTreeViewPane;
+        private readonly ListViewPane _myListViewPane;
+        private CancellationTokenSource _searchBoxChanged;
 
         public Form1(IDataContext myDatabase, string startingDirectory)
         {
             _database = myDatabase;
-            _startingDirectory = startingDirectory;
+
             InitializeComponent();
-            TreeView1_Load(_startingDirectory);
+
+            _myPreviewPane = new PreviewPane(splitContainer2.Panel2);
+            _myTreeViewPane = new TreeViewPane(treeView1, startingDirectory);
+            _myListViewPane = new ListViewPane(listView1, startingDirectory);
         }
 
-        private CancellationTokenSource _searchBoxChanged;
-
-        private Control NewPdfPreview(string filePath)
+        public Control SearchResultsPanel
         {
-            var myRenderer = new PdfRenderer();
-            byte[] bytes = System.IO.File.ReadAllBytes(filePath);
-            myRenderer.Load(PdfDocument.Load(new MemoryStream(bytes)));
-            return myRenderer;
+            get => searchResultLayoutPanel1;
         }
 
-        private Control NewPlainTextPreview(string filePath)
+        public PreviewPane MyPreviewPane
         {
-            var myRenderer = new RichTextBox();
-            myRenderer.LoadFile(filePath, RichTextBoxStreamType.PlainText);
-            myRenderer.Font = new Font(PLAIN_TEXT_FONT_FAMILY, PLAIN_TEXT_POINT);
-            myRenderer.BackColor = Color.Black;
-            myRenderer.ForeColor = Color.Violet;
-            return myRenderer;
+            get => _myPreviewPane;
         }
 
-        private void GetDirectories(DirectoryInfo[] subDirs, TreeNode nodeToAddTo)
+        public TreeViewPane MyTreeViewPane
         {
-            TreeNode aNode;
-            DirectoryInfo[] subSubDirs;
+            get => _myTreeViewPane;
+        }
 
-            foreach (DirectoryInfo subDir in subDirs)
-            {
-                try
-                {
-                    aNode = new TreeNode
-                    {
-                        Text = subDir.Name,
-                        ImageIndex = 0,
-                        SelectedImageIndex = 0,
-                        Tag = subDir,
-                        ImageKey = "folder"
-                    };
+        public ListViewPane MyListViewPane
+        {
+            get => _myListViewPane;
+        }
 
-                    subSubDirs = subDir.GetDirectories();
-
-                    if (subSubDirs.Length != 0)
-                    {
-                        GetDirectories(subSubDirs, aNode);
-                    }
-
-                    nodeToAddTo.Nodes.Add(aNode);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    continue;
-                }
-            }
+        public CancellationTokenSource SearchBoxChanged
+        {
+            get => _searchBoxChanged;
+            set => _searchBoxChanged = value;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -102,113 +66,10 @@ namespace MyForms
             // this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         }
 
-        private void TreeView1_Load(string directoryPath)
-        {
-            treeView1.Nodes.Clear();
-            TreeNode rootNode;
-            DirectoryInfo info = new DirectoryInfo(directoryPath);
-
-            if (info.Exists)
-            {
-                _currentDirectory = info;
-
-                rootNode = new TreeNode
-                {
-                    Text = info.Name,
-                    Tag = info
-                };
-                
-                GetDirectories(info.GetDirectories(), rootNode);
-                treeView1.Nodes.Add(rootNode);
-            }
-        }
-
-        private void ListView1_Load(TreeNode newSelected)
-        {
-            ListView1_Load((DirectoryInfo)newSelected.Tag);
-        }
-
-        private void ListView1_Load(DirectoryInfo newDirectory)
-        {
-            listView1.Items.Clear();
-            ActiveListItems.Clear();
-            _currentDirectory = newDirectory;
-            ListViewItem.ListViewSubItem[] subItems;
-            ListViewItem item;
-
-            foreach (DirectoryInfo dir in _currentDirectory.GetDirectories())
-            {
-                try
-                {
-                    item = new ListViewItem(dir.Name, 0);
-
-                    subItems = new ListViewItem.ListViewSubItem[]
-                    {
-                        new ListViewItem.ListViewSubItem(
-                            owner: item,
-                            text: dir.LastWriteTime.ToShortDateString()
-                        )
-                    };
-
-                    item.SubItems.AddRange(subItems);
-                    listView1.Items.Add(item);
-                    ActiveListItems.Add(dir);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    continue;
-                }
-            }
-
-            foreach (FileInfo file in _currentDirectory.GetFiles()) 
-            {
-                try
-                {
-                    item = new ListViewItem(file.Name, 1);
-
-                    subItems = new ListViewItem.ListViewSubItem[]
-                    {
-                        new ListViewItem.ListViewSubItem(
-                            owner: item,
-                            text: file.LastWriteTime.ToShortDateString()
-                        )
-                    };
-
-                    item.SubItems.AddRange(subItems);
-                    listView1.Items.Add(item);
-                    ActiveListItems.Add(file);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    continue;
-                }
-            }
-
-            listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-        }
-
-        private Control SearchResultsPanel
-        {
-            get
-            {
-                return searchResultLayoutPanel1 as Control;
-            }
-        }
-
-        private Control PreviewPane
-        {
-            get
-            {
-                return splitContainer2.Panel2 as Control;
-            }
-        }
-
-        private void ClearPreviewPane()
-        {
-            PreviewPane.Controls.Remove(_panelControl);
-        }
-
-        private async Task ChangeSearchResultsAsync(CancellationToken myCancellationToken)
+        private async Task
+        ChangeSearchResultsAsync(
+                CancellationToken myCancellationToken
+            )
         {
             string text = searchBox1.Text;
 
@@ -257,28 +118,15 @@ namespace MyForms
             catch (OperationCanceledException) { }
         }
 
-        private void SetPreviewPane(Control myControl)
-        {
-            _panelControl = myControl;
-            PreviewPane.Controls.Add(_panelControl);
-            _panelControl.Dock = DockStyle.Fill;
-        }
-
         private void SetSelectedDirectoryTree()
         {
-            if (listView1.SelectedItems.Count == 0)
-                return;
-
-            var indices = listView1.SelectedIndices;
-            var lastIndex = indices[indices.Count - 1];
-            var modelItem = ActiveListItems[lastIndex];
-            string fullName = modelItem.FullName;
-            bool isDirectory = modelItem.Attributes.HasFlag(FileAttributes.Directory);
+            var modelItem = MyListViewPane.GetLastSelectedItem();
+            bool isDirectory = (bool)(modelItem?.Attributes.HasFlag(FileAttributes.Directory));
 
             if (isDirectory)
             {
-                TreeView1_Load(fullName);
-                ListView1_Load((DirectoryInfo)modelItem);
+                MyTreeViewPane.Load((DirectoryInfo)modelItem);
+                MyListViewPane.Load((DirectoryInfo)modelItem);
             }
         }
     }

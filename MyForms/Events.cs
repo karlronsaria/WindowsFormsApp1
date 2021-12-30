@@ -11,12 +11,11 @@ namespace MyForms
             var dialog = new FolderBrowserDialog();
 
             if (dialog.ShowDialog() == DialogResult.OK)
-                TreeView1_Load(dialog.SelectedPath);
+                MyTreeViewPane.Load(dialog.SelectedPath);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            // if (e.KeyCode == Keys.Escape)
             switch (e.KeyCode)
             {
                 case Keys.OemQuestion:
@@ -29,7 +28,7 @@ namespace MyForms
 
         private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            ListView1_Load(e.Node);
+            MyListViewPane.Load(e.Node);
         }
 
         private void TreeView1_KeyDown(object sender, KeyEventArgs e)
@@ -39,7 +38,7 @@ namespace MyForms
                 case Keys.Enter:
                 case Keys.Space:
                     if (treeView1.SelectedNode is TreeNode n)
-                        ListView1_Load(n);
+                        MyListViewPane.Load(n);
 
                     // link: https://stackoverflow.com/questions/13952932/disable-beep-of-enter-and-escape-key-c-sharp
                     // retrieved: 2021_12_13
@@ -48,9 +47,9 @@ namespace MyForms
                 case Keys.Up:
                     if (e.KeyData.HasFlag(Keys.Alt))
                     {
-                        var parent = _currentDirectory.Parent;
-                        TreeView1_Load(parent.FullName);
-                        ListView1_Load(parent);
+                        var parent = MyTreeViewPane.CurrentDirectory.Parent;
+                        MyTreeViewPane.Load(parent.FullName);
+                        MyListViewPane.Load(parent);
                     }
 
                     break;
@@ -67,9 +66,9 @@ namespace MyForms
                 case Keys.Up:
                     if (e.KeyData.HasFlag(Keys.Alt))
                     {
-                        var parent = _currentDirectory.Parent;
-                        TreeView1_Load(parent.FullName);
-                        ListView1_Load(parent);
+                        var parent = MyTreeViewPane.CurrentDirectory.Parent;
+                        MyTreeViewPane.Load(parent.FullName);
+                        MyListViewPane.Load(parent);
                     }
                     break;
             }
@@ -82,14 +81,14 @@ namespace MyForms
 
         private void ListView1_SelectedIndexChanged_UsingItems(object sender, System.EventArgs e)
         {
-            ClearPreviewPane();
+            MyPreviewPane.ClearPreviewPane();
 
             if (listView1.SelectedItems.Count == 0)
                 return;
 
             var indices = listView1.SelectedIndices;
             var lastIndex = indices[indices.Count - 1];
-            var modelItem = _listViewItems[lastIndex];
+            var modelItem = MyListViewPane.ActiveListItems[lastIndex];
 
             var fullName = modelItem.FullName;
             var extension = modelItem.Extension;
@@ -100,10 +99,10 @@ namespace MyForms
                 switch (extension.ToUpper())
                 {
                     case ".PDF":
-                        SetPreviewPane(NewPdfPreview(fullName));
+                        MyPreviewPane.SetPreviewPane(PreviewPane.NewPdfPreview(fullName));
                         break;
                     default:
-                        SetPreviewPane(NewPlainTextPreview(fullName));
+                        MyPreviewPane.SetPreviewPane(PreviewPane.NewPlainTextPreview(fullName));
                         break;
                 }
             }
@@ -111,14 +110,14 @@ namespace MyForms
 
         private async void SearchBox_TextChangedAsync(object sender, EventArgs e)
         {
-            _searchBoxChanged = Forms.NewCancellationSource(_searchBoxChanged);
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
             SearchResultsPanel.Controls.Clear();
-            await ChangeSearchResultsAsync(_searchBoxChanged.Token);
+            await ChangeSearchResultsAsync(SearchBoxChanged.Token);
         }
 
         private async void TagButton_DoubleClickAsync(object sender, EventArgs e)
         {
-            _searchBoxChanged = Forms.NewCancellationSource(_searchBoxChanged);
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
             SearchResultsPanel.Controls.Clear();
             string text = (sender as Forms.SearchResult)?.Text;
 
@@ -126,14 +125,14 @@ namespace MyForms
                 parent: SearchResultsPanel,
                 list: _database.GetNamesMatchingTag(text),
                 onDoubleClick: DocumentButton_DoubleClickAsync,
-                myCancellationToken: _searchBoxChanged.Token,
+                myCancellationToken: SearchBoxChanged.Token,
                 labelText: $"Documents with the tag \"{text}\":"
             );
         }
 
         private async void DocumentButton_DoubleClickAsync(object sender, EventArgs e)
         {
-            _searchBoxChanged = Forms.NewCancellationSource(_searchBoxChanged);
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
             SearchResultsPanel.Controls.Clear();
             string text = (sender as Forms.SearchResult)?.Text;
 
@@ -141,7 +140,7 @@ namespace MyForms
                 parent: SearchResultsPanel,
                 list: _database.GetTagsMatchingName(text),
                 onDoubleClick: TagButton_DoubleClickAsync,
-                myCancellationToken: _searchBoxChanged.Token,
+                myCancellationToken: SearchBoxChanged.Token,
                 labelText: $"Tags for the document \"{text}\":"
             );
         }

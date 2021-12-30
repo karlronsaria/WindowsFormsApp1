@@ -22,6 +22,16 @@ namespace MyForms
             "this and my heart and all the bees, " +
             "which in the clover dwell.";
 
+        public delegate void InvokeHandler(Control sender);
+
+        public static void InvokeIfHandled(Control sender, InvokeHandler myMethod, bool isHandled)
+        {
+            if (isHandled)
+                sender.Invoke(myMethod, sender);
+            else
+                myMethod.Invoke(sender);
+        }
+
         public static CancellationTokenSource
         NewCancellationSource(
                 CancellationTokenSource mySource

@@ -13,7 +13,11 @@ namespace MyForms
         public ListViewPane(ListView myListView, string startingDirectory)
         {
             _myListView = myListView;
-            Load(startingDirectory);
+
+            Load(
+                directoryPath: startingDirectory,
+                isHandled: false
+            );
         }
 
         public IList<FileSystemInfo> ActiveListItems
@@ -21,19 +25,24 @@ namespace MyForms
             get => _listViewItems;
         }
 
-        public void Load(string directoryPath)
+        public void Load(string directoryPath, bool isHandled = true)
         {
-            Load(new DirectoryInfo(directoryPath));
+            Load(new DirectoryInfo(directoryPath), isHandled);
         }
 
-        public void Load(TreeNode newSelected)
+        public void Load(TreeNode newSelected, bool isHandled = true)
         {
-            Load((DirectoryInfo)newSelected.Tag);
+            Load((DirectoryInfo)newSelected.Tag, isHandled);
         }
 
-        public void Load(DirectoryInfo directory)
+        public void Load(DirectoryInfo directory, bool isHandled = true)
         {
-            _myListView.Items.Clear();
+            MyForms.Forms.InvokeIfHandled(
+                _myListView,
+                s => (s as ListView).Items.Clear(),
+                isHandled
+            );
+
             ActiveListItems.Clear();
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item;
@@ -53,7 +62,13 @@ namespace MyForms
                     };
 
                     item.SubItems.AddRange(subItems);
-                    _myListView.Items.Add(item);
+
+                    MyForms.Forms.InvokeIfHandled(
+                        _myListView,
+                        s => (s as ListView).Items.Add(item),
+                        isHandled
+                    );
+
                     ActiveListItems.Add(dir);
                 }
                 catch (UnauthorizedAccessException)
@@ -77,7 +92,13 @@ namespace MyForms
                     };
 
                     item.SubItems.AddRange(subItems);
-                    _myListView.Items.Add(item);
+
+                    MyForms.Forms.InvokeIfHandled(
+                        _myListView,
+                        s => (s as ListView).Items.Add(item),
+                        isHandled
+                    );
+
                     ActiveListItems.Add(file);
                 }
                 catch (UnauthorizedAccessException)
@@ -86,7 +107,11 @@ namespace MyForms
                 }
             }
 
-            _myListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+            MyForms.Forms.InvokeIfHandled(
+                _myListView,
+                s => (s as ListView).AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize),
+                isHandled
+            );
         }
 
         public FileSystemInfo GetLastSelectedItem()

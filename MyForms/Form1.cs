@@ -118,15 +118,16 @@ namespace MyForms
             catch (OperationCanceledException) { }
         }
 
-        private void SetSelectedDirectoryTree()
+        private async Task
+        SetSelectedDirectoryTreeAsync()
         {
             var modelItem = MyListViewPane.GetLastSelectedItem();
             bool isDirectory = (bool)(modelItem?.Attributes.HasFlag(FileAttributes.Directory));
 
             if (isDirectory)
             {
-                MyTreeViewPane.Load((DirectoryInfo)modelItem);
-                MyListViewPane.Load((DirectoryInfo)modelItem);
+                await Task.Run(() => MyTreeViewPane.Load((DirectoryInfo)modelItem));
+                await Task.Run(() => MyListViewPane.Load((DirectoryInfo)modelItem));
             }
         }
     }

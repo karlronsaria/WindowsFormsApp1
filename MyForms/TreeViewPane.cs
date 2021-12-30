@@ -16,7 +16,11 @@ namespace MyForms
         {
             _myTreeView = myTreeView;
             _currentDirectory = null;
-            Load(startingDirectory);
+
+            Load(
+                directoryPath: startingDirectory,
+                isHandled: false
+            );
         }
 
         public static IEnumerable<TreeNode>
@@ -64,15 +68,20 @@ namespace MyForms
                 nodeToAddTo.Nodes.Add(node);
         }
 
-        public void Load(string directoryPath)
+        public void Load(string directoryPath, bool isHandled = true)
         {
-            Load(new DirectoryInfo(directoryPath));
+            Load(new DirectoryInfo(directoryPath), isHandled);
         }
 
-        public void Load(DirectoryInfo directory)
+        public void Load(DirectoryInfo directory, bool isHandled = true)
         {
             TreeNode rootNode;
-            _myTreeView.Nodes.Clear();
+
+            MyForms.Forms.InvokeIfHandled(
+                _myTreeView,
+                s => (s as TreeView).Nodes.Clear(),
+                isHandled
+            );
 
             if (directory.Exists)
             {
@@ -85,7 +94,13 @@ namespace MyForms
                 };
                 
                 AddSubdirectoryToTree(directory.GetDirectories(), rootNode);
-                _myTreeView.Nodes.Add(rootNode);
+
+                MyForms.Forms.InvokeIfHandled(
+                    _myTreeView,
+                    s => (s as TreeView).Nodes.Add(rootNode),
+                    isHandled
+                );
+
             }
         }
     }

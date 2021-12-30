@@ -56,12 +56,12 @@ namespace MyForms
             }
         }
 
-        private void ListView1_KeyDown(object sender, KeyEventArgs e)
+        private async void ListView1_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
                 case Keys.Enter:
-                    SetSelectedDirectoryTree();
+                    await SetSelectedDirectoryTreeAsync();
                     break;
                 case Keys.Up:
                     if (e.KeyData.HasFlag(Keys.Alt))
@@ -74,37 +74,35 @@ namespace MyForms
             }
         }
 
-        private void ListView1_DoubleClick(object sender, System.EventArgs e)
+        private async void ListView1_DoubleClick(object sender, System.EventArgs e)
         {
-            SetSelectedDirectoryTree();
+            await SetSelectedDirectoryTreeAsync();
         }
 
         private void ListView1_SelectedIndexChanged_UsingItems(object sender, System.EventArgs e)
         {
             MyPreviewPane.ClearPreviewPane();
+            var modelItem = MyListViewPane.GetLastSelectedItem();
 
-            if (listView1.SelectedItems.Count == 0)
+            if (modelItem == null)
                 return;
 
-            var indices = listView1.SelectedIndices;
-            var lastIndex = indices[indices.Count - 1];
-            var modelItem = MyListViewPane.ActiveListItems[lastIndex];
+            bool isDirectory = modelItem.Attributes.HasFlag(FileAttributes.Directory);
+
+            if (isDirectory)
+                return;
 
             var fullName = modelItem.FullName;
             var extension = modelItem.Extension;
-            bool isDirectory = modelItem.Attributes.HasFlag(FileAttributes.Directory);
 
-            if (!isDirectory)
+            switch (extension.ToUpper())
             {
-                switch (extension.ToUpper())
-                {
-                    case ".PDF":
-                        MyPreviewPane.SetPreviewPane(PreviewPane.NewPdfPreview(fullName));
-                        break;
-                    default:
-                        MyPreviewPane.SetPreviewPane(PreviewPane.NewPlainTextPreview(fullName));
-                        break;
-                }
+                case ".PDF":
+                    MyPreviewPane.SetPreviewPane(PreviewPane.NewPdfPreview(fullName));
+                    break;
+                default:
+                    MyPreviewPane.SetPreviewPane(PreviewPane.NewPlainTextPreview(fullName));
+                    break;
             }
         }
 

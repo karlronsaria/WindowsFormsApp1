@@ -70,6 +70,7 @@ namespace MyForms
                         MyTreeViewPane.Load(parent.FullName);
                         MyListViewPane.Load(parent);
                     }
+
                     break;
             }
         }
@@ -117,7 +118,7 @@ namespace MyForms
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
             SearchResultsPanel.Controls.Clear();
-            string text = (sender as Forms.SearchResult)?.Text;
+            string text = (sender as SearchResult)?.Text;
 
             await Forms.AddListLayoutAsync(
                 parent: SearchResultsPanel,
@@ -132,7 +133,7 @@ namespace MyForms
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
             SearchResultsPanel.Controls.Clear();
-            string text = (sender as Forms.SearchResult)?.Text;
+            string text = (sender as SearchResult)?.Text;
 
             await Forms.AddListLayoutAsync(
                 parent: SearchResultsPanel,

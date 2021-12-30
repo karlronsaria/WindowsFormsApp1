@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Threading;
@@ -10,8 +8,6 @@ namespace MyForms
 {
     public static class Forms
     {
-        public class SearchResult : System.Windows.Forms.TextBox { }
-
         internal const string SAMPLE_TEXT =
             "It's all I have to bring today, " +
             "this and my heart beside, " +
@@ -24,7 +20,12 @@ namespace MyForms
 
         public delegate void InvokeHandler(Control sender);
 
-        public static void InvokeIfHandled(Control sender, InvokeHandler myMethod, bool isHandled)
+        public static void
+        InvokeIfHandled(
+                Control sender,
+                InvokeHandler myMethod,
+                bool isHandled
+            )
         {
             if (isHandled)
                 sender.Invoke(myMethod, sender);
@@ -63,48 +64,31 @@ namespace MyForms
                 var btn = new SearchResult()
                 {
                     Text = text,
-                    AutoSize = true,
-                    ReadOnly = true,
                 };
 
-                btn.Size = TextRenderer.MeasureText(btn.Text, btn.Font);
-                btn.Cursor = Cursors.Arrow;
                 btn.DoubleClick += onDoubleClick;
                 parent.Controls.Add(btn);
             });
         }
 
-        public static Control
+        public static SearchResultLayout
         LoadListSublayout(
                 Control parent,
                 string labelText = SAMPLE_TEXT
             )
         {
-            FlowLayoutPanel myFlowLayoutPanel = new FlowLayoutPanel()
+            var myFlowLayoutPanel = new SearchResultLayout()
             {
-                FlowDirection = FlowDirection.LeftToRight,
-                WrapContents = true,
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
                 AutoSize = true,
+                LabelText = labelText,
             };
+
+            myFlowLayoutPanel.FlowPanel.FlowDirection = FlowDirection.LeftToRight;
 
             parent.Invoke((MethodInvoker)delegate
             {
-                parent.Controls.Add(
-                    new Panel()
-                    {
-                        Height = 10
-                    }
-                );
-
-                parent.Controls.Add(
-                    new Label()
-                    {
-                        Text = labelText,
-                        Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                        AutoSize = true,
-                    }
-                );
-
                 parent.Controls.Add(myFlowLayoutPanel);
             });
 
@@ -136,38 +120,6 @@ namespace MyForms
                 }
             }
             catch (OperationCanceledException) { }
-        }
-
-        public static async Task
-        SetSampleListLayoutAsync(
-                Control parent,
-                CancellationToken myCancellationToken,
-                string sampleText = "foobar"
-            )
-        {
-            int numPanels = 5;
-
-            for (int i = 1; i <= numPanels; i++)
-            {
-                string label = $"Panel {i}:";
-                string c = "";
-
-                var someList = from b in Enumerable.Range(0, 37)
-                               where (c = String.Join(
-                                    "",
-                                    from a in Enumerable.Range(1, b)
-                                    select "A"
-                                )).Count() > 0
-                               select $"{sampleText} {b}: {c}";
-
-                await AddListLayoutAsync(
-                    parent: parent,
-                    list: someList,
-                    onDoubleClick: (s, e) => { },
-                    myCancellationToken: myCancellationToken,
-                    labelText: label
-                );
-            }
         }
     }
 }

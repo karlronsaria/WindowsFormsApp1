@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
-    internal class SearchResultLayout : System.Windows.Forms.FlowLayoutPanel
+    public class SearchResultLayout : System.Windows.Forms.FlowLayoutPanel
     {
         public const int DEFAULT_SPACING_HEIGHT = 10;
         public const FlowDirection DEFAULT_FLOW_DIRECTION = FlowDirection.LeftToRight;
@@ -11,82 +11,29 @@ namespace MyForms
         public const bool DEFAULT_AUTOSIZE_PREFERENCE = true;
         public const bool DEFAULT_WRAP_CONTENTS_PREFERENCE = true;
 
-        private Control _spacing;
-        private Control _label;
-        private Control _flowPanel;
-
-        private int _spacingHeight;
-        private FlowDirection _flowDirection;
-        private DockStyle _dockStyle;
-        private bool _autosize;
-        private bool _wrapContents;
+        private Panel _spacing;
+        private Label _label;
+        private FlowLayoutPanel _flowPanel;
 
         public SearchResultLayout(
-                int spacingHeight = DEFAULT_SPACING_HEIGHT,
-                FlowDirection flowDirection = DEFAULT_FLOW_DIRECTION,
-                DockStyle dockStyle = DEFAULT_DOCKSTYLE,
-                bool autosize = DEFAULT_AUTOSIZE_PREFERENCE,
-                bool wrapContents = DEFAULT_WRAP_CONTENTS_PREFERENCE
+                int spacingHeight = DEFAULT_SPACING_HEIGHT
             ) : base()
         {
-            _spacingHeight = spacingHeight;
-            _flowDirection = flowDirection;
-            _dockStyle = dockStyle;
-            _autosize = autosize;
-            _wrapContents = wrapContents;
+            SpacingHeight = spacingHeight;
         }
 
-        public int SpacingHeight
+        public FlowLayoutPanel FlowPanel
         {
-            get { return _spacingHeight; }
-        }
-
-        private bool HasInstance()
-        {
-            return _label != null;
-        }
-
-        private void AddSpacing()
-        {
-            _spacing = new Panel()
+            get
             {
-                Height = _spacingHeight,
-            };
+                if (!HasInstance())
+                    Build();
 
-            this.Controls.Add(_spacing);
+                return _flowPanel;
+            }
         }
 
-        private void AddLabel(string text)
-        {
-            _label = new Label()
-            {
-                Text = text,
-                Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                AutoSize = true,
-            };
-
-            this.Controls.Add(_label);
-        }
-
-        private void AddFlowPanel()
-        {
-            _flowPanel = new FlowLayoutPanel()
-            {
-                FlowDirection = _flowDirection,
-                Dock = _dockStyle,
-                AutoSize = _autosize,
-                WrapContents = _wrapContents,
-            };
-
-            this.Controls.Add(_flowPanel);
-        }
-
-        private void Build(string labelText = "")
-        {
-            AddSpacing();
-            AddLabel(labelText);
-            AddFlowPanel();
-        }
+        public int SpacingHeight { get; }
 
         public string LabelText
         {
@@ -110,19 +57,71 @@ namespace MyForms
             }
         }
 
-        public void AddButton(string text, EventHandler buttonClick)
+        private bool HasInstance()
+        {
+            return _label != null;
+        }
+
+        private void AddSpacing()
+        {
+            _spacing = new Panel()
+            {
+                Height = SpacingHeight,
+            };
+
+            this.Controls.Add(_spacing);
+        }
+
+        private void AddLabel(string text)
+        {
+            _label = new Label()
+            {
+                Text = text,
+                Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                AutoSize = true,
+            };
+
+            this.Controls.Add(_label);
+        }
+
+        private void AddFlowPanel()
+        {
+            _flowPanel = new FlowLayoutPanel()
+            {
+                FlowDirection = DEFAULT_FLOW_DIRECTION,
+                Dock = DEFAULT_DOCKSTYLE,
+                AutoSize = DEFAULT_AUTOSIZE_PREFERENCE,
+                WrapContents = DEFAULT_WRAP_CONTENTS_PREFERENCE,
+            };
+
+            this.Controls.Add(_flowPanel);
+        }
+
+        private void Build(string labelText = "")
+        {
+            AddSpacing();
+            AddLabel(labelText);
+            AddFlowPanel();
+        }
+
+        public void AddSearchResult(string text, EventHandler onDoubleClick)
         {
             if (!HasInstance())
                 Build();
 
-            Button btn = new Button()
+            var btn = new SearchResult()
             {
                 Text = text,
                 AutoSize = true,
             };
 
-            btn.Click += buttonClick;
-            _flowPanel.Controls.Add(btn);
+            btn.DoubleClick += onDoubleClick;
+
+            MyForms.Forms.InvokeIfHandled(
+                _flowPanel,
+                s => s.Controls.Add(btn),
+                true
+            );
         }
     }
 }

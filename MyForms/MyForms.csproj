@@ -72,6 +72,9 @@
     <Compile Include="ListViewPane.cs" />
     <Compile Include="PreviewPane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchResult.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SearchResultLayout.cs">
       <SubType>Component</SubType>
     </Compile>

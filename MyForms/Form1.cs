@@ -53,17 +53,10 @@ namespace MyForms
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // // No smaller than design time size
-            // this.MinimumSize = new System.Drawing.Size(this.Width, this.Height);
-
-            // No larger than screen size
             this.MaximumSize = new System.Drawing.Size(
                 Screen.PrimaryScreen.Bounds.Width,
                 Screen.PrimaryScreen.Bounds.Height
             );
-
-            // this.AutoSize = true;
-            // this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         }
 
         private async Task
@@ -76,8 +69,8 @@ namespace MyForms
             if (text.Length == 0)
                 return;
 
-            Control documentResultsPanel = null;
-            Control tagResultsPanel = null;
+            SearchResultLayout documentResultsPanel = null;
+            SearchResultLayout tagResultsPanel = null;
 
             try
             {
@@ -91,10 +84,9 @@ namespace MyForms
 
                     myCancellationToken.ThrowIfCancellationRequested();
 
-                    await Task.Run(() => Forms.AddSearchResult(
-                        parent: documentResultsPanel,
-                        onDoubleClick: DocumentButton_DoubleClickAsync,
-                        text: item
+                    await Task.Run(() => documentResultsPanel.AddSearchResult(
+                        text: item,
+                        onDoubleClick: DocumentButton_DoubleClickAsync
                     ));
                 }
 
@@ -108,10 +100,9 @@ namespace MyForms
 
                     myCancellationToken.ThrowIfCancellationRequested();
 
-                    await Task.Run(() => Forms.AddSearchResult(
-                        parent: tagResultsPanel,
-                        onDoubleClick: TagButton_DoubleClickAsync,
-                        text: item
+                    await Task.Run(() => tagResultsPanel.AddSearchResult(
+                        text: item,
+                        onDoubleClick: TagButton_DoubleClickAsync
                     ));
                 }
             }

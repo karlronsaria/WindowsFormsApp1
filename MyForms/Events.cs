@@ -56,7 +56,7 @@ namespace MyForms
             }
         }
 
-        private async void ListView1_KeyDown(object sender, KeyEventArgs e)
+        private async void ListView1_KeyDownAsync(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
@@ -74,7 +74,7 @@ namespace MyForms
             }
         }
 
-        private async void ListView1_DoubleClick(object sender, System.EventArgs e)
+        private async void ListView1_DoubleClickAsync(object sender, System.EventArgs e)
         {
             await SetSelectedDirectoryTreeAsync();
         }

@@ -41,7 +41,7 @@ namespace MyForms
                         ImageIndex = 0,
                         SelectedImageIndex = 0,
                         Tag = subDir,
-                        ImageKey = "folder"
+                        ImageKey = "folder",
                     };
 
                     subSubDirs = subDir.GetDirectories();
@@ -90,7 +90,7 @@ namespace MyForms
                 rootNode = new TreeNode
                 {
                     Text = directory.Name,
-                    Tag = directory
+                    Tag = directory,
                 };
                 
                 AddSubdirectoryToTree(directory.GetDirectories(), rootNode);
@@ -100,7 +100,6 @@ namespace MyForms
                     s => (s as TreeView).Nodes.Add(rootNode),
                     isHandled
                 );
-
             }
         }
     }

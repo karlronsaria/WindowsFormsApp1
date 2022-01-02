@@ -22,6 +22,25 @@ namespace MyForms
             SpacingHeight = spacingHeight;
         }
 
+        public SearchResultLayout(
+                Control parent,
+                string labelText,
+                int spacingHeight = DEFAULT_SPACING_HEIGHT
+            ) : base()
+        {
+            SpacingHeight = spacingHeight;
+            FlowDirection = FlowDirection.TopDown;
+            WrapContents = false;
+            AutoSize = true;
+            LabelText = labelText;
+            FlowPanel.FlowDirection = FlowDirection.LeftToRight;
+
+            parent.Invoke((MethodInvoker)delegate
+            {
+                parent.Controls.Add(this);
+            });
+        }
+
         public FlowLayoutPanel FlowPanel
         {
             get
@@ -106,9 +125,6 @@ namespace MyForms
 
         public void AddSearchResult(string text, EventHandler onDoubleClick)
         {
-            if (!HasInstance())
-                Build();
-
             var btn = new SearchResult()
             {
                 Text = text,
@@ -116,10 +132,17 @@ namespace MyForms
             };
 
             btn.DoubleClick += onDoubleClick;
+            Add(btn);
+        }
+
+        public void Add(SearchResult mySearchResult)
+        {
+            if (!HasInstance())
+                Build();
 
             MyForms.Forms.InvokeIfHandled(
                 _flowPanel,
-                s => s.Controls.Add(btn),
+                s => s.Controls.Add(mySearchResult),
                 true
             );
         }

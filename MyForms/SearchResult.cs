@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace MyForms
 {
@@ -9,6 +10,17 @@ namespace MyForms
             base.ReadOnly = true;
             AutoSize = true;
             Cursor = Cursors.Arrow;
+        }
+
+        public SearchResult(
+                string text,
+                EventHandler onClick,
+                EventHandler onDoubleClick
+            )
+        {
+            Text = text;
+            Click += onClick;
+            DoubleClick += onDoubleClick;
         }
 
         public bool ReadOnly { get => base.ReadOnly; }

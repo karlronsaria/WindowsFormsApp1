@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
 
 namespace MyForms
 {
@@ -71,30 +72,6 @@ namespace MyForms
             });
         }
 
-        public static SearchResultLayout
-        LoadListSublayout(
-                Control parent,
-                string labelText = SAMPLE_TEXT
-            )
-        {
-            var myFlowLayoutPanel = new SearchResultLayout()
-            {
-                FlowDirection = FlowDirection.TopDown,
-                WrapContents = false,
-                AutoSize = true,
-                LabelText = labelText,
-            };
-
-            myFlowLayoutPanel.FlowPanel.FlowDirection = FlowDirection.LeftToRight;
-
-            parent.Invoke((MethodInvoker)delegate
-            {
-                parent.Controls.Add(myFlowLayoutPanel);
-            });
-
-            return myFlowLayoutPanel;
-        }
-
         public static async Task
         AddListLayoutAsync(
                 Control parent,
@@ -104,19 +81,38 @@ namespace MyForms
                 string labelText = SAMPLE_TEXT
             )
         {
-            Control myFlowLayoutPanel = LoadListSublayout(parent, labelText);
+            await AddListLayoutAsync(
+                parent: parent,
+                searchResults:
+                    from item in list
+                    select (
+                        new SearchResult(
+                            text: item,
+                            onClick: (s, e) => { },
+                            onDoubleClick: onDoubleClick
+                        )
+                    ),
+                myCancellationToken: myCancellationToken,
+                labelText: labelText
+            );
+        }
+
+        public static async Task
+        AddListLayoutAsync(
+                Control parent,
+                IEnumerable<SearchResult> searchResults,
+                CancellationToken myCancellationToken,
+                string labelText = SAMPLE_TEXT
+            )
+        {
+            var myFlowLayoutPanel = new SearchResultLayout(parent, labelText);
 
             try
             {
-                foreach (string item in list)
+                foreach (var item in searchResults)
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
-
-                    await Task.Run(() => AddSearchResult(
-                        parent: myFlowLayoutPanel,
-                        text: item,
-                        onDoubleClick: onDoubleClick
-                    ));
+                    await Task.Run(() => myFlowLayoutPanel.Add(item));
                 }
             }
             catch (OperationCanceledException) { }

@@ -110,37 +110,26 @@ namespace MyForms
         private async void SearchBox_TextChangedAsync(object sender, EventArgs e)
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
-            SearchResultsPanel.Controls.Clear();
-            await ChangeSearchResultsAsync(SearchBoxChanged.Token);
+            await ChangeResultsAsync(SearchBoxChanged.Token, "Search");
         }
 
         private async void TagButton_DoubleClickAsync(object sender, EventArgs e)
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
-            SearchResultsPanel.Controls.Clear();
-            string text = (sender as SearchResult)?.Text;
 
-            await Forms.AddListLayoutAsync(
-                parent: SearchResultsPanel,
-                list: _database.GetNamesMatchingTag(text),
-                onDoubleClick: DocumentButton_DoubleClickAsync,
+            await ShowMatchingTagResults(
                 myCancellationToken: SearchBoxChanged.Token,
-                labelText: $"Documents with the tag \"{text}\":"
+                text: (sender as SearchResult)?.Text
             );
         }
 
         private async void DocumentButton_DoubleClickAsync(object sender, EventArgs e)
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
-            SearchResultsPanel.Controls.Clear();
-            string text = (sender as SearchResult)?.Text;
 
-            await Forms.AddListLayoutAsync(
-                parent: SearchResultsPanel,
-                list: _database.GetTagsMatchingName(text),
-                onDoubleClick: TagButton_DoubleClickAsync,
+            await ShowMatchingDocumentResults(
                 myCancellationToken: SearchBoxChanged.Token,
-                labelText: $"Tags for the document \"{text}\":"
+                text: (sender as SearchResult)?.Text
             );
         }
     }

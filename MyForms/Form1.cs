@@ -36,11 +36,6 @@ namespace MyForms
             _subpanels["Set"] = new Dictionary<string, SearchResultLayout>();
         }
 
-        public Control MainSearchResultsPanel
-        {
-            get => searchResultLayoutPanel1;
-        }
-
         public PreviewPane MyPreviewPane
         {
             get => _myPreviewPane;
@@ -88,10 +83,10 @@ namespace MyForms
                 string text
             )
         {
-            MainSearchResultsPanel.Controls.Clear();
+            MainPanels["Search"].Controls.Clear();
 
             await Forms.AddListLayoutAsync(
-                parent: MainSearchResultsPanel,
+                parent: MainPanels["Search"],
                 searchResults:
                     from item in _database.GetNamesMatchingTag(text)
                     select (
@@ -112,10 +107,10 @@ namespace MyForms
                 string text
             )
         {
-            MainSearchResultsPanel.Controls.Clear();
+            MainPanels["Search"].Controls.Clear();
 
             await Forms.AddListLayoutAsync(
-                parent: MainSearchResultsPanel,
+                parent: MainPanels["Search"],
                 searchResults:
                     from item in _database.GetTagsMatchingName(text)
                     select (

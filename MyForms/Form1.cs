@@ -85,20 +85,29 @@ namespace MyForms
         {
             MainPanels["Search"].Controls.Clear();
 
-            await Forms.AddListLayoutAsync(
+            var myFlowLayoutPanel = new SearchResultLayout(
                 parent: MainPanels["Search"],
-                searchResults:
-                    from item in _database.GetNamesMatchingTag(text)
-                    select (
-                        new SearchResult(
-                            text: item,
-                            onClick: (s, e) => { },
-                            onDoubleClick: DocumentButton_DoubleClickAsync
-                        )
-                    ),
-                myCancellationToken: myCancellationToken,
                 labelText: $"Documents with the tag \"{text}\":"
             );
+
+            try
+            {
+                foreach (var item in _database.GetNamesMatchingTag(text))
+                {
+                    myCancellationToken.ThrowIfCancellationRequested();
+
+                    var mySearchResult = new SearchResult()
+                    {
+                        Text = item,
+                    };
+
+                    mySearchResult.Click += DocumentSearchResult_ClickAsync;
+                    mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
+
+                    await Task.Run(() => myFlowLayoutPanel.Add(mySearchResult));
+                }
+            }
+            catch (OperationCanceledException) { }
         }
 
         private async Task
@@ -109,20 +118,29 @@ namespace MyForms
         {
             MainPanels["Search"].Controls.Clear();
 
-            await Forms.AddListLayoutAsync(
+            var myFlowLayoutPanel = new SearchResultLayout(
                 parent: MainPanels["Search"],
-                searchResults:
-                    from item in _database.GetTagsMatchingName(text)
-                    select (
-                        new SearchResult(
-                            text: item,
-                            onClick: (s, e) => { },
-                            onDoubleClick: TagButton_DoubleClickAsync
-                        )
-                    ),
-                myCancellationToken: myCancellationToken,
                 labelText: $"Tags for the document \"{text}\":"
             );
+
+            try
+            {
+                foreach (var item in _database.GetTagsMatchingName(text))
+                {
+                    myCancellationToken.ThrowIfCancellationRequested();
+
+                    var mySearchResult = new SearchResult()
+                    {
+                        Text = item,
+                    };
+
+                    mySearchResult.Click += TagSearchResult_ClickAsync;
+                    mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
+
+                    await Task.Run(() => myFlowLayoutPanel.Add(mySearchResult));
+                }
+            }
+            catch (OperationCanceledException) { }
         }
 
         private async Task
@@ -133,13 +151,34 @@ namespace MyForms
                 string labelText
             )
         {
-            if (Subpanels[mainPanelKey][subpanelKey] == null)
+            if (!Subpanels[mainPanelKey].ContainsKey(subpanelKey))
                 Subpanels[mainPanelKey][subpanelKey] = new SearchResultLayout(
                     parent: MainPanels[mainPanelKey],
                     labelText: labelText
                 );
 
             await Task.Run(() => Subpanels[mainPanelKey][subpanelKey].Add(mySearchResult));
+        }
+
+        private async Task
+        AddSetValueButton(
+                CancellationToken myCancellationToken,
+                string subpanelKey,
+                string labelText,
+                string buttonText
+            )
+        {
+            var mySearchResult = new SearchResult()
+            {
+                Text = buttonText,
+            };
+
+            await AddSearchResult(
+                mySearchResult: mySearchResult,
+                mainPanelKey: "Set",
+                subpanelKey: subpanelKey,
+                labelText: labelText
+            );
         }
 
         private async Task
@@ -154,8 +193,8 @@ namespace MyForms
             if (text.Length == 0)
                 return;
 
-            Subpanels[mainPanelKey]["Documents"] = null;
-            Subpanels[mainPanelKey]["Tags"] = null;
+            Subpanels[mainPanelKey].Remove("Documents");
+            Subpanels[mainPanelKey].Remove("Tags");
 
             try
             {
@@ -168,7 +207,8 @@ namespace MyForms
                         Text = item,
                     };
 
-                    mySearchResult.DoubleClick += DocumentButton_DoubleClickAsync;
+                    mySearchResult.Click += DocumentSearchResult_ClickAsync;
+                    mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
 
                     await AddSearchResult(
                         mySearchResult: mySearchResult,
@@ -187,7 +227,8 @@ namespace MyForms
                         Text = item,
                     };
 
-                    mySearchResult.DoubleClick += TagButton_DoubleClickAsync;
+                    mySearchResult.Click += TagSearchResult_ClickAsync;
+                    mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
 
                     await AddSearchResult(
                         mySearchResult: mySearchResult,

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MyForms
 {
@@ -113,7 +114,35 @@ namespace MyForms
             await ChangeResultsAsync(SearchBoxChanged.Token, "Search");
         }
 
-        private async void TagButton_DoubleClickAsync(object sender, EventArgs e)
+        private async void TagSearchResult_ClickAsync(object sender, EventArgs e)
+        {
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+
+            await AddSetValueButton(
+                myCancellationToken: SearchBoxChanged.Token,
+                subpanelKey: "Tags",
+                labelText: "Tags:",
+                buttonText: $"You clicked on {(sender as SearchResult).Text}!"
+            );
+
+            // await Task.Run(() => { });
+        }
+
+        private async void DocumentSearchResult_ClickAsync(object sender, EventArgs e)
+        {
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+
+            await AddSetValueButton(
+                myCancellationToken: SearchBoxChanged.Token,
+                subpanelKey: "Documents",
+                labelText: "Documents:",
+                buttonText: $"You clicked on {(sender as SearchResult).Text}!"
+            );
+
+            // await Task.Run(() => { });
+        }
+
+        private async void TagSearchResult_DoubleClickAsync(object sender, EventArgs e)
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
@@ -123,7 +152,7 @@ namespace MyForms
             );
         }
 
-        private async void DocumentButton_DoubleClickAsync(object sender, EventArgs e)
+        private async void DocumentSearchResult_DoubleClickAsync(object sender, EventArgs e)
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
@@ -131,6 +160,30 @@ namespace MyForms
                 myCancellationToken: SearchBoxChanged.Token,
                 text: (sender as SearchResult)?.Text
             );
+        }
+
+        private async void TagSetValue_ClickAsync(object sender, EventArgs e)
+        {
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+            await Task.Run(() => { });
+        }
+
+        private async void DocumentSetValue_ClickAsync(object sender, EventArgs e)
+        {
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+            await Task.Run(() => { });
+        }
+
+        private async void TagSetValue_DoubleClickAsync(object sender, EventArgs e)
+        {
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+            await Task.Run(() => { });
+        }
+
+        private async void DocumentSetValue_DoubleClickAsync(object sender, EventArgs e)
+        {
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+            await Task.Run(() => { });
         }
     }
 }

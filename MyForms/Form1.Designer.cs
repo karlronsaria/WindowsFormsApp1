@@ -42,7 +42,7 @@
             this.searchBox1 = new MyForms.MyTextBox();
             this.searchResultLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.setPanel1 = new System.Windows.Forms.Panel();
-            this.setValueLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.selectValueLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -237,7 +237,7 @@
             // setPanel1
             // 
             this.setPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.setPanel1.Controls.Add(this.setValueLayoutPanel1);
+            this.setPanel1.Controls.Add(this.selectValueLayoutPanel1);
             this.setPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.setPanel1.Location = new System.Drawing.Point(0, 0);
             this.setPanel1.Name = "setPanel1";
@@ -246,14 +246,16 @@
             // 
             // setValueLayoutPanel1
             // 
-            this.setValueLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.selectValueLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.searchResultLayoutPanel1.AutoScroll = true;
-            this.setValueLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.setValueLayoutPanel1.Name = "setValueLayoutPanel1";
-            this.setValueLayoutPanel1.Size = new System.Drawing.Size(250, 354);
-            this.setValueLayoutPanel1.TabIndex = 1;
+            this.selectValueLayoutPanel1.AutoScroll = true;
+            this.selectValueLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.selectValueLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.selectValueLayoutPanel1.Name = "setValueLayoutPanel1";
+            this.selectValueLayoutPanel1.Size = new System.Drawing.Size(250, 354);
+            this.selectValueLayoutPanel1.TabIndex = 1;
+            this.selectValueLayoutPanel1.WrapContents = false;
             // 
             // Form1
             // 
@@ -306,7 +308,7 @@
         private MyTextBox searchBox1;
         private System.Windows.Forms.FlowLayoutPanel searchResultLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer4;
-        private System.Windows.Forms.FlowLayoutPanel setValueLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel selectValueLayoutPanel1;
         private System.Windows.Forms.Panel searchPanel1;
         private System.Windows.Forms.Panel setPanel1;
     }

@@ -41,6 +41,8 @@ namespace MyForms
             });
         }
 
+        private new ControlCollection Controls { get => base.Controls; }
+
         public FlowLayoutPanel FlowPanel
         {
             get
@@ -123,28 +125,54 @@ namespace MyForms
             AddFlowPanel();
         }
 
-        public void AddSearchResult(string text, EventHandler onDoubleClick)
-        {
-            var btn = new SearchResult()
-            {
-                Text = text,
-                AutoSize = true,
-            };
-
-            btn.DoubleClick += onDoubleClick;
-            Add(btn);
-        }
-
-        public void Add(SearchResult mySearchResult)
+        public bool? Add(SearchResult mySearchResult)
         {
             if (!HasInstance())
                 Build();
 
-            MyForms.Forms.InvokeIfHandled(
+            var myMethod = new Func<Control, bool>(s =>
+            {
+                if (s.Controls.ContainsKey(mySearchResult.Name))
+                    return false;
+
+                s.Controls.Add(mySearchResult);
+                return true;
+            });
+
+            return (bool?)MyForms.Forms.InvokeIfHandled(
                 _flowPanel,
-                s => s.Controls.Add(mySearchResult),
+                s => myMethod.Invoke(s),
                 true
             );
+        }
+
+        public bool? Remove(string text)
+        {
+            if (!HasInstance())
+                Build();
+
+            var myMethod = new Func<Control, bool>(s =>
+            {
+                if (!s.Controls.ContainsKey(text))
+                    return false;
+
+                s.Controls.RemoveByKey(text);
+                return true;
+            });
+
+            return (bool?)MyForms.Forms.InvokeIfHandled(
+                _flowPanel,
+                s => myMethod.Invoke(s),
+                true
+            );
+        }
+
+        public void Clear()
+        {
+            if (!HasInstance())
+                Build();
+
+            Controls.Clear();
         }
     }
 }

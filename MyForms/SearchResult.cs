@@ -23,9 +23,11 @@ namespace MyForms
             DoubleClick += onDoubleClick;
         }
 
-        public bool ReadOnly { get => base.ReadOnly; }
+        public new bool ReadOnly { get => base.ReadOnly; }
 
-        public string Text
+        public new string Name { get => base.Name; }
+
+        public new string Text
         {
             get
             {
@@ -35,6 +37,7 @@ namespace MyForms
             set
             {
                 base.Text = value;
+                base.Name = value;
                 Size = TextRenderer.MeasureText(base.Text, Font);
             }
         }

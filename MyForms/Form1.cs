@@ -4,18 +4,36 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Linq;
 
 namespace MyForms
 {
     public partial class Form1 : Form
     {
+        public enum LayoutType : int
+        {
+            Search,
+            Select,
+        }
+
+        public enum SublayoutType : int
+        {
+            Documents,
+            Tags,
+            Dates,
+        }
+
+        internal class LayoutDictionary :
+            Dictionary<LayoutType, Control> { }
+
+        internal class SublayoutDictionary :
+            Dictionary<LayoutType, Dictionary<SublayoutType, SearchResultLayout>> { }
+
         private readonly IDataContext _database;
         private readonly PreviewPane _myPreviewPane;
         private readonly TreeViewPane _myTreeViewPane;
         private readonly ListViewPane _myListViewPane;
-        private readonly Dictionary<string, Control> _mainPanels;
-        private readonly Dictionary<string, Dictionary<string, SearchResultLayout>> _subpanels;
+        private readonly LayoutDictionary _mainLayouts;
+        private readonly SublayoutDictionary _sublayouts;
         private CancellationTokenSource _searchBoxChanged;
 
         public Form1(IDataContext myDatabase, string startingDirectory)
@@ -26,44 +44,44 @@ namespace MyForms
             _myPreviewPane = new PreviewPane(splitContainer2.Panel2);
             _myTreeViewPane = new TreeViewPane(treeView1, startingDirectory);
             _myListViewPane = new ListViewPane(listView1, startingDirectory);
-            _mainPanels = new Dictionary<string, Control>();
-            _subpanels = new Dictionary<string, Dictionary<string, SearchResultLayout>>();
+            _mainLayouts = new LayoutDictionary();
+            _sublayouts = new SublayoutDictionary();
 
-            _mainPanels["Search"] = searchResultLayoutPanel1;
-            _mainPanels["Set"] = setValueLayoutPanel1;
+            _mainLayouts[LayoutType.Search] = searchResultLayoutPanel1;
+            _mainLayouts[LayoutType.Select] = selectValueLayoutPanel1;
 
-            _subpanels["Search"] = new Dictionary<string, SearchResultLayout>();
-            _subpanels["Set"] = new Dictionary<string, SearchResultLayout>();
+            _sublayouts[LayoutType.Search] = new Dictionary<SublayoutType, SearchResultLayout>();
+            _sublayouts[LayoutType.Select] = new Dictionary<SublayoutType, SearchResultLayout>();
         }
 
-        public PreviewPane MyPreviewPane
+        internal PreviewPane MyPreviewPane
         {
             get => _myPreviewPane;
         }
 
-        public TreeViewPane MyTreeViewPane
+        internal TreeViewPane MyTreeViewPane
         {
             get => _myTreeViewPane;
         }
 
-        public ListViewPane MyListViewPane
+        internal ListViewPane MyListViewPane
         {
             get => _myListViewPane;
         }
 
-        public Dictionary<string, Control>
+        internal LayoutDictionary
         MainPanels
         {
-            get => _mainPanels;
+            get => _mainLayouts;
         }
 
-        public Dictionary<string, Dictionary<string, SearchResultLayout>>
+        internal SublayoutDictionary
         Subpanels
         {
-            get => _subpanels;
+            get => _sublayouts;
         }
 
-        public CancellationTokenSource SearchBoxChanged
+        internal CancellationTokenSource SearchBoxChanged
         {
             get => _searchBoxChanged;
             set => _searchBoxChanged = value;
@@ -83,10 +101,10 @@ namespace MyForms
                 string text
             )
         {
-            MainPanels["Search"].Controls.Clear();
+            MainPanels[LayoutType.Search].Controls.Clear();
 
             var myFlowLayoutPanel = new SearchResultLayout(
-                parent: MainPanels["Search"],
+                parent: MainPanels[LayoutType.Search],
                 labelText: $"Documents with the tag \"{text}\":"
             );
 
@@ -116,10 +134,10 @@ namespace MyForms
                 string text
             )
         {
-            MainPanels["Search"].Controls.Clear();
+            MainPanels[LayoutType.Search].Controls.Clear();
 
             var myFlowLayoutPanel = new SearchResultLayout(
-                parent: MainPanels["Search"],
+                parent: MainPanels[LayoutType.Search],
                 labelText: $"Tags for the document \"{text}\":"
             );
 
@@ -146,8 +164,8 @@ namespace MyForms
         private async Task
         AddSearchResult(
                 SearchResult mySearchResult,
-                string mainPanelKey,
-                string subpanelKey,
+                LayoutType mainPanelKey,
+                SublayoutType subpanelKey,
                 string labelText
             )
         {
@@ -161,9 +179,9 @@ namespace MyForms
         }
 
         private async Task
-        AddSetValueButton(
+        AddSelectValueButton(
                 CancellationToken myCancellationToken,
-                string subpanelKey,
+                SublayoutType subpanelKey,
                 string labelText,
                 string buttonText
             )
@@ -175,7 +193,7 @@ namespace MyForms
 
             await AddSearchResult(
                 mySearchResult: mySearchResult,
-                mainPanelKey: "Set",
+                mainPanelKey: LayoutType.Select,
                 subpanelKey: subpanelKey,
                 labelText: labelText
             );
@@ -184,7 +202,7 @@ namespace MyForms
         private async Task
         ChangeResultsAsync(
                 CancellationToken myCancellationToken,
-                string mainPanelKey
+                LayoutType mainPanelKey
             )
         {
             MainPanels[mainPanelKey].Controls.Clear();
@@ -193,8 +211,8 @@ namespace MyForms
             if (text.Length == 0)
                 return;
 
-            Subpanels[mainPanelKey].Remove("Documents");
-            Subpanels[mainPanelKey].Remove("Tags");
+            Subpanels[mainPanelKey].Remove(SublayoutType.Documents);
+            Subpanels[mainPanelKey].Remove(SublayoutType.Tags);
 
             try
             {
@@ -213,7 +231,7 @@ namespace MyForms
                     await AddSearchResult(
                         mySearchResult: mySearchResult,
                         mainPanelKey: mainPanelKey,
-                        subpanelKey: "Documents",
+                        subpanelKey: SublayoutType.Documents,
                         labelText: "Documents:"
                     );
                 }
@@ -233,7 +251,7 @@ namespace MyForms
                     await AddSearchResult(
                         mySearchResult: mySearchResult,
                         mainPanelKey: mainPanelKey,
-                        subpanelKey: "Tags",
+                        subpanelKey: SublayoutType.Tags,
                         labelText: "Tags:"
                     );
                 }

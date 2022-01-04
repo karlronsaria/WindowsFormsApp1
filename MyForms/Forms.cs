@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Threading.Tasks;
 using System.Threading;
-using System.Linq;
 
 namespace MyForms
 {
@@ -21,7 +18,7 @@ namespace MyForms
 
         public delegate void InvokeHandler(Control sender);
 
-        public static void
+        public static object
         InvokeIfHandled(
                 Control sender,
                 InvokeHandler myMethod,
@@ -29,9 +26,9 @@ namespace MyForms
             )
         {
             if (isHandled)
-                sender.Invoke(myMethod, sender);
-            else
-                myMethod.Invoke(sender);
+                return sender.Invoke(myMethod, sender);
+
+            return myMethod.DynamicInvoke(sender);
         }
 
         public static CancellationTokenSource
@@ -71,54 +68,6 @@ namespace MyForms
                 parent.Controls.Add(btn);
             });
         }
-
-        /*
-        public static async Task
-        AddListLayoutAsync(
-                Control parent,
-                IEnumerable<string> list,
-                EventHandler onDoubleClick,
-                CancellationToken myCancellationToken,
-                string labelText = SAMPLE_TEXT
-            )
-        {
-            await AddListLayoutAsync(
-                parent: parent,
-                searchResults:
-                    from item in list
-                    select (
-                        new SearchResult(
-                            text: item,
-                            onClick: (s, e) => { },
-                            onDoubleClick: onDoubleClick
-                        )
-                    ),
-                myCancellationToken: myCancellationToken,
-                labelText: labelText
-            );
-        }
-
-        public static async Task
-        AddListLayoutAsync(
-                Control parent,
-                IEnumerable<SearchResult> searchResults,
-                CancellationToken myCancellationToken,
-                string labelText = SAMPLE_TEXT
-            )
-        {
-            var myFlowLayoutPanel = new SearchResultLayout(parent, labelText);
-
-            try
-            {
-                foreach (var item in searchResults)
-                {
-                    myCancellationToken.ThrowIfCancellationRequested();
-                    await Task.Run(() => myFlowLayoutPanel.Add(item));
-                }
-            }
-            catch (OperationCanceledException) { }
-        }
-        */
     }
 }
 

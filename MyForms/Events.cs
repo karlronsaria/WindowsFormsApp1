@@ -191,5 +191,26 @@ namespace MyForms
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
             await Task.Run(() => { });
         }
+
+        private void SetValuesButton1_Click(object sender, EventArgs e)
+        {
+            var mainPanel = Subpanels[LayoutType.Select];
+
+            mainPanel.TryGetValue(SublayoutType.Documents, out SearchResultLayout subpanel);
+            var documents = subpanel?.Values;
+
+            if (documents == null)
+                return;
+
+            mainPanel.TryGetValue(SublayoutType.Tags, out subpanel);
+            var tags = subpanel?.Values;
+
+            if (tags == null)
+                return;
+
+            _database.SetTags(documents, tags);
+            MainPanels[LayoutType.Select].Controls.Clear();
+            mainPanel.Clear();
+        }
     }
 }

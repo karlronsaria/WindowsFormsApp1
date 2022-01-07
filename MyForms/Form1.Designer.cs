@@ -42,6 +42,7 @@
             this.searchBox1 = new MyForms.MyTextBox();
             this.searchResultLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.setPanel1 = new System.Windows.Forms.Panel();
+            this.SetValuesButton1 = new System.Windows.Forms.Button();
             this.selectValueLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -237,6 +238,7 @@
             // setPanel1
             // 
             this.setPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.setPanel1.Controls.Add(this.SetValuesButton1);
             this.setPanel1.Controls.Add(this.selectValueLayoutPanel1);
             this.setPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.setPanel1.Location = new System.Drawing.Point(0, 0);
@@ -244,16 +246,29 @@
             this.setPanel1.Size = new System.Drawing.Size(260, 364);
             this.setPanel1.TabIndex = 2;
             // 
-            // setValueLayoutPanel1
+            // SetValuesButton1
+            // 
+            this.SetValuesButton1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SetValuesButton1.ForeColor = System.Drawing.Color.Black;
+            this.SetValuesButton1.Location = new System.Drawing.Point(3, 3);
+            this.SetValuesButton1.Name = "SetValuesButton1";
+            this.SetValuesButton1.Size = new System.Drawing.Size(250, 20);
+            this.SetValuesButton1.TabIndex = 2;
+            this.SetValuesButton1.Text = "Set";
+            this.SetValuesButton1.UseVisualStyleBackColor = true;
+            this.SetValuesButton1.Click += new System.EventHandler(this.SetValuesButton1_Click);
+            // 
+            // selectValueLayoutPanel1
             // 
             this.selectValueLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.selectValueLayoutPanel1.AutoScroll = true;
             this.selectValueLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.selectValueLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.selectValueLayoutPanel1.Name = "setValueLayoutPanel1";
-            this.selectValueLayoutPanel1.Size = new System.Drawing.Size(250, 354);
+            this.selectValueLayoutPanel1.Location = new System.Drawing.Point(3, 29);
+            this.selectValueLayoutPanel1.Name = "selectValueLayoutPanel1";
+            this.selectValueLayoutPanel1.Size = new System.Drawing.Size(250, 328);
             this.selectValueLayoutPanel1.TabIndex = 1;
             this.selectValueLayoutPanel1.WrapContents = false;
             // 
@@ -311,6 +326,7 @@
         private System.Windows.Forms.FlowLayoutPanel selectValueLayoutPanel1;
         private System.Windows.Forms.Panel searchPanel1;
         private System.Windows.Forms.Panel setPanel1;
+        private System.Windows.Forms.Button SetValuesButton1;
     }
 }
 

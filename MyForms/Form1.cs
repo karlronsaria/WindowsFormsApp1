@@ -272,6 +272,27 @@ namespace MyForms
                 await Task.Run(() => MyListViewPane.Load((DirectoryInfo)modelItem));
             }
         }
+
+        private void
+        SetValues()
+        {
+            var mainPanel = Subpanels[LayoutType.Select];
+            mainPanel.TryGetValue(SublayoutType.Documents, out SearchResultLayout subpanel);
+            var documents = subpanel?.Values;
+
+            if (documents == null)
+                return;
+
+            mainPanel.TryGetValue(SublayoutType.Tags, out subpanel);
+            var tags = subpanel?.Values;
+
+            if (tags == null)
+                return;
+
+            _database.SetTags(documents, tags);
+            MainPanels[LayoutType.Select].Controls.Clear();
+            mainPanel.Clear();
+        }
     }
 }
 

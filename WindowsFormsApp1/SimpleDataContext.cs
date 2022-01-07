@@ -146,5 +146,29 @@ namespace Infrastructure
                             myTag.DocumentIds.Add(documentId);
             }
         }
+
+        public void SetDates(IEnumerable<string> documentNames, IEnumerable<string> dateStrings, string format)
+        {
+            var savedDocuments =
+                from name in documentNames
+                select GetDocumentMatchingName(name);
+
+            var dateTimeObjects = new List<System.DateTime>();
+
+            foreach (var dateString in dateStrings)
+                if (System.DateTime.TryParseExact(
+                    s: dateString,
+                    format: format,
+                    provider: null,
+                    style: System.Globalization.DateTimeStyles.None,
+                    result: out var myDate
+                ))
+                    dateTimeObjects.Add(myDate);
+
+            foreach (var document in savedDocuments)
+                foreach (var date in dateTimeObjects)
+                    if (!document.Dates.Contains(date))
+                        document.Dates.Add(date);
+        }
     }
 }

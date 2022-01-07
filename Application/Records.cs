@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Application
 {
@@ -10,7 +9,7 @@ namespace Application
         public int Id { get; set; }
         public string Name { get; set; }
         public MyEnumerable<string> Tags { get; set; }
-        public MyEnumerable<DateTime> Dates { get; set; }
+        public MyEnumerable<System.DateTime> Dates { get; set; }
         public string Description { get; set; }
     }
 
@@ -25,5 +24,4 @@ namespace Application
         public MyEnumerable<Document> Documents { get; set; }
         public MyEnumerable<Tag> Tags { get; set; }
     }
-
 }

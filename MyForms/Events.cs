@@ -144,7 +144,7 @@ namespace MyForms
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
-            await AddSelectValueButton(
+            await AddSelectValueButton<SearchResultLayoutWithEndButton>(
                 myCancellationToken: SearchBoxChanged.Token,
                 subpanelKey: SublayoutType.Tags,
                 labelText: "You double-clicked on these tags:",
@@ -158,7 +158,7 @@ namespace MyForms
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
-            await AddSelectValueButton(
+            await AddSelectValueButton<SearchResultLayout>(
                 myCancellationToken: SearchBoxChanged.Token,
                 subpanelKey: SublayoutType.Documents,
                 labelText: "You double-clicked on these documents:",

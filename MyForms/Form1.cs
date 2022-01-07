@@ -162,36 +162,37 @@ namespace MyForms
         }
 
         private async Task
-        AddSearchResult(
+        AddSearchResult<LayoutT>(
                 SearchResult mySearchResult,
                 LayoutType mainPanelKey,
                 SublayoutType subpanelKey,
                 string labelText
-            )
+            ) where LayoutT : SearchResultLayout, new()
         {
             if (!Subpanels[mainPanelKey].ContainsKey(subpanelKey))
-                Subpanels[mainPanelKey][subpanelKey] = new SearchResultLayout(
-                    parent: MainPanels[mainPanelKey],
-                    labelText: labelText
-                );
+                Subpanels[mainPanelKey][subpanelKey] = new LayoutT()
+                {
+                    Parent = MainPanels[mainPanelKey],
+                    LabelText = labelText,
+                };
 
             await Task.Run(() => Subpanels[mainPanelKey][subpanelKey].Add(mySearchResult));
         }
 
         private async Task
-        AddSelectValueButton(
-                CancellationToken myCancellationToken,
+        AddSelectValueButton<LayoutT>(
+                CancellationToken myCancellationToken, // TODO
                 SublayoutType subpanelKey,
                 string labelText,
                 string buttonText
-            )
+            ) where LayoutT : SearchResultLayout, new()
         {
             var mySearchResult = new SearchResult()
             {
                 Text = buttonText,
             };
 
-            await AddSearchResult(
+            await AddSearchResult<LayoutT>(
                 mySearchResult: mySearchResult,
                 mainPanelKey: LayoutType.Select,
                 subpanelKey: subpanelKey,
@@ -228,7 +229,7 @@ namespace MyForms
                     mySearchResult.Click += DocumentSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
 
-                    await AddSearchResult(
+                    await AddSearchResult<SearchResultLayout>(
                         mySearchResult: mySearchResult,
                         mainPanelKey: mainPanelKey,
                         subpanelKey: SublayoutType.Documents,
@@ -248,7 +249,7 @@ namespace MyForms
                     mySearchResult.Click += TagSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
 
-                    await AddSearchResult(
+                    await AddSearchResult<SearchResultLayout>(
                         mySearchResult: mySearchResult,
                         mainPanelKey: mainPanelKey,
                         subpanelKey: SublayoutType.Tags,

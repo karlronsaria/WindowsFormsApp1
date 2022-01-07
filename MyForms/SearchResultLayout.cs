@@ -1,8 +1,56 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace MyForms
 {
+    public class SearchResultLayoutWithEndButton : SearchResultLayout
+    {
+        public const string NEW_ITEM_TEXT = " + ";
+
+        public SearchResultLayoutWithEndButton() : base() { }
+
+        public SearchResultLayoutWithEndButton(
+                int spacingHeight
+            ) : base(spacingHeight) { }
+
+        public SearchResultLayoutWithEndButton(
+                Control parent,
+                string labelText,
+                int spacingHeight = DEFAULT_SPACING_HEIGHT
+            ) : base(parent, labelText, spacingHeight) { }
+
+        protected SearchResult NewItemButton { get; } = new SearchResult()
+        {
+            Text = NEW_ITEM_TEXT,
+            BackColor = System.Drawing.Color.DimGray,
+        };
+
+        protected override int LastItemIndex
+        {
+            get
+            {
+                if (!FlowPanel.Controls.Contains(NewItemButton))
+                    return -1;
+
+                return FlowPanel.Controls.GetChildIndex(NewItemButton) - 1;
+            }
+        }
+
+        protected override void AddFlowPanel()
+        {
+            base.AddFlowPanel();
+            Add(NewItemButton);
+        }
+
+        protected override void AddToSubcontrols(Control parent, Control child)
+        {
+            parent.Controls.Remove(NewItemButton);
+            parent.Controls.Add(child);
+            parent.Controls.Add(NewItemButton);
+        }
+    }
+
     public class SearchResultLayout : System.Windows.Forms.FlowLayoutPanel
     {
         public const int DEFAULT_SPACING_HEIGHT = 10;
@@ -11,14 +59,29 @@ namespace MyForms
         public const bool DEFAULT_AUTOSIZE_PREFERENCE = true;
         public const bool DEFAULT_WRAP_CONTENTS_PREFERENCE = true;
 
+        private readonly Control _parent = null;
         private Panel _spacing;
         private Label _label;
         private FlowLayoutPanel _flowPanel;
 
+        private void Initialize()
+        {
+            FlowDirection = FlowDirection.TopDown;
+            WrapContents = false;
+            AutoSize = true;
+        }
+
+        public SearchResultLayout()
+        {
+            Initialize();
+            SpacingHeight = DEFAULT_SPACING_HEIGHT;
+        }
+
         public SearchResultLayout(
-                int spacingHeight = DEFAULT_SPACING_HEIGHT
+                int spacingHeight
             ) : base()
         {
+            Initialize();
             SpacingHeight = spacingHeight;
         }
 
@@ -28,17 +91,27 @@ namespace MyForms
                 int spacingHeight = DEFAULT_SPACING_HEIGHT
             ) : base()
         {
+            Initialize();
             SpacingHeight = spacingHeight;
-            FlowDirection = FlowDirection.TopDown;
-            WrapContents = false;
-            AutoSize = true;
             LabelText = labelText;
-            FlowPanel.FlowDirection = FlowDirection.LeftToRight;
+            Parent = parent;
+        }
 
-            parent.Invoke((MethodInvoker)delegate
+        public new Control Parent
+        {
+            get
             {
-                parent.Controls.Add(this);
-            });
+                return _parent;
+            }
+
+            set
+            {
+                if (_parent == null)
+                    value.Invoke((MethodInvoker)delegate
+                    {
+                        value.Controls.Add(this);
+                    });
+            }
         }
 
         private new ControlCollection Controls { get => base.Controls; }
@@ -78,6 +151,21 @@ namespace MyForms
             }
         }
 
+        protected virtual int LastItemIndex { get => FlowPanel.Controls.Count - 1; }
+
+        public IEnumerable<string> Values
+        {
+            get
+            {
+                var list = new List<string>();
+
+                for (int i = 0; i <= LastItemIndex; i++)
+                    list.Add(FlowPanel.Controls[i].Text);
+
+                return list;
+            }
+        }
+
         private bool HasInstance()
         {
             return _label != null;
@@ -105,7 +193,7 @@ namespace MyForms
             this.Controls.Add(_label);
         }
 
-        private void AddFlowPanel()
+        protected virtual void AddFlowPanel()
         {
             _flowPanel = new FlowLayoutPanel()
             {
@@ -125,6 +213,11 @@ namespace MyForms
             AddFlowPanel();
         }
 
+        protected virtual void AddToSubcontrols(Control parent, Control child)
+        {
+            parent.Controls.Add(child);
+        }
+
         public bool? Add(SearchResult mySearchResult)
         {
             if (!HasInstance())
@@ -135,7 +228,7 @@ namespace MyForms
                 if (s.Controls.ContainsKey(mySearchResult.Name))
                     return false;
 
-                s.Controls.Add(mySearchResult);
+                AddToSubcontrols(s, mySearchResult);
                 return true;
             });
 

@@ -44,15 +44,17 @@ namespace MyForms
 
             NewItemButton.Click += (sender, e) =>
             {
-                FlowPanel.Controls.Remove(NewItemButton);
+                Remove(NewItemButton);
 
-                var myTextBox = new TextBox()
-                {
-                    // TODO
-                };
-
-                FlowPanel.Controls.Add(myTextBox);
+                var myTextBox = new TextBox();
+                Add(myTextBox);
                 myTextBox.Focus();
+
+                myTextBox.LostFocus += (lostFocusSender, lostFocusArgs) =>
+                {
+                    Remove(myTextBox);
+                    Add(NewItemButton);
+                };
 
                 myTextBox.KeyDown += (keyDownSender, keyDownArgs) =>
                 {
@@ -60,19 +62,19 @@ namespace MyForms
                     {
                         case Keys.Enter:
                             string text = myTextBox.Text;
-                            FlowPanel.Controls.Remove(myTextBox);
+                            Remove(myTextBox);
 
                             if (!String.IsNullOrWhiteSpace(text))
-                                FlowPanel.Controls.Add(new SearchResult()
-                                {
-                                    Text = text,
-                                });
+                                Add(
+                                    mySearchResult: new SearchResult() { Text = text, },
+                                    removeOnEvent: RemoveOn.CLICK
+                                );
 
-                            FlowPanel.Controls.Add(NewItemButton);
+                            Add(NewItemButton);
                             break;
                         case Keys.Escape:
-                            FlowPanel.Controls.Remove(myTextBox);
-                            FlowPanel.Controls.Add(NewItemButton);
+                            Remove(myTextBox);
+                            Add(NewItemButton);
                             break;
                     }
                 };
@@ -254,7 +256,46 @@ namespace MyForms
             parent.Controls.Add(child);
         }
 
-        public bool? Add(SearchResult mySearchResult)
+        protected bool? Add(Control myControl)
+        {
+            var myMethod = new Func<Control, bool>(s =>
+            {
+                s.Controls.Add(myControl);
+                return true;
+            });
+
+            return (bool?)MyForms.Forms.InvokeIfHandled(
+                _flowPanel,
+                s => myMethod.Invoke(s),
+                true
+            );
+        }
+
+        protected bool? Remove(Control myControl)
+        {
+            var myMethod = new Func<Control, bool>(s =>
+            {
+                s.Controls.Remove(myControl);
+                return true;
+            });
+
+            return (bool?)MyForms.Forms.InvokeIfHandled(
+                _flowPanel,
+                s => myMethod.Invoke(s),
+                true
+            );
+        }
+
+        public enum RemoveOn : int
+        {
+            NONE,
+            CLICK,
+            DOUBLE_CLICK,
+            CONTROL_CLICK,
+            SHIFT_CLICK,
+        }
+
+        public bool? Add(SearchResult mySearchResult, RemoveOn removeOnEvent = RemoveOn.NONE)
         {
             if (!HasInstance())
                 Build();
@@ -263,6 +304,23 @@ namespace MyForms
             {
                 if (s.Controls.ContainsKey(mySearchResult.Name))
                     return false;
+
+                void removalHandler(object sender, EventArgs args)
+                {
+                    Remove(mySearchResult);
+                }
+
+                switch (removeOnEvent)
+                {
+                    case RemoveOn.NONE:
+                        break;
+                    case RemoveOn.CLICK:
+                        mySearchResult.Click += removalHandler;
+                        break;
+                    case RemoveOn.DOUBLE_CLICK:
+                        mySearchResult.DoubleClick += removalHandler;
+                        break;
+                }
 
                 AddToSubcontrols(s, mySearchResult);
                 return true;

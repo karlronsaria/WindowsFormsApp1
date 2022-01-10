@@ -166,7 +166,8 @@ namespace MyForms
                 SearchResult mySearchResult,
                 LayoutType mainPanelKey,
                 SublayoutType subpanelKey,
-                string labelText
+                string labelText,
+                SearchResultLayout.RemoveOn removeOnEvent = SearchResultLayout.RemoveOn.NONE
             ) where LayoutT : SearchResultLayout, new()
         {
             if (!Subpanels[mainPanelKey].ContainsKey(subpanelKey))
@@ -176,7 +177,9 @@ namespace MyForms
                     LabelText = labelText,
                 };
 
-            await Task.Run(() => Subpanels[mainPanelKey][subpanelKey].Add(mySearchResult));
+            await Task.Run(() => Subpanels[mainPanelKey][subpanelKey]
+                .Add(mySearchResult, removeOnEvent)
+            );
         }
 
         private async Task
@@ -196,7 +199,8 @@ namespace MyForms
                 mySearchResult: mySearchResult,
                 mainPanelKey: LayoutType.Select,
                 subpanelKey: subpanelKey,
-                labelText: labelText
+                labelText: labelText,
+                removeOnEvent: SearchResultLayout.RemoveOn.CLICK
             );
         }
 

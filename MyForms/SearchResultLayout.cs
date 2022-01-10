@@ -41,6 +41,42 @@ namespace MyForms
         {
             base.AddFlowPanel();
             Add(NewItemButton);
+
+            NewItemButton.Click += (sender, e) =>
+            {
+                FlowPanel.Controls.Remove(NewItemButton);
+
+                var myTextBox = new TextBox()
+                {
+                    // TODO
+                };
+
+                FlowPanel.Controls.Add(myTextBox);
+                myTextBox.Focus();
+
+                myTextBox.KeyDown += (keyDownSender, keyDownArgs) =>
+                {
+                    switch (keyDownArgs.KeyCode)
+                    {
+                        case Keys.Enter:
+                            string text = myTextBox.Text;
+                            FlowPanel.Controls.Remove(myTextBox);
+
+                            if (!String.IsNullOrWhiteSpace(text))
+                                FlowPanel.Controls.Add(new SearchResult()
+                                {
+                                    Text = text,
+                                });
+
+                            FlowPanel.Controls.Add(NewItemButton);
+                            break;
+                        case Keys.Escape:
+                            FlowPanel.Controls.Remove(myTextBox);
+                            FlowPanel.Controls.Add(NewItemButton);
+                            break;
+                    }
+                };
+            };
         }
 
         protected override void AddToSubcontrols(Control parent, Control child)

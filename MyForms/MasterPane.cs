@@ -40,15 +40,40 @@ namespace MyForms
             get => _sublayouts;
         }
 
+        public EventHandler LayoutChanged { get; set; } = delegate { };
+
         public void Clear()
         {
-            Controls.Clear();
-            Layouts.Clear();
+            var myMethod = new Func<MasterPane, bool>(pane =>
+            {
+                pane.Controls.Clear();
+                pane.Layouts.Clear();
+                pane.LayoutChanged.Invoke(pane, new EventArgs());
+                return true;
+            });
+
+            MyForms.Forms.InvokeIfHandled(
+                this,
+                s => myMethod.Invoke(s as MasterPane),
+                IsHandleCreated
+            );
         }
 
         public bool Remove(SublayoutType key)
         {
-            Controls.Remove(Layouts[key]);
+            var myMethod = new Func<MasterPane, bool>(pane =>
+            {
+                pane.Controls.Remove(Layouts[key]);
+                pane.LayoutChanged.Invoke(pane, new EventArgs());
+                return true;
+            });
+
+            MyForms.Forms.InvokeIfHandled(
+                this,
+                s => myMethod.Invoke(s as MasterPane),
+                IsHandleCreated
+            );
+
             return Layouts.Remove(key);
         }
 
@@ -68,39 +93,38 @@ namespace MyForms
                 SearchResultLayout.RemoveOn removeWhen = SearchResultLayout.RemoveOn.NONE
             ) where LayoutT : SearchResultLayout, new()
         {
-            var myMethod = new Func<Control, bool>(s =>
+            var myMethod = new Func<MasterPane, bool>(pane =>
             {
-                var pane = s as MasterPane;
                 labelText = labelText ?? key.ToString();
-
-                pane.Add(key, new LayoutT() { LabelText = $"{labelText}:", });
-                return pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
+                pane.Add(key, new LayoutT() { LabelText = $"{labelText}:" });
+                bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
+                pane.LayoutChanged.Invoke(pane, new EventArgs());
+                return success;
             });
 
             return (bool?)MyForms.Forms.InvokeIfHandled(
                 this,
-                s => myMethod.Invoke(s),
+                s => myMethod.Invoke(s as MasterPane),
                 IsHandleCreated
             );
         }
 
         public bool? Add(SublayoutType key, SearchResultLayout value)
         {
-            var myMethod = new Func<Control, bool>(s =>
+            var myMethod = new Func<MasterPane, bool>(pane =>
             {
-                var pane = s as MasterPane;
-
                 if (pane.Layouts.ContainsKey(key))
                     return false;
 
                 pane.Layouts.Add(key, value);
                 pane.Controls.Add(value);
+                // pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return true;
             });
 
             return (bool?)MyForms.Forms.InvokeIfHandled(
                 this,
-                s => myMethod.Invoke(s),
+                s => myMethod.Invoke(s as MasterPane),
                 IsHandleCreated
             );
         }
@@ -114,6 +138,11 @@ namespace MyForms
         {
             Layouts.TryGetValue(key, out SearchResultLayout subpanel);
             return subpanel?.Values;
+        }
+
+        public bool Any()
+        {
+            return Layouts.Count > 0;
         }
     }
 }

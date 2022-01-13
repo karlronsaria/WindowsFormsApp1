@@ -255,7 +255,7 @@
             this.SetValuesButton1.Name = "SetValuesButton1";
             this.SetValuesButton1.Size = new System.Drawing.Size(250, 20);
             this.SetValuesButton1.TabIndex = 2;
-            this.SetValuesButton1.Text = "Set";
+            // this.SetValuesButton1.Text = "Set";
             this.SetValuesButton1.UseVisualStyleBackColor = true;
             this.SetValuesButton1.Click += new System.EventHandler(this.SetValuesButton1_Click);
             // 
@@ -271,6 +271,7 @@
             this.selectValueLayoutPanel1.Size = new System.Drawing.Size(250, 328);
             this.selectValueLayoutPanel1.TabIndex = 1;
             this.selectValueLayoutPanel1.WrapContents = false;
+            this.selectValueLayoutPanel1.LayoutChanged += new System.EventHandler(this.SelectValuePane_LayoutChanged);
             // 
             // Form1
             // 

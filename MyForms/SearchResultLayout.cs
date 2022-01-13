@@ -359,7 +359,22 @@ namespace MyForms
             if (!HasInstance())
                 Build();
 
-            Controls.Clear();
+            var myMethod = new Func<Control, bool>(s =>
+            {
+                s.Controls.Clear();
+                return true;
+            });
+
+            MyForms.Forms.InvokeIfHandled(
+                _flowPanel,
+                s => myMethod.Invoke(s),
+                IsHandleCreated
+            );
+        }
+
+        public int Count
+        {
+            get => LastItemIndex + 1;
         }
     }
 }

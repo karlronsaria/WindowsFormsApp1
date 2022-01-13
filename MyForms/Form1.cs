@@ -38,6 +38,8 @@ namespace MyForms
                 [LayoutType.Search] = searchResultLayoutPanel1,
                 [LayoutType.Select] = selectValueLayoutPanel1
             };
+
+            MainPanels[LayoutType.Select].Clear();
         }
 
         internal PreviewPane MyPreviewPane
@@ -226,7 +228,6 @@ namespace MyForms
                 return;
 
             _database.SetTags(documents, tags);
-            mainPanel.Clear();
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace MyForms
 {
@@ -201,6 +202,42 @@ namespace MyForms
         private void SetValuesButton1_Click(object sender, EventArgs e)
         {
             SetValues();
+            MainPanels[LayoutType.Select].Clear();
+        }
+
+        private void SelectValuePane_LayoutChanged(object sender, EventArgs e)
+        {
+            var selectPanel = MainPanels[LayoutType.Select];
+
+            bool valuesAreSettable =
+                selectPanel.Layouts.Count > 1
+                && selectPanel.Contains(MasterPane.SublayoutType.Documents)
+                && selectPanel.Layouts[MasterPane.SublayoutType.Documents].Count > 0;
+
+            if (!valuesAreSettable)
+            {
+                SetValuesButton1.Text = "New";
+                return;
+            }
+
+            valuesAreSettable = false;
+
+            foreach (var key in 
+                from k in selectPanel.Layouts.Keys
+                where k != MasterPane.SublayoutType.Documents
+                select k)
+            {
+                var what = selectPanel.Layouts[key].Count;
+                valuesAreSettable |= selectPanel.Layouts[key].Count > 0;
+            }
+
+            if (!valuesAreSettable)
+            {
+                SetValuesButton1.Text = "New";
+                return;
+            }
+
+            SetValuesButton1.Text = "Set";
         }
     }
 }

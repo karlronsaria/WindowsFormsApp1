@@ -40,10 +40,10 @@
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.searchPanel1 = new System.Windows.Forms.Panel();
             this.searchBox1 = new MyForms.MyTextBox();
-            this.searchResultLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.searchResultLayoutPanel1 = new MyForms.MasterPane();
             this.setPanel1 = new System.Windows.Forms.Panel();
             this.SetValuesButton1 = new System.Windows.Forms.Button();
-            this.selectValueLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.selectValueLayoutPanel1 = new MyForms.MasterPane();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -321,9 +321,9 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private MyTextBox searchBox1;
-        private System.Windows.Forms.FlowLayoutPanel searchResultLayoutPanel1;
+        private MyForms.MasterPane searchResultLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer4;
-        private System.Windows.Forms.FlowLayoutPanel selectValueLayoutPanel1;
+        private MyForms.MasterPane selectValueLayoutPanel1;
         private System.Windows.Forms.Panel searchPanel1;
         private System.Windows.Forms.Panel setPanel1;
         private System.Windows.Forms.Button SetValuesButton1;

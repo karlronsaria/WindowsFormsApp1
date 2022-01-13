@@ -133,7 +133,11 @@ namespace Infrastructure
             {
                 if (!savedTagNames.Contains(name))
                     _data.Tags.Add(
-                        new Tag { Name = name, }
+                        new Tag
+                        {
+                            Name = name,
+                            DocumentIds = new MyEnumerable<int>(),
+                        }
                     );
 
                 foreach (Tag myTag in (
@@ -142,7 +146,7 @@ namespace Infrastructure
                     select tag
                 ))
                     foreach (var documentId in savedDocumentIds)
-                        if (!myTag.DocumentIds.Contains(documentId))
+                        if (!(bool)myTag.DocumentIds?.Contains(documentId))
                             myTag.DocumentIds.Add(documentId);
             }
         }

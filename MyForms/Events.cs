@@ -144,28 +144,34 @@ namespace MyForms
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
-            await AddSelectValueButton<SearchResultLayoutWithEndButton>(
-                myCancellationToken: SearchBoxChanged.Token,
-                subpanelKey: SublayoutType.Tags,
-                labelText: "You double-clicked on these tags:",
-                buttonText: (sender as SearchResult).Text
+            await Task.Run(() =>
+                MainPanels[LayoutType.Select].Add<SearchResultLayoutWithEndButton>(
+                    key: MasterPane.SublayoutType.Tags,
+                    mySearchResult: new SearchResult()
+                    {
+                        Text = (sender as SearchResult).Text,
+                    },
+                    labelText: "You double-clicked on these tags:",
+                    removeWhen: SearchResultLayout.RemoveOn.CLICK
+                )
             );
-
-            // await Task.Run(() => { });
         }
 
         private async void DocumentSearchResult_DoubleClickAsync(object sender, EventArgs e)
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
-            await AddSelectValueButton<SearchResultLayout>(
-                myCancellationToken: SearchBoxChanged.Token,
-                subpanelKey: SublayoutType.Documents,
-                labelText: "You double-clicked on these documents:",
-                buttonText: (sender as SearchResult).Text
+            await Task.Run(() =>
+                MainPanels[LayoutType.Select].Add<SearchResultLayout>(
+                    key: MasterPane.SublayoutType.Documents,
+                    mySearchResult: new SearchResult()
+                    {
+                        Text = (sender as SearchResult).Text,
+                    },
+                    labelText: "You double-clicked on these documents:",
+                    removeWhen: SearchResultLayout.RemoveOn.CLICK
+                )
             );
-
-            // await Task.Run(() => { });
         }
 
         private async void TagSelectValue_ClickAsync(object sender, EventArgs e)

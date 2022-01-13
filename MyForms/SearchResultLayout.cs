@@ -267,7 +267,7 @@ namespace MyForms
             return (bool?)MyForms.Forms.InvokeIfHandled(
                 _flowPanel,
                 s => myMethod.Invoke(s),
-                true
+                IsHandleCreated
             );
         }
 
@@ -282,7 +282,7 @@ namespace MyForms
             return (bool?)MyForms.Forms.InvokeIfHandled(
                 _flowPanel,
                 s => myMethod.Invoke(s),
-                true
+                IsHandleCreated
             );
         }
 
@@ -329,7 +329,7 @@ namespace MyForms
             return (bool?)MyForms.Forms.InvokeIfHandled(
                 _flowPanel,
                 s => myMethod.Invoke(s),
-                true
+                IsHandleCreated
             );
         }
 
@@ -350,7 +350,7 @@ namespace MyForms
             return (bool?)MyForms.Forms.InvokeIfHandled(
                 _flowPanel,
                 s => myMethod.Invoke(s),
-                true
+                IsHandleCreated
             );
         }
 

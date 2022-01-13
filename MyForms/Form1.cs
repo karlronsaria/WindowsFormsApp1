@@ -15,25 +15,14 @@ namespace MyForms
             Select,
         }
 
-        public enum SublayoutType : int
-        {
-            Documents,
-            Tags,
-            Dates,
-        }
-
         internal class LayoutDictionary :
-            Dictionary<LayoutType, Control> { }
-
-        internal class SublayoutDictionary :
-            Dictionary<LayoutType, Dictionary<SublayoutType, SearchResultLayout>> { }
+            Dictionary<LayoutType, MasterPane> { }
 
         private readonly IDataContext _database;
         private readonly PreviewPane _myPreviewPane;
         private readonly TreeViewPane _myTreeViewPane;
         private readonly ListViewPane _myListViewPane;
         private readonly LayoutDictionary _mainLayouts;
-        private readonly SublayoutDictionary _sublayouts;
         private CancellationTokenSource _searchBoxChanged;
 
         public Form1(IDataContext myDatabase, string startingDirectory)
@@ -44,14 +33,11 @@ namespace MyForms
             _myPreviewPane = new PreviewPane(splitContainer2.Panel2);
             _myTreeViewPane = new TreeViewPane(treeView1, startingDirectory);
             _myListViewPane = new ListViewPane(listView1, startingDirectory);
-            _mainLayouts = new LayoutDictionary();
-            _sublayouts = new SublayoutDictionary();
-
-            _mainLayouts[LayoutType.Search] = searchResultLayoutPanel1;
-            _mainLayouts[LayoutType.Select] = selectValueLayoutPanel1;
-
-            _sublayouts[LayoutType.Search] = new Dictionary<SublayoutType, SearchResultLayout>();
-            _sublayouts[LayoutType.Select] = new Dictionary<SublayoutType, SearchResultLayout>();
+            _mainLayouts = new LayoutDictionary
+            {
+                [LayoutType.Search] = searchResultLayoutPanel1,
+                [LayoutType.Select] = selectValueLayoutPanel1
+            };
         }
 
         internal PreviewPane MyPreviewPane
@@ -73,12 +59,6 @@ namespace MyForms
         MainPanels
         {
             get => _mainLayouts;
-        }
-
-        internal SublayoutDictionary
-        Subpanels
-        {
-            get => _sublayouts;
         }
 
         internal CancellationTokenSource SearchBoxChanged
@@ -162,62 +142,16 @@ namespace MyForms
         }
 
         private async Task
-        AddSearchResult<LayoutT>(
-                SearchResult mySearchResult,
-                LayoutType mainPanelKey,
-                SublayoutType subpanelKey,
-                string labelText,
-                SearchResultLayout.RemoveOn removeOnEvent = SearchResultLayout.RemoveOn.NONE
-            ) where LayoutT : SearchResultLayout, new()
-        {
-            if (!Subpanels[mainPanelKey].ContainsKey(subpanelKey))
-                Subpanels[mainPanelKey][subpanelKey] = new LayoutT()
-                {
-                    Parent = MainPanels[mainPanelKey],
-                    LabelText = labelText,
-                };
-
-            await Task.Run(() => Subpanels[mainPanelKey][subpanelKey]
-                .Add(mySearchResult, removeOnEvent)
-            );
-        }
-
-        private async Task
-        AddSelectValueButton<LayoutT>(
-                CancellationToken myCancellationToken, // TODO
-                SublayoutType subpanelKey,
-                string labelText,
-                string buttonText
-            ) where LayoutT : SearchResultLayout, new()
-        {
-            var mySearchResult = new SearchResult()
-            {
-                Text = buttonText,
-            };
-
-            await AddSearchResult<LayoutT>(
-                mySearchResult: mySearchResult,
-                mainPanelKey: LayoutType.Select,
-                subpanelKey: subpanelKey,
-                labelText: labelText,
-                removeOnEvent: SearchResultLayout.RemoveOn.CLICK
-            );
-        }
-
-        private async Task
         ChangeResultsAsync(
                 CancellationToken myCancellationToken,
                 LayoutType mainPanelKey
             )
         {
-            MainPanels[mainPanelKey].Controls.Clear();
+            MainPanels[mainPanelKey].Clear();
             string text = searchBox1.Text;
 
             if (text.Length == 0)
                 return;
-
-            Subpanels[mainPanelKey].Remove(SublayoutType.Documents);
-            Subpanels[mainPanelKey].Remove(SublayoutType.Tags);
 
             try
             {
@@ -233,11 +167,11 @@ namespace MyForms
                     mySearchResult.Click += DocumentSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
 
-                    await AddSearchResult<SearchResultLayout>(
-                        mySearchResult: mySearchResult,
-                        mainPanelKey: mainPanelKey,
-                        subpanelKey: SublayoutType.Documents,
-                        labelText: "Documents:"
+                    await Task.Run(() =>
+                        MainPanels[LayoutType.Search].Add<SearchResultLayout>(
+                            key: MasterPane.SublayoutType.Documents,
+                            mySearchResult: mySearchResult
+                        )
                     );
                 }
 
@@ -253,11 +187,11 @@ namespace MyForms
                     mySearchResult.Click += TagSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
 
-                    await AddSearchResult<SearchResultLayout>(
-                        mySearchResult: mySearchResult,
-                        mainPanelKey: mainPanelKey,
-                        subpanelKey: SublayoutType.Tags,
-                        labelText: "Tags:"
+                    await Task.Run(() =>
+                        MainPanels[LayoutType.Search].Add<SearchResultLayout>(
+                            key: MasterPane.SublayoutType.Tags,
+                            mySearchResult: mySearchResult
+                        )
                     );
                 }
             }
@@ -280,21 +214,18 @@ namespace MyForms
         private void
         SetValues()
         {
-            var mainPanel = Subpanels[LayoutType.Select];
-            mainPanel.TryGetValue(SublayoutType.Documents, out SearchResultLayout subpanel);
-            var documents = subpanel?.Values;
+            var mainPanel = MainPanels[LayoutType.Select];
+            var documents = mainPanel.GetValues(MasterPane.SublayoutType.Documents);
 
             if (documents == null)
                 return;
 
-            mainPanel.TryGetValue(SublayoutType.Tags, out subpanel);
-            var tags = subpanel?.Values;
+            var tags = mainPanel.GetValues(MasterPane.SublayoutType.Tags);
 
             if (tags == null)
                 return;
 
             _database.SetTags(documents, tags);
-            MainPanels[LayoutType.Select].Controls.Clear();
             mainPanel.Clear();
         }
     }

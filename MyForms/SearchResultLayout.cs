@@ -24,16 +24,16 @@ namespace MyForms
         {
             Text = NEW_ITEM_TEXT,
             BackColor = System.Drawing.Color.DimGray,
+            ToolTip = "New Item",
         };
 
         protected override int LastItemIndex
         {
             get
             {
-                if (!FlowPanel.Controls.Contains(NewItemButton))
-                    return -1;
-
-                return FlowPanel.Controls.GetChildIndex(NewItemButton) - 1;
+                return FlowPanel.Controls.Contains(NewItemButton)
+                    ? FlowPanel.Controls.GetChildIndex(NewItemButton) - 1
+                    : -1;
             }
         }
 

@@ -3,8 +3,13 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
-    public class SearchResult : System.Windows.Forms.TextBox
+    public class SearchResult : TextBox
     {
+        public const int TOOL_TIP_AUTOMATIC_DELAY = 500;
+
+        private string _toolTipText;
+        private EventHandler _onMouseHover;
+
         public SearchResult()
         {
             base.ReadOnly = true;
@@ -39,6 +44,42 @@ namespace MyForms
                 base.Text = value;
                 base.Name = value;
                 Size = TextRenderer.MeasureText(base.Text, Font);
+            }
+        }
+
+        public string ToolTip
+        {
+            get
+            {
+                return _toolTipText;
+            }
+
+            set
+            {
+                if (_onMouseHover != null)
+                {
+                    this.MouseHover -= _onMouseHover;
+                    _onMouseHover = null;
+                }
+
+                if (String.IsNullOrEmpty(value))
+                {
+                    _toolTipText = null;
+                    return;
+                }
+
+                _toolTipText = value;
+
+                _onMouseHover = (sender, e) =>
+                {
+                    new ToolTip
+                    {
+                        AutomaticDelay = TOOL_TIP_AUTOMATIC_DELAY,
+                    }
+                    .SetToolTip(sender as Control, _toolTipText);
+                };
+
+                this.MouseHover += _onMouseHover;
             }
         }
     }

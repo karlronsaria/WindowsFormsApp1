@@ -73,7 +73,7 @@ namespace MyForms
                         if (!String.IsNullOrWhiteSpace(text))
                             Add(
                                 mySearchResult: new SearchResult() { Text = text, },
-                                removeOnEvent: RemoveOn.CLICK
+                                removeWhen: RemoveOn.CLICK
                             );
 
                         Add(NewItemButton);
@@ -312,7 +312,7 @@ namespace MyForms
             SHIFT_CLICK,
         }
 
-        public bool? Add(SearchResult mySearchResult, RemoveOn removeOnEvent = RemoveOn.NONE)
+        public bool? Add(SearchResult mySearchResult, RemoveOn removeWhen = RemoveOn.NONE)
         {
             if (!HasInstance())
                 Build();
@@ -327,7 +327,7 @@ namespace MyForms
                     Remove(mySearchResult);
                 }
 
-                switch (removeOnEvent)
+                switch (removeWhen)
                 {
                     case RemoveOn.NONE:
                         break;
@@ -394,6 +394,11 @@ namespace MyForms
         public int Count
         {
             get => LastItemIndex + 1;
+        }
+
+        public bool Any()
+        {
+            return Count > 0;
         }
     }
 }

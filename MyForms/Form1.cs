@@ -95,15 +95,9 @@ namespace MyForms
                 foreach (var item in _database.GetNamesMatchingTag(text))
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
-
-                    var mySearchResult = new SearchResult()
-                    {
-                        Text = item,
-                    };
-
+                    var mySearchResult = new SearchResult() { Text = item };
                     mySearchResult.Click += DocumentSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
-
                     await Task.Run(() => myFlowLayoutPanel.Add(mySearchResult));
                 }
             }
@@ -128,15 +122,9 @@ namespace MyForms
                 foreach (var item in _database.GetTagsMatchingName(text))
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
-
-                    var mySearchResult = new SearchResult()
-                    {
-                        Text = item,
-                    };
-
+                    var mySearchResult = new SearchResult() { Text = item };
                     mySearchResult.Click += TagSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
-
                     await Task.Run(() => myFlowLayoutPanel.Add(mySearchResult));
                 }
             }
@@ -160,40 +148,24 @@ namespace MyForms
                 foreach (string item in _database.GetNamesMatchingSubstring(text))
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
-
-                    var mySearchResult = new SearchResult()
-                    {
-                        Text = item,
-                    };
-
+                    var mySearchResult = new SearchResult() { Text = item };
                     mySearchResult.Click += DocumentSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
 
                     await Task.Run(() =>
-                        MainPanels[LayoutType.Search].Add<SearchResultLayout>(
-                            key: MasterPane.SublayoutType.Documents,
-                            mySearchResult: mySearchResult
-                        )
+                        MainPanels[LayoutType.Search].Documents.Add(mySearchResult)
                     );
                 }
 
                 foreach (string item in _database.GetTagsMatchingSubstring(text))
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
-
-                    var mySearchResult = new SearchResult()
-                    {
-                        Text = item,
-                    };
-
+                    var mySearchResult = new SearchResult() { Text = item };
                     mySearchResult.Click += TagSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
 
                     await Task.Run(() =>
-                        MainPanels[LayoutType.Search].Add<SearchResultLayout>(
-                            key: MasterPane.SublayoutType.Tags,
-                            mySearchResult: mySearchResult
-                        )
+                        MainPanels[LayoutType.Search].Tags.Add(mySearchResult)
                     );
                 }
             }

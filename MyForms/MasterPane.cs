@@ -41,6 +41,39 @@ namespace MyForms
 
         public EventHandler LayoutChanged { get; set; } = delegate { };
 
+        public SearchResultLayout Documents
+        {
+            get
+            {
+                if (!Layouts.ContainsKey(SublayoutType.Documents))
+                    Add<SearchResultLayout>(SublayoutType.Documents);
+
+                return Layouts[SublayoutType.Documents];
+            }
+        }
+
+        public SearchResultLayoutWithEndButton Tags
+        {
+            get
+            {
+                if (!Layouts.ContainsKey(SublayoutType.Tags))
+                    Add<SearchResultLayoutWithEndButton>(SublayoutType.Tags);
+
+                return Layouts[SublayoutType.Tags] as SearchResultLayoutWithEndButton;
+            }
+        }
+
+        public SearchResultLayoutWithEndButton Dates
+        {
+            get
+            {
+                if (!Layouts.ContainsKey(SublayoutType.Dates))
+                    Add<SearchResultLayoutWithEndButton>(SublayoutType.Dates);
+
+                return Layouts[SublayoutType.Dates] as SearchResultLayoutWithEndButton;
+            }
+        }
+
         public void Clear()
         {
             var myMethod = new Func<MasterPane, bool>(pane =>

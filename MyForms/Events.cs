@@ -148,13 +148,11 @@ namespace MyForms
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
             await Task.Run(() =>
-                MainPanels[LayoutType.Select].Add<SearchResultLayoutWithEndButton>(
-                    key: MasterPane.SublayoutType.Tags,
+                MainPanels[LayoutType.Select].Tags.Add(
                     mySearchResult: new SearchResult()
                     {
                         Text = (sender as SearchResult).Text,
                     },
-                    labelText: "You double-clicked on these tags:",
                     removeWhen: SearchResultLayout.RemoveOn.CLICK
                 )
             );
@@ -165,13 +163,11 @@ namespace MyForms
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
             await Task.Run(() =>
-                MainPanels[LayoutType.Select].Add<SearchResultLayout>(
-                    key: MasterPane.SublayoutType.Documents,
+                MainPanels[LayoutType.Select].Documents.Add(
                     mySearchResult: new SearchResult()
                     {
                         Text = (sender as SearchResult).Text,
                     },
-                    labelText: "You double-clicked on these documents:",
                     removeWhen: SearchResultLayout.RemoveOn.CLICK
                 )
             );
@@ -214,11 +210,7 @@ namespace MyForms
 
         private void ProcessAddNewItemToPanel(object sender, EventArgs e)
         {
-            var panel = MainPanels[LayoutType.Select];
-            panel.Add<SearchResultLayoutWithEndButton>(MasterPane.SublayoutType.Tags);
-
-            (panel.Layouts[MasterPane.SublayoutType.Tags] as SearchResultLayoutWithEndButton)
-                .NewItemButton.Focus();
+            MainPanels[LayoutType.Select].Tags.NewItemButton.Focus();
         }
 
         private void SelectValuePane_LayoutChanged(object sender, EventArgs e)
@@ -237,7 +229,7 @@ namespace MyForms
                 return;
             }
 
-            if (documentsPanel.Count == 0)
+            if (!documentsPanel.Any())
             {
                 selectPanel.Remove(MasterPane.SublayoutType.Documents);
                 SetValuesButton1.Text = "New";
@@ -257,12 +249,12 @@ namespace MyForms
             valuesAreSettable = false;
 
             foreach (
-                var key in 
-                    from k in selectPanel.Layouts.Keys
-                    where k != MasterPane.SublayoutType.Documents
-                    select k
+                var layouts in
+                    from l in selectPanel.Layouts.Values
+                    where l is SearchResultLayoutWithEndButton
+                    select l
                 )
-                valuesAreSettable |= selectPanel.Layouts[key].Count > 0;
+                valuesAreSettable |= layouts.Count > 0;
 
             if (!valuesAreSettable)
             {

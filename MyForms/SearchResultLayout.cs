@@ -20,12 +20,23 @@ namespace MyForms
                 int spacingHeight = DEFAULT_SPACING_HEIGHT
             ) : base(parent, labelText, spacingHeight) { }
 
-        protected SearchResult NewItemButton { get; } = new SearchResult()
+        private readonly SearchResult _newItemButton = new SearchResult()
         {
             Text = NEW_ITEM_TEXT,
             BackColor = System.Drawing.Color.DimGray,
             ToolTip = "New Item",
         };
+
+        public SearchResult NewItemButton
+        {
+            get
+            {
+                if (!HasInstance())
+                    Build();
+
+                return _newItemButton;
+            }
+        }
 
         protected override int LastItemIndex
         {
@@ -37,48 +48,51 @@ namespace MyForms
             }
         }
 
+        protected void ProcessNewItemButton(object sender, EventArgs e)
+        {
+            Remove(NewItemButton);
+
+            var myTextBox = new TextBox();
+            Add(myTextBox);
+            myTextBox.Focus();
+
+            myTextBox.LostFocus += (lostFocusSender, lostFocusArgs) =>
+            {
+                Remove(myTextBox);
+                Add(NewItemButton);
+            };
+
+            myTextBox.KeyDown += (keyDownSender, keyDownArgs) =>
+            {
+                switch (keyDownArgs.KeyCode)
+                {
+                    case Keys.Enter:
+                        string text = myTextBox.Text;
+                        Remove(myTextBox);
+
+                        if (!String.IsNullOrWhiteSpace(text))
+                            Add(
+                                mySearchResult: new SearchResult() { Text = text, },
+                                removeOnEvent: RemoveOn.CLICK
+                            );
+
+                        Add(NewItemButton);
+                        break;
+                    case Keys.Escape:
+                        Remove(myTextBox);
+                        Add(NewItemButton);
+                        break;
+                }
+            };
+        }
+
         protected override void AddFlowPanel()
         {
             base.AddFlowPanel();
             Add(NewItemButton);
 
-            NewItemButton.Click += (sender, e) =>
-            {
-                Remove(NewItemButton);
-
-                var myTextBox = new TextBox();
-                Add(myTextBox);
-                myTextBox.Focus();
-
-                myTextBox.LostFocus += (lostFocusSender, lostFocusArgs) =>
-                {
-                    Remove(myTextBox);
-                    Add(NewItemButton);
-                };
-
-                myTextBox.KeyDown += (keyDownSender, keyDownArgs) =>
-                {
-                    switch (keyDownArgs.KeyCode)
-                    {
-                        case Keys.Enter:
-                            string text = myTextBox.Text;
-                            Remove(myTextBox);
-
-                            if (!String.IsNullOrWhiteSpace(text))
-                                Add(
-                                    mySearchResult: new SearchResult() { Text = text, },
-                                    removeOnEvent: RemoveOn.CLICK
-                                );
-
-                            Add(NewItemButton);
-                            break;
-                        case Keys.Escape:
-                            Remove(myTextBox);
-                            Add(NewItemButton);
-                            break;
-                    }
-                };
-            };
+            NewItemButton.Click += ProcessNewItemButton;
+            NewItemButton.GotFocus += ProcessNewItemButton;
         }
 
         protected override void AddToSubcontrols(Control parent, Control child)
@@ -204,7 +218,9 @@ namespace MyForms
             }
         }
 
-        private bool HasInstance()
+        public EventHandler OnSearchResultRemoval { get; set; } = delegate { };
+
+        protected bool HasInstance()
         {
             return _label != null;
         }
@@ -244,7 +260,7 @@ namespace MyForms
             this.Controls.Add(_flowPanel);
         }
 
-        private void Build(string labelText = "")
+        protected void Build(string labelText = "")
         {
             AddSpacing();
             AddLabel(labelText);
@@ -276,6 +292,7 @@ namespace MyForms
             var myMethod = new Func<Control, bool>(s =>
             {
                 s.Controls.Remove(myControl);
+                this.OnSearchResultRemoval.Invoke(s, new EventArgs());
                 return true;
             });
 
@@ -344,6 +361,7 @@ namespace MyForms
                     return false;
 
                 s.Controls.RemoveByKey(text);
+                this.OnSearchResultRemoval.Invoke(s, new EventArgs());
                 return true;
             });
 
@@ -362,6 +380,7 @@ namespace MyForms
             var myMethod = new Func<Control, bool>(s =>
             {
                 s.Controls.Clear();
+                this.OnSearchResultRemoval.Invoke(s, new EventArgs());
                 return true;
             });
 

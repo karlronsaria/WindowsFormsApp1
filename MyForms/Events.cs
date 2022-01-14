@@ -8,6 +8,8 @@ namespace MyForms
 {
     public partial class Form1 : Form
     {
+        private EventHandler _setValuesButton_onClick = delegate { };
+
         private void OpenDirectoryStripMenuItem_Click(object sender, EventArgs e)
         {
             var dialog = new FolderBrowserDialog();
@@ -201,43 +203,76 @@ namespace MyForms
 
         private void SetValuesButton1_Click(object sender, EventArgs e)
         {
+            _setValuesButton_onClick(sender, e);
+        }
+
+        private void ProcessSetValuesAndClearPanel(object sender, EventArgs e)
+        {
             SetValues();
             MainPanels[LayoutType.Select].Clear();
+        }
+
+        private void ProcessAddNewItemToPanel(object sender, EventArgs e)
+        {
+            var panel = MainPanels[LayoutType.Select];
+            panel.Add<SearchResultLayoutWithEndButton>(MasterPane.SublayoutType.Tags);
+
+            (panel.Layouts[MasterPane.SublayoutType.Tags] as SearchResultLayoutWithEndButton)
+                .NewItemButton.Focus();
         }
 
         private void SelectValuePane_LayoutChanged(object sender, EventArgs e)
         {
             var selectPanel = MainPanels[LayoutType.Select];
 
-            bool valuesAreSettable =
-                selectPanel.Layouts.Count > 1
-                && selectPanel.Contains(MasterPane.SublayoutType.Documents)
-                && selectPanel.Layouts[MasterPane.SublayoutType.Documents].Count > 0;
+            selectPanel.Layouts.TryGetValue(
+                MasterPane.SublayoutType.Documents,
+                out var documentsPanel
+            );
+
+            if (documentsPanel == null)
+            {
+                SetValuesButton1.Text = "New";
+                _setValuesButton_onClick = ProcessAddNewItemToPanel;
+                return;
+            }
+
+            if (documentsPanel.Count == 0)
+            {
+                selectPanel.Remove(MasterPane.SublayoutType.Documents);
+                SetValuesButton1.Text = "New";
+                _setValuesButton_onClick = ProcessAddNewItemToPanel;
+                return;
+            }
+
+            bool valuesAreSettable = selectPanel.Layouts.Count > 1 && documentsPanel.Count > 0;
 
             if (!valuesAreSettable)
             {
                 SetValuesButton1.Text = "New";
+                _setValuesButton_onClick = ProcessAddNewItemToPanel;
                 return;
             }
 
             valuesAreSettable = false;
 
-            foreach (var key in 
-                from k in selectPanel.Layouts.Keys
-                where k != MasterPane.SublayoutType.Documents
-                select k)
-            {
-                var what = selectPanel.Layouts[key].Count;
+            foreach (
+                var key in 
+                    from k in selectPanel.Layouts.Keys
+                    where k != MasterPane.SublayoutType.Documents
+                    select k
+                )
                 valuesAreSettable |= selectPanel.Layouts[key].Count > 0;
-            }
 
             if (!valuesAreSettable)
             {
                 SetValuesButton1.Text = "New";
+                _setValuesButton_onClick = ProcessAddNewItemToPanel;
                 return;
             }
 
             SetValuesButton1.Text = "Set";
+            _setValuesButton_onClick = ProcessSetValuesAndClearPanel;
         }
     }
 }

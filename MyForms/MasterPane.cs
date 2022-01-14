@@ -59,22 +59,21 @@ namespace MyForms
             );
         }
 
-        public bool Remove(SublayoutType key)
+        public bool? Remove(SublayoutType key)
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
             {
                 pane.Controls.Remove(Layouts[key]);
+                bool success = pane.Layouts.Remove(key);
                 pane.LayoutChanged.Invoke(pane, new EventArgs());
-                return true;
+                return success;
             });
 
-            MyForms.Forms.InvokeIfHandled(
+            return (bool?)MyForms.Forms.InvokeIfHandled(
                 this,
                 s => myMethod.Invoke(s as MasterPane),
                 IsHandleCreated
             );
-
-            return Layouts.Remove(key);
         }
 
         public bool? Add<LayoutT>(
@@ -95,10 +94,29 @@ namespace MyForms
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
             {
-                labelText = labelText ?? key.ToString();
-                pane.Add(key, new LayoutT() { LabelText = $"{labelText}:" });
+                labelText = labelText ?? $"{key}:";
+                pane.Add(key, new LayoutT() { LabelText = labelText });
                 bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
+                pane.Layouts[key].OnSearchResultRemoval += pane.LayoutChanged;
                 pane.LayoutChanged.Invoke(pane, new EventArgs());
+                return success;
+            });
+
+            return (bool?)MyForms.Forms.InvokeIfHandled(
+                this,
+                s => myMethod.Invoke(s as MasterPane),
+                IsHandleCreated
+            );
+        }
+
+        public bool? Add<LayoutT>(
+                SublayoutType key
+            ) where LayoutT : SearchResultLayout, new()
+        {
+            var myMethod = new Func<MasterPane, bool>(pane =>
+            {
+                string labelText = $"{key}:";
+                bool success = pane.Add(key, new LayoutT() { LabelText = labelText }) ?? false;
                 return success;
             });
 
@@ -118,6 +136,7 @@ namespace MyForms
 
                 pane.Layouts.Add(key, value);
                 pane.Controls.Add(value);
+                pane.Layouts[key].OnSearchResultRemoval += pane.LayoutChanged;
                 // pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return true;
             });

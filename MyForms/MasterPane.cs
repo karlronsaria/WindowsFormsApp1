@@ -34,8 +34,7 @@ namespace MyForms
             get => base.Controls;
         }
 
-        internal LayoutDictionary
-        Layouts
+        internal LayoutDictionary Layouts
         {
             get => _sublayouts;
         }
@@ -97,7 +96,7 @@ namespace MyForms
                 labelText = labelText ?? $"{key}:";
                 pane.Add(key, new LayoutT() { LabelText = labelText });
                 bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
-                pane.Layouts[key].OnSearchResultRemoval += pane.LayoutChanged;
+                pane.Layouts[key].ItemRemoved += pane.LayoutChanged;
                 pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return success;
             });
@@ -136,7 +135,7 @@ namespace MyForms
 
                 pane.Layouts.Add(key, value);
                 pane.Controls.Add(value);
-                pane.Layouts[key].OnSearchResultRemoval += pane.LayoutChanged;
+                pane.Layouts[key].ItemRemoved += pane.LayoutChanged;
                 // pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return true;
             });

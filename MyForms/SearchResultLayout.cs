@@ -218,7 +218,7 @@ namespace MyForms
             }
         }
 
-        public EventHandler OnSearchResultRemoval { get; set; } = delegate { };
+        public EventHandler ItemRemoved { get; set; } = delegate { };
 
         protected bool HasInstance()
         {
@@ -292,7 +292,7 @@ namespace MyForms
             var myMethod = new Func<Control, bool>(s =>
             {
                 s.Controls.Remove(myControl);
-                this.OnSearchResultRemoval.Invoke(s, new EventArgs());
+                this.ItemRemoved.Invoke(s, new EventArgs());
                 return true;
             });
 
@@ -361,7 +361,7 @@ namespace MyForms
                     return false;
 
                 s.Controls.RemoveByKey(text);
-                this.OnSearchResultRemoval.Invoke(s, new EventArgs());
+                this.ItemRemoved.Invoke(s, new EventArgs());
                 return true;
             });
 
@@ -380,7 +380,7 @@ namespace MyForms
             var myMethod = new Func<Control, bool>(s =>
             {
                 s.Controls.Clear();
-                this.OnSearchResultRemoval.Invoke(s, new EventArgs());
+                this.ItemRemoved.Invoke(s, new EventArgs());
                 return true;
             });
 

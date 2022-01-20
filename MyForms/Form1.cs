@@ -153,7 +153,11 @@ namespace MyForms
                     mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
 
                     await Task.Run(() =>
-                        MainPanels[LayoutType.Search].Documents.Add(mySearchResult)
+                        MainPanels[LayoutType.Search]
+                            .AddInOrder<SearchResultLayout>(
+                                key: MasterPane.SublayoutType.Documents,
+                                mySearchResult: mySearchResult
+                            )
                     );
                 }
 

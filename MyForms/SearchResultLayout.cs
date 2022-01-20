@@ -400,5 +400,10 @@ namespace MyForms
         {
             return Count > 0;
         }
+
+        public bool FlowPanelEmpty()
+        {
+            return FlowPanel.Controls.Count == 0;
+        }
     }
 }

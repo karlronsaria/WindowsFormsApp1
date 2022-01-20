@@ -163,13 +163,15 @@ namespace MyForms
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
             await Task.Run(() =>
-                MainPanels[LayoutType.Select].Documents.Add(
-                    mySearchResult: new SearchResult()
-                    {
-                        Text = (sender as SearchResult).Text,
-                    },
-                    removeWhen: SearchResultLayout.RemoveOn.CLICK
-                )
+                MainPanels[LayoutType.Select]
+                    .AddInOrder<SearchResultLayout>(
+                        key: MasterPane.SublayoutType.Documents,
+                        mySearchResult: new SearchResult()
+                        {
+                            Text = (sender as SearchResult).Text,
+                        },
+                        removeWhen: SearchResultLayout.RemoveOn.CLICK
+                    )
             );
         }
 
@@ -231,7 +233,7 @@ namespace MyForms
 
             if (!documentsPanel.Any())
             {
-                selectPanel.Remove(MasterPane.SublayoutType.Documents);
+                // selectPanel.Remove(MasterPane.SublayoutType.Documents);
                 SetValuesButton1.Text = "New";
                 _setValuesButton_onClick = ProcessAddNewItemToPanel;
                 return;

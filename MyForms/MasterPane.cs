@@ -41,25 +41,32 @@ namespace MyForms
 
         public EventHandler LayoutChanged { get; set; } = delegate { };
 
+        /*
         public SearchResultLayout Documents
         {
             get
             {
-                if (!Layouts.ContainsKey(SublayoutType.Documents))
-                    Add<SearchResultLayout>(SublayoutType.Documents);
+                var key = SublayoutType.Documents;
 
-                return Layouts[SublayoutType.Documents];
+                if (!Layouts.ContainsKey(key))
+                    AddInOrder<SearchResultLayout>(key);
+                    // Add<SearchResultLayout>(key);
+
+                return Layouts[key];
             }
         }
+        */
 
         public SearchResultLayoutWithEndButton Tags
         {
             get
             {
-                if (!Layouts.ContainsKey(SublayoutType.Tags))
-                    Add<SearchResultLayoutWithEndButton>(SublayoutType.Tags);
+                var key = SublayoutType.Tags;
 
-                return Layouts[SublayoutType.Tags] as SearchResultLayoutWithEndButton;
+                if (!Layouts.ContainsKey(key))
+                    AddInOrder<SearchResultLayoutWithEndButton>(key);
+
+                return Layouts[key] as SearchResultLayoutWithEndButton;
             }
         }
 
@@ -67,10 +74,12 @@ namespace MyForms
         {
             get
             {
-                if (!Layouts.ContainsKey(SublayoutType.Dates))
-                    Add<SearchResultLayoutWithEndButton>(SublayoutType.Dates);
+                var key = SublayoutType.Dates;
 
-                return Layouts[SublayoutType.Dates] as SearchResultLayoutWithEndButton;
+                if (!Layouts.ContainsKey(key))
+                    AddInOrder<SearchResultLayoutWithEndButton>(key);
+
+                return Layouts[key] as SearchResultLayoutWithEndButton;
             }
         }
 
@@ -108,6 +117,16 @@ namespace MyForms
             );
         }
 
+        private void ReorderLayouts()
+        {
+            Controls.Clear();
+
+            foreach (var key in (SublayoutType[])Enum.GetValues(typeof(SublayoutType)))
+                if (Layouts.ContainsKey(key))
+                    Controls.Add(Layouts[key]);
+        }
+
+        /*
         public bool? Add<LayoutT>(
                 SublayoutType key,
                 SearchResult mySearchResult,
@@ -130,7 +149,7 @@ namespace MyForms
                 pane.Add(key, new LayoutT() { LabelText = labelText });
                 bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
                 pane.Layouts[key].ItemRemoved += pane.LayoutChanged;
-                pane.LayoutChanged.Invoke(pane, new EventArgs());
+                // pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return success;
             });
 
@@ -146,11 +165,8 @@ namespace MyForms
             ) where LayoutT : SearchResultLayout, new()
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
-            {
-                string labelText = $"{key}:";
-                bool success = pane.Add(key, new LayoutT() { LabelText = labelText }) ?? false;
-                return success;
-            });
+                pane.Add(key, new LayoutT() { LabelText = $"{key}:" }) ?? false
+            );
 
             return (bool?)MyForms.Forms.InvokeIfHandled(
                 this,
@@ -169,7 +185,86 @@ namespace MyForms
                 pane.Layouts.Add(key, value);
                 pane.Controls.Add(value);
                 pane.Layouts[key].ItemRemoved += pane.LayoutChanged;
-                // pane.LayoutChanged.Invoke(pane, new EventArgs());
+                return true;
+            });
+
+            return (bool?)MyForms.Forms.InvokeIfHandled(
+                this,
+                s => myMethod.Invoke(s as MasterPane),
+                IsHandleCreated
+            );
+        }
+        */
+
+        public bool? AddInOrder<LayoutT>(
+                SublayoutType key,
+                SearchResult mySearchResult,
+                SearchResultLayout.RemoveOn removeWhen = SearchResultLayout.RemoveOn.NONE
+            ) where LayoutT : SearchResultLayout, new()
+        {
+            return AddInOrder<LayoutT>(key, mySearchResult, null, removeWhen);
+        }
+
+        public bool? AddInOrder<LayoutT>(
+                SublayoutType key,
+                SearchResult mySearchResult,
+                string labelText,
+                SearchResultLayout.RemoveOn removeWhen = SearchResultLayout.RemoveOn.NONE
+            ) where LayoutT : SearchResultLayout, new()
+        {
+            var myMethod = new Func<MasterPane, bool>(pane =>
+            {
+                labelText = labelText ?? $"{key}:";
+                pane.AddInOrder(key, new LayoutT() { LabelText = labelText });
+                bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
+                pane.LayoutChanged.Invoke(pane, new EventArgs());
+                return success;
+            });
+
+            return (bool?)MyForms.Forms.InvokeIfHandled(
+                this,
+                s => myMethod.Invoke(s as MasterPane),
+                IsHandleCreated
+            );
+        }
+
+        public bool? AddInOrder<LayoutT>(
+                SublayoutType key
+            ) where LayoutT : SearchResultLayout, new()
+        {
+            var myMethod = new Func<MasterPane, bool>(pane =>
+                pane.AddInOrder(key, new LayoutT() { LabelText = $"{key}:" }) ?? false
+            );
+
+            return (bool?)MyForms.Forms.InvokeIfHandled(
+                this,
+                s => myMethod.Invoke(s as MasterPane),
+                IsHandleCreated
+            );
+        }
+
+        protected virtual void ProcessWhenItemRemoved(SublayoutType key)
+        {
+            Layouts.TryGetValue(key, out var layout);
+
+            if (layout?.FlowPanelEmpty() ?? false)
+                Remove(key);
+        }
+
+        public bool? AddInOrder(SublayoutType key, SearchResultLayout value)
+        {
+            var myMethod = new Func<MasterPane, bool>(pane =>
+            {
+                if (pane.Layouts.ContainsKey(key))
+                    return false;
+
+                pane.Layouts.Add(key, value);
+                pane.ReorderLayouts();
+
+                if (key == SublayoutType.Documents)
+                    pane.Layouts[key].ItemRemoved += (sender, e) => ProcessWhenItemRemoved(key);
+
+                pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return true;
             });
 

@@ -68,6 +68,22 @@ namespace MyForms
                 parent.Controls.Add(btn);
             });
         }
+
+        public static Control GetActiveControl(ContainerControl parent)
+        {
+            if (parent.ActiveControl is ContainerControl controlBox)
+                return GetActiveControl(controlBox);
+
+            return parent.ActiveControl;
+        }
+
+        public static bool IsTextWritable(Control myControl)
+        {
+            if (!(myControl is TextBox textBox))
+                return false;
+
+            return !textBox.ReadOnly;
+        }
     }
 }
 

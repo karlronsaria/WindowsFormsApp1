@@ -22,6 +22,16 @@ namespace MyForms
         {
             switch (e.KeyCode)
             {
+                case Keys.N:
+                    if (e.Modifiers == Keys.Control)
+                        MainPanels[LayoutType.Select].Tags.NewItemButton.Focus();
+
+                    break;
+                case Keys.D:
+                    if (e.Modifiers == Keys.Control)
+                        MainPanels[LayoutType.Select].Dates.NewItemButton.Focus();
+
+                    break;
                 case Keys.OemQuestion:
                     if (e.Modifiers == Keys.Control)
                         searchBox1.Focus();

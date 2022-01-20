@@ -131,7 +131,7 @@ namespace MyForms
                 labelText = labelText ?? $"{key}:";
                 pane.AddInOrder(key, new LayoutT() { LabelText = labelText });
                 bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
-                pane.LayoutChanged.Invoke(pane, new EventArgs());
+                // pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return success;
             });
 

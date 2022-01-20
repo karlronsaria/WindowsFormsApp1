@@ -34,6 +34,11 @@ namespace MyForms
                         MainPanels[LayoutType.Select].Dates.NewItemButton.Focus();
 
                     break;
+                case Keys.S:
+                    if (!Forms.IsTextWritable(what) && SetValuesButton1.Text == "Set")
+                        SetValues();
+
+                    break;
                 case Keys.OemQuestion:
                     if (e.Modifiers == Keys.Control)
                         searchBox1.Focus();
@@ -179,17 +184,35 @@ namespace MyForms
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
-            await Task.Run(() =>
-                MainPanels[LayoutType.Select]
+            var myMethod = new Func<Form1, bool>(s =>
+            {
+                s.MainPanels[LayoutType.Select]
                     .AddInOrder<SearchResultLayout>(
-                        key: MasterPane.SublayoutType.Documents,
+                        key: MasterPane.SublayoutType.Documents
+                    );
+
+                s.MainPanels[LayoutType.Select]
+                    .Layouts[MasterPane.SublayoutType.Documents]
+                    .Add(
                         mySearchResult: new SearchResult()
                         {
                             Text = (sender as SearchResult).Text,
                         },
                         removeWhen: SearchResultLayout.RemoveOn.CLICK
-                    )
-            );
+                    );
+
+                s.SelectValuePane_LayoutChanged(this, new EventArgs());
+                return true;
+            });
+
+            await Task.Run(() =>
+            {
+                _ = (bool?)MyForms.Forms.InvokeIfHandled(
+                    this,
+                    s => myMethod.Invoke(s as Form1),
+                    IsHandleCreated
+                );
+            });
         }
 
         private async void TagSelectValue_ClickAsync(object sender, EventArgs e)

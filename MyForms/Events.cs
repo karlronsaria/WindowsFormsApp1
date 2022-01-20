@@ -18,17 +18,35 @@ namespace MyForms
                 MyTreeViewPane.Load(dialog.SelectedPath);
         }
 
+        private static Control GetActiveControl(ContainerControl parent)
+        {
+            if (parent.ActiveControl is ContainerControl controlBox)
+                return GetActiveControl(controlBox);
+
+            return parent.ActiveControl;
+        }
+
+        private static bool IsTextWritable(Control myControl)
+        {
+            if (!(myControl is TextBox textBox))
+                return false;
+
+            return !textBox.ReadOnly;
+        }
+
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            var what = GetActiveControl(this);
+
             switch (e.KeyCode)
             {
                 case Keys.N:
-                    if (e.Modifiers == Keys.Control)
+                    if (!IsTextWritable(what))
                         MainPanels[LayoutType.Select].Tags.NewItemButton.Focus();
 
                     break;
                 case Keys.D:
-                    if (e.Modifiers == Keys.Control)
+                    if (!IsTextWritable(what))
                         MainPanels[LayoutType.Select].Dates.NewItemButton.Focus();
 
                     break;
@@ -38,6 +56,11 @@ namespace MyForms
 
                     break;
             }
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
         }
 
         private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)

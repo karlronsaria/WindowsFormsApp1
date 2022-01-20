@@ -233,7 +233,6 @@ namespace MyForms
 
             if (!documentsPanel.Any())
             {
-                // selectPanel.Remove(MasterPane.SublayoutType.Documents);
                 SetValuesButton1.Text = "New";
                 _setValuesButton_onClick = ProcessAddNewItemToPanel;
                 return;

@@ -41,22 +41,6 @@ namespace MyForms
 
         public EventHandler LayoutChanged { get; set; } = delegate { };
 
-        /*
-        public SearchResultLayout Documents
-        {
-            get
-            {
-                var key = SublayoutType.Documents;
-
-                if (!Layouts.ContainsKey(key))
-                    AddInOrder<SearchResultLayout>(key);
-                    // Add<SearchResultLayout>(key);
-
-                return Layouts[key];
-            }
-        }
-        */
-
         public SearchResultLayoutWithEndButton Tags
         {
             get
@@ -125,76 +109,6 @@ namespace MyForms
                 if (Layouts.ContainsKey(key))
                     Controls.Add(Layouts[key]);
         }
-
-        /*
-        public bool? Add<LayoutT>(
-                SublayoutType key,
-                SearchResult mySearchResult,
-                SearchResultLayout.RemoveOn removeWhen = SearchResultLayout.RemoveOn.NONE
-            ) where LayoutT : SearchResultLayout, new()
-        {
-            return Add<LayoutT>(key, mySearchResult, null, removeWhen);
-        }
-
-        public bool? Add<LayoutT>(
-                SublayoutType key,
-                SearchResult mySearchResult,
-                string labelText,
-                SearchResultLayout.RemoveOn removeWhen = SearchResultLayout.RemoveOn.NONE
-            ) where LayoutT : SearchResultLayout, new()
-        {
-            var myMethod = new Func<MasterPane, bool>(pane =>
-            {
-                labelText = labelText ?? $"{key}:";
-                pane.Add(key, new LayoutT() { LabelText = labelText });
-                bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
-                pane.Layouts[key].ItemRemoved += pane.LayoutChanged;
-                // pane.LayoutChanged.Invoke(pane, new EventArgs());
-                return success;
-            });
-
-            return (bool?)MyForms.Forms.InvokeIfHandled(
-                this,
-                s => myMethod.Invoke(s as MasterPane),
-                IsHandleCreated
-            );
-        }
-
-        public bool? Add<LayoutT>(
-                SublayoutType key
-            ) where LayoutT : SearchResultLayout, new()
-        {
-            var myMethod = new Func<MasterPane, bool>(pane =>
-                pane.Add(key, new LayoutT() { LabelText = $"{key}:" }) ?? false
-            );
-
-            return (bool?)MyForms.Forms.InvokeIfHandled(
-                this,
-                s => myMethod.Invoke(s as MasterPane),
-                IsHandleCreated
-            );
-        }
-
-        public bool? Add(SublayoutType key, SearchResultLayout value)
-        {
-            var myMethod = new Func<MasterPane, bool>(pane =>
-            {
-                if (pane.Layouts.ContainsKey(key))
-                    return false;
-
-                pane.Layouts.Add(key, value);
-                pane.Controls.Add(value);
-                pane.Layouts[key].ItemRemoved += pane.LayoutChanged;
-                return true;
-            });
-
-            return (bool?)MyForms.Forms.InvokeIfHandled(
-                this,
-                s => myMethod.Invoke(s as MasterPane),
-                IsHandleCreated
-            );
-        }
-        */
 
         public bool? AddInOrder<LayoutT>(
                 SublayoutType key,

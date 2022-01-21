@@ -51,7 +51,6 @@ namespace MyForms
         protected void ProcessNewItemButton(object sender, EventArgs e)
         {
             Remove(NewItemButton);
-
             var myTextBox = new TextBox();
             Add(myTextBox);
             myTextBox.Focus();

@@ -266,8 +266,23 @@ namespace MyForms
 
         private void ProcessSetValuesAndClearPanel(object sender, EventArgs e)
         {
-            SetValues();
-            MainPanels[LayoutType.Select].Clear();
+            // link: https://stackoverflow.com/questions/3845695/is-there-a-builtin-confirmation-dialog-in-windows-forms
+            // retrieved: 2022_01_20
+
+            var confirmResult = MessageBox.Show(
+                text: MainPanels[LayoutType.Select].ToString(),
+                caption: "Confirm setting values",
+                buttons: MessageBoxButtons.YesNo
+            );
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                SetValues();
+                MainPanels[LayoutType.Select].Clear();
+                return;
+            }
+
+            return;
         }
 
         private void ProcessAddNewItemToPanel(object sender, EventArgs e)

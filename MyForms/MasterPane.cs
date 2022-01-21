@@ -6,6 +6,8 @@ namespace MyForms
 {
     public class MasterPane : FlowLayoutPanel
     {
+        public const string TOSTRING_SPACING = "    ";
+
         public enum SublayoutType : int
         {
             Documents,
@@ -203,6 +205,28 @@ namespace MyForms
         public bool Any()
         {
             return Layouts.Count > 0;
+        }
+
+        public override string ToString()
+        {
+            string text = "";
+
+            foreach (var key in (MasterPane.SublayoutType[])Enum.GetValues(typeof(MasterPane.SublayoutType)))
+            {
+                if (Layouts.ContainsKey(key))
+                {
+                    text += $"{key}:\n\n";
+
+                    foreach (string value in GetValues(key))
+                    {
+                        text += $"{TOSTRING_SPACING}{value}\n";
+                    }
+
+                    text += "\n";
+                }
+            }
+
+            return text;
         }
     }
 }

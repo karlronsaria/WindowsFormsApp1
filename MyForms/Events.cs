@@ -36,7 +36,7 @@ namespace MyForms
                     break;
                 case Keys.S:
                     if (!Forms.IsTextWritable(what) && SetValuesButton1.Text == "Set")
-                        SetValues();
+                        ProcessSetValuesAndClearPanel(this, new EventArgs());
 
                     break;
                 case Keys.OemQuestion:
@@ -169,15 +169,35 @@ namespace MyForms
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
 
+            var myMethod = new Func<Form1, bool>(s =>
+            {
+                s.MainPanels[LayoutType.Select]
+                    .AddInOrder<SearchResultLayoutWithEndButton>(
+                        key: MasterPane.SublayoutType.Tags
+                    );
+
+                s.MainPanels[LayoutType.Select]
+                    .Layouts[MasterPane.SublayoutType.Tags]
+                    .Add(
+                        mySearchResult: new SearchResult()
+                        {
+                            Text = (sender as SearchResult).Text,
+                        },
+                        removeWhen: SearchResultLayout.RemoveOn.CLICK
+                    );
+
+                s.SelectValuePane_LayoutChanged(this, new EventArgs());
+                return true;
+            });
+
             await Task.Run(() =>
-                MainPanels[LayoutType.Select].Tags.Add(
-                    mySearchResult: new SearchResult()
-                    {
-                        Text = (sender as SearchResult).Text,
-                    },
-                    removeWhen: SearchResultLayout.RemoveOn.CLICK
-                )
-            );
+            {
+                _ = (bool?)MyForms.Forms.InvokeIfHandled(
+                    this,
+                    s => myMethod.Invoke(s as Form1),
+                    IsHandleCreated
+                );
+            });
         }
 
         private async void DocumentSearchResult_DoubleClickAsync(object sender, EventArgs e)
@@ -290,12 +310,12 @@ namespace MyForms
             valuesAreSettable = false;
 
             foreach (
-                var layouts in
+                var layout in
                     from l in selectPanel.Layouts.Values
                     where l is SearchResultLayoutWithEndButton
                     select l
                 )
-                valuesAreSettable |= layouts.Count > 0;
+                valuesAreSettable |= layout.Count > 0;
 
             if (!valuesAreSettable)
             {

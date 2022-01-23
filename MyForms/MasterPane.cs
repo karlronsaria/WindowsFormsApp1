@@ -16,7 +16,7 @@ namespace MyForms
         }
 
         internal class LayoutDictionary :
-            Dictionary<SublayoutType, SearchResultLayout>
+            Dictionary<SublayoutType, ILayout>
         {
             protected new void Clear()
             {
@@ -115,8 +115,8 @@ namespace MyForms
         public bool? AddInOrder<LayoutT>(
                 SublayoutType key,
                 SearchResult mySearchResult,
-                SearchResultLayout.RemoveOn removeWhen = SearchResultLayout.RemoveOn.NONE
-            ) where LayoutT : SearchResultLayout, new()
+                ILayout.RemoveOn removeWhen = ILayout.RemoveOn.NONE
+            ) where LayoutT : ILayout, new()
         {
             return AddInOrder<LayoutT>(key, mySearchResult, null, removeWhen);
         }
@@ -125,8 +125,8 @@ namespace MyForms
                 SublayoutType key,
                 SearchResult mySearchResult,
                 string labelText,
-                SearchResultLayout.RemoveOn removeWhen = SearchResultLayout.RemoveOn.NONE
-            ) where LayoutT : SearchResultLayout, new()
+                ILayout.RemoveOn removeWhen = ILayout.RemoveOn.NONE
+            ) where LayoutT : ILayout, new()
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
             {
@@ -146,7 +146,7 @@ namespace MyForms
 
         public bool? AddInOrder<LayoutT>(
                 SublayoutType key
-            ) where LayoutT : SearchResultLayout, new()
+            ) where LayoutT : ILayout, new()
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
                 pane.AddInOrder(key, new LayoutT() { LabelText = $"{key}:" }) ?? false
@@ -167,7 +167,7 @@ namespace MyForms
                 Remove(key);
         }
 
-        public bool? AddInOrder(SublayoutType key, SearchResultLayout value)
+        public bool? AddInOrder(SublayoutType key, ILayout value)
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
             {
@@ -198,7 +198,7 @@ namespace MyForms
 
         public IEnumerable<string> GetValues(SublayoutType key)
         {
-            Layouts.TryGetValue(key, out SearchResultLayout subpanel);
+            Layouts.TryGetValue(key, out ILayout subpanel);
             return subpanel?.Values;
         }
 

@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DateText.cs" />
     <Compile Include="Defaults.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -78,7 +79,7 @@
     <Compile Include="SearchResult.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SearchResultLayout.cs">
+    <Compile Include="Layout.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TreeViewPane.cs" />

@@ -4,10 +4,96 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
-    public class SearchResultLayoutWithEndButton : SearchResultLayout
+    public abstract class ISearchResult : System.Windows.Forms.TextBox
     {
-        public const string NEW_ITEM_TEXT = " + ";
+        public ISearchResult() : base()
+        {
+            base.ReadOnly = true;
+        }
 
+        public abstract string ToolTip { get; set; }
+
+        public new bool ReadOnly { get => base.ReadOnly; }
+
+        public new string Name { get => base.Name; }
+
+        public new string Text
+        {
+            get
+            {
+                return base.Text;
+            }
+
+            set
+            {
+                base.Text = value;
+                base.Name = value;
+                Size = TextRenderer.MeasureText(base.Text, Font);
+            }
+        }
+    }
+
+    public abstract class ILayout : System.Windows.Forms.FlowLayoutPanel
+    {
+        public enum RemoveOn : int
+        {
+            NONE,
+            CLICK,
+            DOUBLE_CLICK,
+            CONTROL_CLICK,
+            SHIFT_CLICK,
+        }
+
+        public EventHandler ItemRemoved { get; set; } = delegate { };
+
+        public abstract string LabelText { get; set; }
+
+        public abstract int Count { get; }
+
+        public abstract IEnumerable<string> Values { get; }
+
+        public abstract bool FlowPanelEmpty();
+
+        public abstract bool? Add(ISearchResult mySearchResult, RemoveOn removeWhen);
+
+        public bool Any()
+        {
+            return Count > 0;
+        }
+    }
+
+    public class DateLayoutWithEndButton : LayoutWithEndButton<DateResult>
+    {
+        public DateLayoutWithEndButton() : base() { }
+
+        public DateLayoutWithEndButton(
+                int spacingHeight
+            ) : base(spacingHeight) { }
+
+        public DateLayoutWithEndButton(
+                Control parent,
+                string labelText,
+                int spacingHeight = DEFAULT_SPACING_HEIGHT
+            ) : base(parent, labelText, spacingHeight) { }
+    }
+
+    public class SearchResultLayout : Layout<SearchResult>
+    {
+        public SearchResultLayout() : base() { }
+
+        public SearchResultLayout(
+                int spacingHeight
+            ) : base(spacingHeight) { }
+
+        public SearchResultLayout(
+                Control parent,
+                string labelText,
+                int spacingHeight = DEFAULT_SPACING_HEIGHT
+            ) : base(parent, labelText, spacingHeight) { }
+    }
+
+    public class SearchResultLayoutWithEndButton : LayoutWithEndButton<SearchResult>
+    {
         public SearchResultLayoutWithEndButton() : base() { }
 
         public SearchResultLayoutWithEndButton(
@@ -19,15 +105,33 @@ namespace MyForms
                 string labelText,
                 int spacingHeight = DEFAULT_SPACING_HEIGHT
             ) : base(parent, labelText, spacingHeight) { }
+    }
 
-        private readonly SearchResult _newItemButton = new SearchResult()
+    public class LayoutWithEndButton<ButtonT> : Layout<ButtonT>
+        where ButtonT : ISearchResult, new()
+    {
+        public const string NEW_ITEM_TEXT = " + ";
+
+        public LayoutWithEndButton() : base() { }
+
+        public LayoutWithEndButton(
+                int spacingHeight
+            ) : base(spacingHeight) { }
+
+        public LayoutWithEndButton(
+                Control parent,
+                string labelText,
+                int spacingHeight = DEFAULT_SPACING_HEIGHT
+            ) : base(parent, labelText, spacingHeight) { }
+
+        private readonly ButtonT _newItemButton = new ButtonT()
         {
             Text = NEW_ITEM_TEXT,
             BackColor = System.Drawing.Color.DimGray,
             ToolTip = "New Item",
         };
 
-        public SearchResult NewItemButton
+        public ButtonT NewItemButton
         {
             get
             {
@@ -71,7 +175,7 @@ namespace MyForms
 
                         if (!String.IsNullOrWhiteSpace(text))
                             Add(
-                                mySearchResult: new SearchResult() { Text = text, },
+                                mySearchResult: new ButtonT() { Text = text, },
                                 removeWhen: RemoveOn.CLICK
                             );
 
@@ -102,7 +206,8 @@ namespace MyForms
         }
     }
 
-    public class SearchResultLayout : System.Windows.Forms.FlowLayoutPanel
+    public class Layout<ButtonT> : ILayout
+        where ButtonT : ISearchResult, new()
     {
         public const int DEFAULT_SPACING_HEIGHT = 10;
         public const FlowDirection DEFAULT_FLOW_DIRECTION = FlowDirection.LeftToRight;
@@ -122,13 +227,13 @@ namespace MyForms
             AutoSize = true;
         }
 
-        public SearchResultLayout()
+        public Layout()
         {
             Initialize();
             SpacingHeight = DEFAULT_SPACING_HEIGHT;
         }
 
-        public SearchResultLayout(
+        public Layout(
                 int spacingHeight
             ) : base()
         {
@@ -136,7 +241,7 @@ namespace MyForms
             SpacingHeight = spacingHeight;
         }
 
-        public SearchResultLayout(
+        public Layout(
                 Control parent,
                 string labelText,
                 int spacingHeight = DEFAULT_SPACING_HEIGHT
@@ -180,7 +285,7 @@ namespace MyForms
 
         public int SpacingHeight { get; }
 
-        public string LabelText
+        public override string LabelText
         {
             get
             {
@@ -204,7 +309,7 @@ namespace MyForms
 
         protected virtual int LastItemIndex { get => FlowPanel.Controls.Count - 1; }
 
-        public IEnumerable<string> Values
+        public override IEnumerable<string> Values
         {
             get
             {
@@ -216,8 +321,6 @@ namespace MyForms
                 return list;
             }
         }
-
-        public EventHandler ItemRemoved { get; set; } = delegate { };
 
         protected bool HasInstance()
         {
@@ -302,16 +405,7 @@ namespace MyForms
             );
         }
 
-        public enum RemoveOn : int
-        {
-            NONE,
-            CLICK,
-            DOUBLE_CLICK,
-            CONTROL_CLICK,
-            SHIFT_CLICK,
-        }
-
-        public bool? Add(SearchResult mySearchResult, RemoveOn removeWhen = RemoveOn.NONE)
+        public override bool? Add(ISearchResult mySearchResult, RemoveOn removeWhen = RemoveOn.NONE)
         {
             if (!HasInstance())
                 Build();
@@ -390,17 +484,12 @@ namespace MyForms
             );
         }
 
-        public int Count
+        public override int Count
         {
             get => LastItemIndex + 1;
         }
 
-        public bool Any()
-        {
-            return Count > 0;
-        }
-
-        public bool FlowPanelEmpty()
+        public override bool FlowPanelEmpty()
         {
             return FlowPanel.Controls.Count == 0;
         }

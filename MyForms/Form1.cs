@@ -169,7 +169,11 @@ namespace MyForms
                     mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
 
                     await Task.Run(() =>
-                        MainPanels[LayoutType.Search].Tags.Add(mySearchResult)
+                        MainPanels[LayoutType.Search]
+                            .AddInOrder<SearchResultLayout>(
+                                key: MasterPane.SublayoutType.Tags,
+                                mySearchResult: mySearchResult
+                            )
                     );
                 }
             }

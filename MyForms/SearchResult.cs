@@ -3,16 +3,32 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
-    public class SearchResult : TextBox
+    public class DateResult : SearchResult
+    {
+        public DateResult(): base()
+        {
+            DateText.ToDateTextBox<DateResult>(this);
+        }
+
+        public DateResult(
+                string text,
+                EventHandler onClick,
+                EventHandler onDoubleClick
+            ): base(text, onClick, onDoubleClick)
+        {
+            DateText.ToDateTextBox<DateResult>(this);
+        }
+    }
+
+    public class SearchResult : ISearchResult
     {
         public const int TOOL_TIP_AUTOMATIC_DELAY = 500;
 
         private string _toolTipText;
         private EventHandler _onMouseHover;
 
-        public SearchResult()
+        public SearchResult(): base()
         {
-            base.ReadOnly = true;
             AutoSize = true;
             Cursor = Cursors.Arrow;
         }
@@ -21,33 +37,14 @@ namespace MyForms
                 string text,
                 EventHandler onClick,
                 EventHandler onDoubleClick
-            )
+            ): base()
         {
             Text = text;
             Click += onClick;
             DoubleClick += onDoubleClick;
         }
 
-        public new bool ReadOnly { get => base.ReadOnly; }
-
-        public new string Name { get => base.Name; }
-
-        public new string Text
-        {
-            get
-            {
-                return base.Text;
-            }
-
-            set
-            {
-                base.Text = value;
-                base.Name = value;
-                Size = TextRenderer.MeasureText(base.Text, Font);
-            }
-        }
-
-        public string ToolTip
+        public override string ToolTip
         {
             get
             {

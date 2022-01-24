@@ -62,19 +62,61 @@ namespace MyForms
         }
     }
 
-    public class DateLayoutWithEndButton : LayoutWithEndButton<DateResult>
+    public class DateLayoutWithEndButton : LayoutWithEndButton<SearchResult>
     {
-        public DateLayoutWithEndButton() : base() { }
+        public static void HandleDateTextChange(TextBox textBox)
+        {
+            if (Application.DateText.TryGetDateString(textBox.Text, out string newText))
+            {
+                textBox.Text = newText;
+                textBox.Select(textBox.TextLength, 0);
+            }
+        }
+
+        public static bool HandleDateKeyPress(TextBox textBox, KeyPressEventArgs e)
+        {
+            if (Application.DateText.GetNextPartialDateString(
+                    keyChar: e.KeyChar,
+                    input: textBox.Text,
+                    nextPartialDate: out string newText
+                ))
+            {
+                textBox.Text = newText;
+                textBox.Select(textBox.TextLength, 0);
+                return e.Handled = true;
+            }
+
+            return e.Handled;
+        }
+
+        public static T ToDateTextBox<T>(T textBox)
+            where T : TextBox, new()
+        {
+            textBox.KeyPress += (sender, e) => HandleDateKeyPress(textBox as TextBox, e);
+            textBox.TextChanged += (sender, e) => HandleDateTextChange(textBox as TextBox);
+            return textBox;
+        }
+
+        public DateLayoutWithEndButton() : base()
+        {
+            ToDateTextBox<TextBox>(NewItemTextBox);
+        }
 
         public DateLayoutWithEndButton(
                 int spacingHeight
-            ) : base(spacingHeight) { }
+            ) : base(spacingHeight)
+        {
+            ToDateTextBox<TextBox>(NewItemTextBox);
+        }
 
         public DateLayoutWithEndButton(
                 Control parent,
                 string labelText,
                 int spacingHeight = DEFAULT_SPACING_HEIGHT
-            ) : base(parent, labelText, spacingHeight) { }
+            ) : base(parent, labelText, spacingHeight)
+        {
+            ToDateTextBox<TextBox>(NewItemTextBox);
+        }
     }
 
     public class SearchResultLayout : Layout<SearchResult>
@@ -112,17 +154,26 @@ namespace MyForms
     {
         public const string NEW_ITEM_TEXT = " + ";
 
-        public LayoutWithEndButton() : base() { }
+        public LayoutWithEndButton() : base()
+        {
+            BuildNewItemTextBox();
+        }
 
         public LayoutWithEndButton(
                 int spacingHeight
-            ) : base(spacingHeight) { }
+            ) : base(spacingHeight)
+        {
+            BuildNewItemTextBox();
+        }
 
         public LayoutWithEndButton(
                 Control parent,
                 string labelText,
                 int spacingHeight = DEFAULT_SPACING_HEIGHT
-            ) : base(parent, labelText, spacingHeight) { }
+            ) : base(parent, labelText, spacingHeight)
+        {
+            BuildNewItemTextBox();
+        }
 
         private readonly ButtonT _newItemButton = new ButtonT()
         {
@@ -152,26 +203,23 @@ namespace MyForms
             }
         }
 
-        protected void ProcessNewItemButton(object sender, EventArgs e)
-        {
-            Remove(NewItemButton);
-            var myTextBox = new TextBox();
-            Add(myTextBox);
-            myTextBox.Focus();
+        private readonly TextBox _newItemTextBox = new TextBox();
 
-            myTextBox.LostFocus += (lostFocusSender, lostFocusArgs) =>
+        private void BuildNewItemTextBox()
+        {
+            NewItemTextBox.LostFocus += (lostFocusSender, lostFocusArgs) =>
             {
-                Remove(myTextBox);
+                Remove(NewItemTextBox);
                 Add(NewItemButton);
             };
 
-            myTextBox.KeyDown += (keyDownSender, keyDownArgs) =>
+            NewItemTextBox.KeyDown += (keyDownSender, keyDownArgs) =>
             {
                 switch (keyDownArgs.KeyCode)
                 {
                     case Keys.Enter:
-                        string text = myTextBox.Text;
-                        Remove(myTextBox);
+                        string text = NewItemTextBox.Text;
+                        Remove(NewItemTextBox);
 
                         if (!String.IsNullOrWhiteSpace(text))
                             Add(
@@ -182,11 +230,29 @@ namespace MyForms
                         Add(NewItemButton);
                         break;
                     case Keys.Escape:
-                        Remove(myTextBox);
+                        Remove(NewItemTextBox);
                         Add(NewItemButton);
                         break;
                 }
             };
+        }
+
+        public TextBox NewItemTextBox
+        {
+            get
+            {
+                return _newItemTextBox;
+            }
+        }
+
+        protected void ProcessNewItemButton(object sender, EventArgs e)
+        {
+            Remove(NewItemButton);
+            // var myTextBox = new TextBox();
+            NewItemTextBox.Text = "";
+            Add(NewItemTextBox);
+            NewItemTextBox.Focus();
+
         }
 
         protected override void AddFlowPanel()

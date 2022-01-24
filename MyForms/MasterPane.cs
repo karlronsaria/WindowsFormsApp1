@@ -56,16 +56,16 @@ namespace MyForms
             }
         }
 
-        public SearchResultLayoutWithEndButton Dates
+        public DateLayoutWithEndButton Dates
         {
             get
             {
                 var key = SublayoutType.Dates;
 
                 if (!Layouts.ContainsKey(key))
-                    AddInOrder<SearchResultLayoutWithEndButton>(key);
+                    AddInOrder<DateLayoutWithEndButton>(key);
 
-                return Layouts[key] as SearchResultLayoutWithEndButton;
+                return Layouts[key] as DateLayoutWithEndButton;
             }
         }
 

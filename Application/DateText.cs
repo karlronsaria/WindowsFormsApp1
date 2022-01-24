@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
-namespace MyForms
+namespace Application
 {
     public static class DateText
     {
@@ -28,33 +27,22 @@ namespace MyForms
 
         public static readonly Regex DATE_PATTERN = new Regex(@"^(?<year>\d{4})_(?<month>\d{2})_(?<day>\d{2})$");
 
-        public static T New<T>()
-            where T : TextBox, new()
+        public static bool TryGetDateString(string input, out string dateString)
         {
-            return ToDateTextBox(new T());
-        }
-
-        public static T ToDateTextBox<T>(T textBox)
-            where T : TextBox, new()
-        {
-            textBox.KeyPress += (sender, e) => HandleDateKeyPress(textBox as TextBox, e);
-            textBox.TextChanged += (sender, e) => HandleDateTextChange(textBox as TextBox, e);
-            return textBox;
-        }
-
-        public static void HandleDateTextChange(TextBox textBox, EventArgs e)
-        {
-            if (textBox.TextLength > DATE_STRING_LENGTH)
+            if (input.Length > DATE_STRING_LENGTH)
             {
-                textBox.Text = textBox.Text.Substring(0, DATE_STRING_LENGTH);
-                textBox.Select(textBox.TextLength, 0);
+                dateString = input.Substring(0, DATE_STRING_LENGTH);
+                return true;
             }
 
-            if (textBox.TextLength == DATE_STRING_LENGTH)
+            if (input.Length == DATE_STRING_LENGTH)
             {
-                textBox.Text = ToNearestCorrectDate(textBox.Text);
-                textBox.Select(textBox.TextLength, 0);
+                dateString = ToNearestCorrectDate(input);
+                return true;
             }
+
+            dateString = "";
+            return false;
         }
 
         public static string ToNearestCorrectDate(string dateString)
@@ -82,41 +70,37 @@ namespace MyForms
             return $"{year:D4}_{month:D2}_{day:D2}";
         }
 
-        public static bool HandleDateKeyPress(TextBox textBox, KeyPressEventArgs e)
+        public static bool GetNextPartialDateString(char keyChar, string input, out string nextPartialDate)
         {
-            if (e.KeyChar == '\b' && MatchesDelimiterPostPosition(textBox.Text))
+            nextPartialDate = input;
+
+            if (keyChar == '\b' && MatchesDelimiterPostPosition(input))
             {
-                textBox.Text = textBox.Text.Substring(0, textBox.TextLength - 2);
-                textBox.Select(textBox.TextLength, 0);
-                return e.Handled = true;
+                nextPartialDate = input.Substring(0, input.Length - 2);
+                return true;
             }
 
-            if (Char.IsControl(e.KeyChar))
-                return e.Handled;
+            if (Char.IsControl(keyChar))
+                return false;
 
-            if (e.KeyChar == '-' || e.KeyChar == '_')
+            if (keyChar == '-' || keyChar == '_')
             {
-                if (MatchesDelimiterPrePosition(textBox.Text))
-                    textBox.Text += '_';
+                if (MatchesDelimiterPrePosition(input))
+                    nextPartialDate += '_';
 
-                textBox.Select(textBox.TextLength, 0);
-                return e.Handled = true;
+                return true;
             }
 
-            if (textBox.Text.Length == DATE_STRING_LENGTH || !Char.IsDigit(e.KeyChar))
+            if (input.Length == DATE_STRING_LENGTH || !Char.IsDigit(keyChar))
+                return true;
+
+            if (MatchesDelimiterPrePosition(input))
             {
-                textBox.Select(textBox.TextLength, 0);
-                return e.Handled = true;
+                nextPartialDate += $"_{keyChar}";
+                return true;
             }
 
-            if (MatchesDelimiterPrePosition(textBox.Text))
-            {
-                textBox.Text += $"_{e.KeyChar}";
-                textBox.Select(textBox.TextLength, 0);
-                return e.Handled = true;
-            }
-
-            return e.Handled;
+            return false;
         }
 
         public static bool MatchesDelimiterPrePosition(string str)
@@ -127,6 +111,11 @@ namespace MyForms
         public static bool MatchesDelimiterPostPosition(string str)
         {
             return Regex.IsMatch(str, @"^\d{4}(-|_)\d(\d(-|_)\d)?$");
+        }
+
+        public static Match Match(string str)
+        {
+            return DATE_PATTERN.Match(str);
         }
     }
 }

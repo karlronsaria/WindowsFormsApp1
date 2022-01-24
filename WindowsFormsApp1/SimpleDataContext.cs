@@ -75,6 +75,30 @@ namespace Infrastructure
             ;
         }
 
+        public IEnumerable<string> GetNamesMatchingDate(string date)
+        {
+            return (
+                from document in _data.Documents
+                where document.Dates.Contains(System.DateTime.ParseExact(
+                    date,
+                    format: Application.DateText.DATE_FORMAT,
+                    provider: null
+                ))
+                select document.Name
+            )
+            ;
+        }
+
+        public IEnumerable<string> GetDatesMatchingName(string name)
+        {
+            return (
+                from date in (GetDocumentMatchingName(name)?.Dates
+                    ?? new MyEnumerable<System.DateTime>())
+                select date.ToString(Application.DateText.DATE_FORMAT)
+            )
+            ;
+        }
+
         public IEnumerable<string> GetNamesMatchingTag(string tag)
         {
             return (
@@ -105,9 +129,9 @@ namespace Infrastructure
             ;
         }
 
-        public IEnumerable<string> GetTagsMatchingName(string tag)
+        public IEnumerable<string> GetTagsMatchingName(string name)
         {
-            return GetTagsMatchingDocument(GetDocumentMatchingName(tag));
+            return GetTagsMatchingDocument(GetDocumentMatchingName(name));
         }
 
         public void SetTags(IEnumerable<string> documentNames, IEnumerable<string> tagNames)
@@ -126,8 +150,13 @@ namespace Infrastructure
 
             foreach (var document in savedDocuments)
                 foreach (var tag in tagNames)
+                {
+                    if (document.Tags == null)
+                        document.Tags = new MyEnumerable<string>();
+
                     if (!document.Tags.Contains(tag))
                         document.Tags.Add(tag);
+                }
 
             foreach (var name in tagNames)
             {
@@ -146,8 +175,13 @@ namespace Infrastructure
                     select tag
                 ))
                     foreach (var documentId in savedDocumentIds)
-                        if (!(bool)myTag.DocumentIds?.Contains(documentId))
+                    {
+                        if (myTag.DocumentIds == null)
+                            myTag.DocumentIds = new MyEnumerable<int>();
+
+                        if (!myTag.DocumentIds.Contains(documentId))
                             myTag.DocumentIds.Add(documentId);
+                    }
             }
         }
 
@@ -171,8 +205,13 @@ namespace Infrastructure
 
             foreach (var document in savedDocuments)
                 foreach (var date in dateTimeObjects)
+                {
+                    if (document.Dates == null)
+                        document.Dates = new MyEnumerable<System.DateTime>();
+
                     if (!document.Dates.Contains(date))
                         document.Dates.Add(date);
+                }
         }
     }
 }

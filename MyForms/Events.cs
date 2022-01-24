@@ -152,6 +152,19 @@ namespace MyForms
             }
         }
 
+        private async void DateSearchResult_ClickAsync(object sender, EventArgs e)
+        {
+            if (Control.ModifierKeys == Keys.Control)
+            {
+                SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+
+                await ShowMatchingDateResults(
+                    myCancellationToken: SearchBoxChanged.Token,
+                    text: (sender as SearchResult)?.Text
+                );
+            }
+        }
+
         private async void DocumentSearchResult_ClickAsync(object sender, EventArgs e)
         {
             if (Control.ModifierKeys == Keys.Control)
@@ -183,7 +196,42 @@ namespace MyForms
                         {
                             Text = (sender as SearchResult).Text,
                         },
-                        removeWhen: SearchResultLayout.RemoveOn.CLICK
+                        removeWhen: ILayout.RemoveOn.CLICK
+                    );
+
+                s.SelectValuePane_LayoutChanged(this, new EventArgs());
+                return true;
+            });
+
+            await Task.Run(() =>
+            {
+                _ = (bool?)MyForms.Forms.InvokeIfHandled(
+                    this,
+                    s => myMethod.Invoke(s as Form1),
+                    IsHandleCreated
+                );
+            });
+        }
+
+        private async void DateSearchResult_DoubleClickAsync(object sender, EventArgs e)
+        {
+            SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+
+            var myMethod = new Func<Form1, bool>(s =>
+            {
+                s.MainPanels[LayoutType.Select]
+                    .AddInOrder<DateLayoutWithEndButton>(
+                        key: MasterPane.SublayoutType.Dates
+                    );
+
+                s.MainPanels[LayoutType.Select]
+                    .Layouts[MasterPane.SublayoutType.Dates]
+                    .Add(
+                        mySearchResult: new SearchResult()
+                        {
+                            Text = (sender as SearchResult).Text,
+                        },
+                        removeWhen: ILayout.RemoveOn.CLICK
                     );
 
                 s.SelectValuePane_LayoutChanged(this, new EventArgs());
@@ -218,7 +266,7 @@ namespace MyForms
                         {
                             Text = (sender as SearchResult).Text,
                         },
-                        removeWhen: SearchResultLayout.RemoveOn.CLICK
+                        removeWhen: ILayout.RemoveOn.CLICK
                     );
 
                 s.SelectValuePane_LayoutChanged(this, new EventArgs());

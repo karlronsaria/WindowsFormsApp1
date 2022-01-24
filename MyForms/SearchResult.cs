@@ -3,23 +3,6 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
-    public class DateResult : SearchResult
-    {
-        public DateResult(): base()
-        {
-            DateText.ToDateTextBox<DateResult>(this);
-        }
-
-        public DateResult(
-                string text,
-                EventHandler onClick,
-                EventHandler onDoubleClick
-            ): base(text, onClick, onDoubleClick)
-        {
-            DateText.ToDateTextBox<DateResult>(this);
-        }
-    }
-
     public class SearchResult : ISearchResult
     {
         public const int TOOL_TIP_AUTOMATIC_DELAY = 500;

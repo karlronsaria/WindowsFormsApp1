@@ -105,7 +105,7 @@ namespace MyForms
         }
 
         private async Task
-        ShowMatchingDocumentResults(
+        ShowMatchingDateResults(
                 CancellationToken myCancellationToken,
                 string text
             )
@@ -114,7 +114,39 @@ namespace MyForms
 
             var myFlowLayoutPanel = new SearchResultLayout(
                 parent: MainPanels[LayoutType.Search],
+                labelText: $"Documents with the date \"{text}\":"
+            );
+
+            try
+            {
+                foreach (var item in _database.GetNamesMatchingDate(text))
+                {
+                    myCancellationToken.ThrowIfCancellationRequested();
+                    var mySearchResult = new SearchResult() { Text = item };
+                    mySearchResult.Click += DocumentSearchResult_ClickAsync;
+                    mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
+                    await Task.Run(() => myFlowLayoutPanel.Add(mySearchResult));
+                }
+            }
+            catch (OperationCanceledException) { }
+        }
+
+        private async Task
+        ShowMatchingDocumentResults(
+                CancellationToken myCancellationToken,
+                string text
+            )
+        {
+            MainPanels[LayoutType.Search].Controls.Clear();
+
+            var tagsLayout = new SearchResultLayout(
+                parent: MainPanels[LayoutType.Search],
                 labelText: $"Tags for the document \"{text}\":"
+            );
+
+            var datesLayout = new SearchResultLayout(
+                parent: MainPanels[LayoutType.Search],
+                labelText: $"Dates for the document \"{text}\":"
             );
 
             try
@@ -125,7 +157,16 @@ namespace MyForms
                     var mySearchResult = new SearchResult() { Text = item };
                     mySearchResult.Click += TagSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
-                    await Task.Run(() => myFlowLayoutPanel.Add(mySearchResult));
+                    await Task.Run(() => tagsLayout.Add(mySearchResult));
+                }
+
+                foreach (var item in _database.GetDatesMatchingName(text))
+                {
+                    myCancellationToken.ThrowIfCancellationRequested();
+                    var mySearchResult = new SearchResult() { Text = item };
+                    mySearchResult.Click += DateSearchResult_ClickAsync;
+                    mySearchResult.DoubleClick += DateSearchResult_DoubleClickAsync;
+                    await Task.Run(() => datesLayout.Add(mySearchResult));
                 }
             }
             catch (OperationCanceledException) { }
@@ -176,6 +217,11 @@ namespace MyForms
                             )
                     );
                 }
+
+                if (Application.DateText.Match(text).Success)
+                {
+                    // TODO
+                }
             }
             catch (OperationCanceledException) { }
         }
@@ -204,10 +250,13 @@ namespace MyForms
 
             var tags = mainPanel.GetValues(MasterPane.SublayoutType.Tags);
 
-            if (tags == null)
-                return;
+            if (tags != null)
+                _database.SetTags(documents, tags);
 
-            _database.SetTags(documents, tags);
+            var dates = mainPanel.GetValues(MasterPane.SublayoutType.Dates);
+
+            if (dates != null)
+                _database.SetDates(documents, dates, Application.DateText.DATE_FORMAT);
         }
     }
 }

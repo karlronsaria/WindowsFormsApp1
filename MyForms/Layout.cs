@@ -220,13 +220,15 @@ namespace MyForms
                     case Keys.Enter:
                         string text = NewItemTextBox.Text;
                         Remove(NewItemTextBox);
+                        var newItem = new ButtonT() { Text = text, };
 
                         if (!String.IsNullOrWhiteSpace(text))
                             Add(
-                                mySearchResult: new ButtonT() { Text = text, },
+                                mySearchResult: newItem,
                                 removeWhen: RemoveOn.CLICK
                             );
 
+                        newItem.Focus();
                         Add(NewItemButton);
                         break;
                     case Keys.Escape:
@@ -248,11 +250,9 @@ namespace MyForms
         protected void ProcessNewItemButton(object sender, EventArgs e)
         {
             Remove(NewItemButton);
-            // var myTextBox = new TextBox();
             NewItemTextBox.Text = "";
             Add(NewItemTextBox);
             NewItemTextBox.Focus();
-
         }
 
         protected override void AddFlowPanel()

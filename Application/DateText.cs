@@ -6,10 +6,14 @@ namespace Application
 {
     public static class DateText
     {
-        public const string DATE_FORMAT = "yyyy_MM_dd";
-        public static readonly int DATE_STRING_LENGTH = DATE_FORMAT.Length;
+        public const string
+        DATE_FORMAT = "yyyy_MM_dd";
 
-        public static readonly Dictionary<int, int> DATE_TABLE = new Dictionary<int, int>()
+        public static readonly int
+        DATE_STRING_LENGTH = DATE_FORMAT.Length;
+
+        public static readonly Dictionary<int, int>
+        DATE_TABLE = new Dictionary<int, int>()
         {
             {1, 30},
             {2, 28},
@@ -25,7 +29,8 @@ namespace Application
             {12, 31},
         };
 
-        public static readonly Regex DATE_PATTERN = new Regex(@"^(?<year>\d{4})_(?<month>\d{2})_(?<day>\d{2})$");
+        public static readonly Regex
+        DATE_PATTERN = new Regex(@"^(?<year>\d{4})_(?<month>\d{2})_(?<day>\d{2})$");
 
         public static bool TryGetDateString(string input, out string dateString)
         {

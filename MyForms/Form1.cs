@@ -25,9 +25,15 @@ namespace MyForms
         private readonly LayoutDictionary _mainLayouts;
         private CancellationTokenSource _searchBoxChanged;
 
+        private void InitializeMyComponent()
+        {
+            this.selectValueLayoutPanel1.LayoutChanged += new System.EventHandler(this.SelectValuePane_LayoutChanged);
+        }
+
         public Form1(IDataContext myDatabase, string startingDirectory)
         {
             InitializeComponent();
+            InitializeMyComponent();
 
             _database = myDatabase;
             _myPreviewPane = new PreviewPane(splitContainer2.Panel2);

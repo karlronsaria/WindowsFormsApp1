@@ -41,7 +41,9 @@ namespace MyForms
             get => _sublayouts;
         }
 
-        public EventHandler LayoutChanged { get; set; } = delegate { };
+        // // OLD (2022_01_26)
+        // public EventHandler LayoutChanged { get; set; } = delegate { };
+        public EventHandler LayoutChanged { get; set; } = new EventHandler(delegate { return; });
 
         public SearchResultLayoutWithEndButton Tags
         {

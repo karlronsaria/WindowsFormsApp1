@@ -271,7 +271,6 @@
             this.selectValueLayoutPanel1.Size = new System.Drawing.Size(250, 328);
             this.selectValueLayoutPanel1.TabIndex = 1;
             this.selectValueLayoutPanel1.WrapContents = false;
-            this.selectValueLayoutPanel1.LayoutChanged += new System.EventHandler(this.SelectValuePane_LayoutChanged);
             // 
             // Form1
             // 

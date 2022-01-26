@@ -105,7 +105,16 @@ namespace MyForms
 
         private void ReorderLayouts()
         {
+            int i = 0;
+            var nonLayoutControls = new List<Control>();
+
+            while (i < Controls.Count && !(Controls[i] is ILayout))
+                nonLayoutControls.Add(Controls[i++]);
+
             Controls.Clear();
+
+            foreach (Control control in nonLayoutControls)
+                Controls.Add(control);
 
             foreach (var key in (SublayoutType[])Enum.GetValues(typeof(SublayoutType)))
                 if (Layouts.ContainsKey(key))

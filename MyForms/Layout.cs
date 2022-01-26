@@ -35,6 +35,12 @@ namespace MyForms
 
     public abstract class ILayout : System.Windows.Forms.FlowLayoutPanel
     {
+        public const int DEFAULT_SPACING_HEIGHT = 10;
+        public const FlowDirection DEFAULT_FLOW_DIRECTION = FlowDirection.LeftToRight;
+        public const DockStyle DEFAULT_DOCKSTYLE = DockStyle.None;
+        public const bool DEFAULT_AUTOSIZE_PREFERENCE = true;
+        public const bool DEFAULT_WRAP_CONTENTS_PREFERENCE = true;
+
         public enum RemoveOn : int
         {
             NONE,
@@ -42,6 +48,23 @@ namespace MyForms
             DOUBLE_CLICK,
             CONTROL_CLICK,
             SHIFT_CLICK,
+        }
+
+        public static Panel NewSpacing
+        {
+            get => new Panel()
+            {
+                Height = DEFAULT_SPACING_HEIGHT,
+            };
+        }
+
+        public static Label NewLabel
+        {
+            get => new Label()
+            {
+                Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                AutoSize = true,
+            };
         }
 
         public EventHandler ItemRemoved { get; set; } = delegate { };
@@ -100,6 +123,8 @@ namespace MyForms
         public DateLayoutWithEndButton() : base()
         {
             ToDateTextBox<TextBox>(NewItemTextBox);
+            ValidateText = text =>
+                DEFAULT_VALIDATE_TEXT(text) && Application.DateText.Match(text).Success;
         }
 
         public DateLayoutWithEndButton(
@@ -152,7 +177,13 @@ namespace MyForms
     public class LayoutWithEndButton<ButtonT> : Layout<ButtonT>
         where ButtonT : ISearchResult, new()
     {
+        public delegate bool TextValidater(string text);
+
         public const string NEW_ITEM_TEXT = " + ";
+        public static readonly TextValidater DEFAULT_VALIDATE_TEXT =
+            text => !String.IsNullOrWhiteSpace(text);
+
+        public TextValidater ValidateText = DEFAULT_VALIDATE_TEXT;
 
         public LayoutWithEndButton() : base()
         {
@@ -220,15 +251,19 @@ namespace MyForms
                     case Keys.Enter:
                         string text = NewItemTextBox.Text;
                         Remove(NewItemTextBox);
-                        var newItem = new ButtonT() { Text = text, };
 
-                        if (!String.IsNullOrWhiteSpace(text))
+                        if (ValidateText(text))
+                        {
+                            var newItem = new ButtonT() { Text = text, };
+
                             Add(
                                 mySearchResult: newItem,
                                 removeWhen: RemoveOn.CLICK
                             );
 
-                        newItem.Focus();
+                            newItem.Focus();
+                        }
+
                         Add(NewItemButton);
                         break;
                     case Keys.Escape:
@@ -275,12 +310,6 @@ namespace MyForms
     public class Layout<ButtonT> : ILayout
         where ButtonT : ISearchResult, new()
     {
-        public const int DEFAULT_SPACING_HEIGHT = 10;
-        public const FlowDirection DEFAULT_FLOW_DIRECTION = FlowDirection.LeftToRight;
-        public const DockStyle DEFAULT_DOCKSTYLE = DockStyle.None;
-        public const bool DEFAULT_AUTOSIZE_PREFERENCE = true;
-        public const bool DEFAULT_WRAP_CONTENTS_PREFERENCE = true;
-
         private readonly Control _parent = null;
         private Panel _spacing;
         private Label _label;
@@ -395,23 +424,14 @@ namespace MyForms
 
         private void AddSpacing()
         {
-            _spacing = new Panel()
-            {
-                Height = SpacingHeight,
-            };
-
+            _spacing = NewSpacing;
             this.Controls.Add(_spacing);
         }
 
         private void AddLabel(string text)
         {
-            _label = new Label()
-            {
-                Text = text,
-                Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                AutoSize = true,
-            };
-
+            _label = NewLabel;
+            _label.Text = text;
             this.Controls.Add(_label);
         }
 

@@ -137,17 +137,13 @@ namespace MyForms
                 string text
             )
         {
-            MainPanels[LayoutType.Search].Controls.Clear();
+            MainPanels[LayoutType.Search].Clear();
 
-            var tagsLayout = new SearchResultLayout(
-                parent: MainPanels[LayoutType.Search],
-                labelText: $"Tags for the document \"{text}\":"
-            );
+            var label = ILayout.NewLabel;
+            label.Text = $"Document: {text}";
 
-            var datesLayout = new SearchResultLayout(
-                parent: MainPanels[LayoutType.Search],
-                labelText: $"Dates for the document \"{text}\":"
-            );
+            MainPanels[LayoutType.Search].Controls.Add(label);
+            MainPanels[LayoutType.Search].Controls.Add(ILayout.NewSpacing);
 
             try
             {
@@ -157,7 +153,14 @@ namespace MyForms
                     var mySearchResult = new SearchResult() { Text = item };
                     mySearchResult.Click += TagSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
-                    await Task.Run(() => tagsLayout.Add(mySearchResult));
+
+                    await Task.Run(() =>
+                        MainPanels[LayoutType.Search]
+                            .AddInOrder<SearchResultLayout>(
+                                key: MasterPane.SublayoutType.Tags,
+                                mySearchResult: mySearchResult
+                            )
+                    );
                 }
 
                 foreach (var item in _database.GetDatesMatchingName(text))
@@ -166,7 +169,14 @@ namespace MyForms
                     var mySearchResult = new SearchResult() { Text = item };
                     mySearchResult.Click += DateSearchResult_ClickAsync;
                     mySearchResult.DoubleClick += DateSearchResult_DoubleClickAsync;
-                    await Task.Run(() => datesLayout.Add(mySearchResult));
+
+                    await Task.Run(() =>
+                        MainPanels[LayoutType.Search]
+                            .AddInOrder<SearchResultLayout>(
+                                key: MasterPane.SublayoutType.Dates,
+                                mySearchResult: mySearchResult
+                            )
+                    );
                 }
             }
             catch (OperationCanceledException) { }

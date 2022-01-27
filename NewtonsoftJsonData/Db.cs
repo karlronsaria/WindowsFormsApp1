@@ -9,12 +9,6 @@ namespace NewtonsoftJsonData
 
         public Db(string fileName)
         {
-            // string json = File.ReadAllText(fileName);
-            // _data = JsonConvert.DeserializeObject<T>(json);
-
-            // string jsonProxy = JsonConvert.DeserializeObject<string>(json);
-            // _data = JsonConvert.DeserializeObject<T>(jsonProxy);
-
             var serializer = new JsonSerializer();
 
             using (FileStream fs = File.Open(fileName, FileMode.Open))
@@ -27,5 +21,24 @@ namespace NewtonsoftJsonData
         }
 
         public T Data { get { return _data; } }
+
+        public static void OutFile(T data, string filePath)
+        {
+            var serializer = new JsonSerializer();
+
+            serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+
+            using (var sw = new StreamWriter(filePath))
+            using (var writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, data);
+            }
+        }
+
+        public void OutFile(string filePath)
+        {
+            Db<T>.OutFile(_data, filePath);
+        }
     }
 }

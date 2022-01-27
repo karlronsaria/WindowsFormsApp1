@@ -4,11 +4,11 @@ namespace MyForms
 {
     public interface IDataContext
     {
-        IEnumerable<string> GetTagsMatchingSubstring(string substring);
+        IEnumerable<string> GetTagsMatchingSubstring(string substring, bool exact = true);
 
         IEnumerable<string> GetTagsMatchingPattern(string pattern);
 
-        IEnumerable<string> GetNamesMatchingSubstring(string substring);
+        IEnumerable<string> GetNamesMatchingSubstring(string substring, bool exact = true);
 
         IEnumerable<string> GetNamesMatchingPattern(string pattern);
 

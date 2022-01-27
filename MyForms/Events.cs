@@ -139,6 +139,18 @@ namespace MyForms
             await ChangeResultsAsync(SearchBoxChanged.Token, LayoutType.Search);
         }
 
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Escape:
+                    this.searchPanel1.Focus();
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                    break;
+            }
+        }
+
         private async void TagSearchResult_ClickAsync(object sender, EventArgs e)
         {
             if (Control.ModifierKeys == Keys.Control)

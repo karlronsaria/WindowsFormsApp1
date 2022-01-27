@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace MyForms
 {
@@ -200,9 +201,14 @@ namespace MyForms
             if (text.Length == 0)
                 return;
 
+            Match exact = Regex.Match(text, "(?<=^\\s*\").*(?=\"\\s*$)");
+
+            if (exact.Success)
+                text = exact.Groups[1].Value;
+
             try
             {
-                foreach (string item in _database.GetNamesMatchingSubstring(text))
+                foreach (string item in _database.GetNamesMatchingSubstring(text, exact.Success))
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
                     var mySearchResult = new SearchResult() { Text = item };
@@ -218,7 +224,7 @@ namespace MyForms
                     );
                 }
 
-                foreach (string item in _database.GetTagsMatchingSubstring(text))
+                foreach (string item in _database.GetTagsMatchingSubstring(text, exact.Success))
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
                     var mySearchResult = new SearchResult() { Text = item };
@@ -232,11 +238,6 @@ namespace MyForms
                                 mySearchResult: mySearchResult
                             )
                     );
-                }
-
-                if (Application.DateText.Match(text).Success)
-                {
-                    // TODO
                 }
             }
             catch (OperationCanceledException) { }

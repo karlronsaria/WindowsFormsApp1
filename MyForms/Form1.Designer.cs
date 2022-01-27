@@ -30,6 +30,9 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.openDirectoryStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -44,6 +47,7 @@
             this.setPanel1 = new System.Windows.Forms.Panel();
             this.SetValuesButton1 = new System.Windows.Forms.Button();
             this.selectValueLayoutPanel1 = new MyForms.MasterPane();
+            this.exportAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -68,7 +72,8 @@
             // 
             this.menuStrip1.BackColor = System.Drawing.SystemColors.WindowFrame;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openDirectoryStripMenuItem});
+            this.openDirectoryStripMenuItem,
+            this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1014, 24);
@@ -82,6 +87,29 @@
             this.openDirectoryStripMenuItem.Size = new System.Drawing.Size(99, 20);
             this.openDirectoryStripMenuItem.Text = "Open Directory";
             this.openDirectoryStripMenuItem.Click += new System.EventHandler(this.OpenDirectoryStripMenuItem_Click);
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importToolStripMenuItem,
+            this.exportToolStripMenuItem,
+            this.exportAsToolStripMenuItem});
+            this.fileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Window;
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importToolStripMenuItem.Text = "Import";
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem.Text = "Export";
             // 
             // splitContainer1
             // 
@@ -221,6 +249,7 @@
             this.searchBox1.WatermarkActive = true;
             this.searchBox1.WatermarkText = "Search";
             this.searchBox1.TextChanged += new System.EventHandler(this.SearchBox_TextChangedAsync);
+            this.searchBox1.KeyDown += SearchBox_KeyDown;
             // 
             // searchResultLayoutPanel1
             // 
@@ -229,6 +258,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.searchResultLayoutPanel1.AutoScroll = true;
             this.searchResultLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.searchResultLayoutPanel1.LayoutChanged = null;
             this.searchResultLayoutPanel1.Location = new System.Drawing.Point(3, 29);
             this.searchResultLayoutPanel1.Name = "searchResultLayoutPanel1";
             this.searchResultLayoutPanel1.Size = new System.Drawing.Size(240, 328);
@@ -255,7 +285,6 @@
             this.SetValuesButton1.Name = "SetValuesButton1";
             this.SetValuesButton1.Size = new System.Drawing.Size(250, 20);
             this.SetValuesButton1.TabIndex = 2;
-            // this.SetValuesButton1.Text = "Set";
             this.SetValuesButton1.UseVisualStyleBackColor = true;
             this.SetValuesButton1.Click += new System.EventHandler(this.SetValuesButton1_Click);
             // 
@@ -266,11 +295,18 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.selectValueLayoutPanel1.AutoScroll = true;
             this.selectValueLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.selectValueLayoutPanel1.LayoutChanged = null;
             this.selectValueLayoutPanel1.Location = new System.Drawing.Point(3, 29);
             this.selectValueLayoutPanel1.Name = "selectValueLayoutPanel1";
             this.selectValueLayoutPanel1.Size = new System.Drawing.Size(250, 328);
             this.selectValueLayoutPanel1.TabIndex = 1;
             this.selectValueLayoutPanel1.WrapContents = false;
+            // 
+            // exportAsToolStripMenuItem
+            // 
+            this.exportAsToolStripMenuItem.Name = "exportAsToolStripMenuItem";
+            this.exportAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportAsToolStripMenuItem.Text = "Export As...";
             // 
             // Form1
             // 
@@ -327,6 +363,10 @@
         private System.Windows.Forms.Panel searchPanel1;
         private System.Windows.Forms.Panel setPanel1;
         private System.Windows.Forms.Button SetValuesButton1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportAsToolStripMenuItem;
     }
 }
 

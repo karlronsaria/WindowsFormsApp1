@@ -30,11 +30,14 @@ namespace Infrastructure
             ;
         }
 
-        protected IEnumerable<Document> GetDocumentsMatchingSubstring(string substring)
+        protected IEnumerable<Document>
+        GetDocumentsMatchingSubstring(string substring, bool exact = true)
         {
             return (
                 from document in _data.Documents
-                where document.Name.Contains(substring)
+                where exact ? document.Name.Contains(substring)
+                            : document.Name.ToLowerInvariant()
+                                .Contains(substring.ToLowerInvariant())
                 select document
             )
             ;
@@ -65,11 +68,14 @@ namespace Infrastructure
             ;
         }
 
-        public IEnumerable<string> GetNamesMatchingSubstring(string substring)
+        public IEnumerable<string>
+        GetNamesMatchingSubstring(string substring, bool exact = true)
         {
             return (
                 from document in _data.Documents
-                where document.Name.Contains(substring)
+                where exact ? document.Name.Contains(substring)
+                            : document.Name.ToLowerInvariant()
+                                .Contains(substring.ToLowerInvariant())
                 select document.Name
             )
             ;
@@ -119,11 +125,14 @@ namespace Infrastructure
             ;
         }
 
-        public IEnumerable<string> GetTagsMatchingSubstring(string substring)
+        public IEnumerable<string>
+        GetTagsMatchingSubstring(string substring, bool exact = true)
         {
             return (
                 from tag in _data.Tags
-                where tag.Name.Contains(substring)
+                where exact ? tag.Name.Contains(substring)
+                            : tag.Name.ToLowerInvariant()
+                                .Contains(substring.ToLowerInvariant())
                 select tag.Name
             )
             ;

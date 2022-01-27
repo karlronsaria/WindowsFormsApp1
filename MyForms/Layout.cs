@@ -124,7 +124,7 @@ namespace MyForms
         {
             ToDateTextBox<TextBox>(NewItemTextBox);
             ValidateText = text =>
-                DEFAULT_VALIDATE_TEXT(text) && Application.DateText.Match(text).Success;
+                DEFAULT_VALIDATE_TEXT(text) && Application.DateText.MatchDate(text).Success;
         }
 
         public DateLayoutWithEndButton(

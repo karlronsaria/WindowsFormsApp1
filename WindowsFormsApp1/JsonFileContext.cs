@@ -11,5 +11,10 @@ namespace Infrastructure
             if (_data == null)
                 _data = new Root();
         }
+
+        public void OutFile(string filePath)
+        {
+            NewtonsoftJsonData.Db<Root>.OutFile(_data, filePath);
+        }
     }
 }

@@ -77,7 +77,7 @@ namespace MyForms
             {
                 pane.Controls.Clear();
                 pane.Layouts.Clear();
-                pane.LayoutChanged.Invoke(pane, new EventArgs());
+                pane.LayoutChanged?.Invoke(pane, new EventArgs());
                 return true;
             });
 
@@ -191,7 +191,7 @@ namespace MyForms
                 if (key == SublayoutType.Documents)
                     pane.Layouts[key].ItemRemoved += (sender, e) => ProcessWhenItemRemoved(key);
 
-                pane.LayoutChanged.Invoke(pane, new EventArgs());
+                pane.LayoutChanged?.Invoke(pane, new EventArgs());
                 return true;
             });
 

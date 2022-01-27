@@ -16,9 +16,9 @@ namespace MyForms
 
         IEnumerable<string> GetTagsMatchingName(string name);
 
-        IEnumerable<string> GetNamesMatchingDate(string date);
+        IEnumerable<string> GetNamesMatchingDate(string date, string format, string pattern);
 
-        IEnumerable<string> GetDatesMatchingName(string name);
+        IEnumerable<string> GetDatesMatchingName(string name, string format);
 
         void SetTags(IEnumerable<string> names, IEnumerable<string> tags);
 

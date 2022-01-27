@@ -135,7 +135,11 @@ namespace MyForms
 
             try
             {
-                foreach (var item in _database.GetNamesMatchingDate(text))
+                foreach (var item in _database.GetNamesMatchingDate(
+                        date: text,
+                        format: Formats.DATE_FORMAT,
+                        pattern: Formats.DATE_PATTERN_NONCAPTURE
+                    ))
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
                     var mySearchResult = new SearchResult() { Text = item };
@@ -155,11 +159,11 @@ namespace MyForms
         {
             MainPanels[LayoutType.Search].Clear();
 
-            var label = ILayout.NewLabel;
+            var label = MyForms.Layout.NewLabel;
             label.Text = $"Document: {text}";
 
             MainPanels[LayoutType.Search].Controls.Add(label);
-            MainPanels[LayoutType.Search].Controls.Add(ILayout.NewSpacing);
+            MainPanels[LayoutType.Search].Controls.Add(MyForms.Layout.NewSpacing);
 
             try
             {
@@ -179,7 +183,9 @@ namespace MyForms
                     );
                 }
 
-                foreach (var item in _database.GetDatesMatchingName(text))
+                foreach (var item in _database.GetDatesMatchingName(
+                        name: text, format: Formats.DATE_FORMAT
+                    ))
                 {
                     myCancellationToken.ThrowIfCancellationRequested();
                     var mySearchResult = new SearchResult() { Text = item };
@@ -219,7 +225,6 @@ namespace MyForms
             bool exact = false;
             bool document = false;
             bool tag = false;
-            bool date = false;
 
             modesCapture = Regex.Match(
                 input: inputText,
@@ -410,7 +415,11 @@ namespace MyForms
 
                 if (modes.Contains(SearchMode.Date))
                 {
-                    foreach (string item in _database.GetNamesMatchingDate(text))
+                    foreach (string item in _database.GetNamesMatchingDate(
+                            date: text,
+                            format: Formats.DATE_FORMAT,
+                            pattern: Formats.DATE_PATTERN_NONCAPTURE
+                        ))
                     {
                         myCancellationToken.ThrowIfCancellationRequested();
                         var mySearchResult = new SearchResult() { Text = item };
@@ -460,8 +469,7 @@ namespace MyForms
             var dates = mainPanel.GetValues(MasterPane.SublayoutType.Dates);
 
             if (dates != null)
-                _database.SetDates(documents, dates, Application.DateText.DATE_FORMAT);
+                _database.SetDates(documents, dates, Formats.DATE_FORMAT);
         }
     }
 }
-

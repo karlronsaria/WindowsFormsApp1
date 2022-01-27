@@ -41,8 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DateText.cs" />
-    <Compile Include="File.cs" />
     <Compile Include="Records.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

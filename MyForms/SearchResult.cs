@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
-    public class SearchResult : ISearchResult
+    public class SearchResult : LayoutItem
     {
         public const int TOOL_TIP_AUTOMATIC_DELAY = 500;
 

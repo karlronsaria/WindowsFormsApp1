@@ -31,7 +31,7 @@ namespace MyForms
                 {
                     _database.FromJson(dialog.FileName);
                     await Task.Run(() => this.SearchBox_TextChangedAsync(null, null));
-                    statusBar1.Text = $"Importing from file: {dialog.FileName}";
+                    statusBar1.Text = $"Imported from file: {dialog.FileName}";
                 }
                 catch (Exception ex)
                 {
@@ -45,10 +45,10 @@ namespace MyForms
 
         private void ExportToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            Application.File.NewDatedFilePath(
+            Formats.NewDatedFilePath(
                 filePath: MostRecentJsonFile,
-                out _,
-                out string newPath
+                newName: out _,
+                newPath: out string newPath
             );
 
             var dialogResult = MessageBox.Show(
@@ -205,20 +205,20 @@ namespace MyForms
             if (text.Length > 0)
                 SetStatusText("");
 
-            var statusTask = Task.Run(() => SetStatusText(GetStatusMessage(modes, newText)));
+            var statusBarTask = Task.Run(() => SetStatusText(GetStatusMessage(modes, newText)));
 
             try
             {
                 await ChangeResultsAsync(
-                    SearchBoxChanged.Token,
-                    LayoutType.Search,
-                    newText,
-                    modes
+                    myCancellationToken: SearchBoxChanged.Token,
+                    mainPanelKey: LayoutType.Search,
+                    text: newText,
+                    modes: modes
                 );
             }
             catch (ArgumentException) { }
 
-            await statusTask;
+            await statusBarTask;
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
@@ -290,7 +290,7 @@ namespace MyForms
                         {
                             Text = (sender as SearchResult).Text,
                         },
-                        removeWhen: ILayout.RemoveOn.CLICK
+                        removeWhen: MyForms.Layout.RemoveOn.CLICK
                     );
 
                 s.SelectValuePane_LayoutChanged(this, new EventArgs());
@@ -325,7 +325,7 @@ namespace MyForms
                         {
                             Text = (sender as SearchResult).Text,
                         },
-                        removeWhen: ILayout.RemoveOn.CLICK
+                        removeWhen: MyForms.Layout.RemoveOn.CLICK
                     );
 
                 s.SelectValuePane_LayoutChanged(this, new EventArgs());
@@ -360,7 +360,7 @@ namespace MyForms
                         {
                             Text = (sender as SearchResult).Text,
                         },
-                        removeWhen: ILayout.RemoveOn.CLICK
+                        removeWhen: MyForms.Layout.RemoveOn.CLICK
                     );
 
                 s.SelectValuePane_LayoutChanged(this, new EventArgs());

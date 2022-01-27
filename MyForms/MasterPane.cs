@@ -16,7 +16,7 @@ namespace MyForms
         }
 
         internal class LayoutDictionary :
-            Dictionary<SublayoutType, ILayout>
+            Dictionary<SublayoutType, Layout>
         {
             protected new void Clear()
             {
@@ -110,7 +110,7 @@ namespace MyForms
             int i = 0;
             var nonLayoutControls = new List<Control>();
 
-            while (i < Controls.Count && !(Controls[i] is ILayout))
+            while (i < Controls.Count && !(Controls[i] is Layout))
                 nonLayoutControls.Add(Controls[i++]);
 
             Controls.Clear();
@@ -126,8 +126,8 @@ namespace MyForms
         public bool? AddInOrder<LayoutT>(
                 SublayoutType key,
                 SearchResult mySearchResult,
-                ILayout.RemoveOn removeWhen = ILayout.RemoveOn.NONE
-            ) where LayoutT : ILayout, new()
+                Layout.RemoveOn removeWhen = MyForms.Layout.RemoveOn.NONE
+            ) where LayoutT : Layout, new()
         {
             return AddInOrder<LayoutT>(key, mySearchResult, null, removeWhen);
         }
@@ -136,8 +136,8 @@ namespace MyForms
                 SublayoutType key,
                 SearchResult mySearchResult,
                 string labelText,
-                ILayout.RemoveOn removeWhen = ILayout.RemoveOn.NONE
-            ) where LayoutT : ILayout, new()
+                Layout.RemoveOn removeWhen = MyForms.Layout.RemoveOn.NONE
+            ) where LayoutT : Layout, new()
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
             {
@@ -157,7 +157,7 @@ namespace MyForms
 
         public bool? AddInOrder<LayoutT>(
                 SublayoutType key
-            ) where LayoutT : ILayout, new()
+            ) where LayoutT : Layout, new()
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
                 pane.AddInOrder(key, new LayoutT() { LabelText = $"{key}:" }) ?? false
@@ -178,7 +178,7 @@ namespace MyForms
                 Remove(key);
         }
 
-        public bool? AddInOrder(SublayoutType key, ILayout value)
+        public bool? AddInOrder(SublayoutType key, Layout value)
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
             {
@@ -209,7 +209,7 @@ namespace MyForms
 
         public IEnumerable<string> GetValues(SublayoutType key)
         {
-            Layouts.TryGetValue(key, out ILayout subpanel);
+            Layouts.TryGetValue(key, out Layout subpanel);
             return subpanel?.Values;
         }
 

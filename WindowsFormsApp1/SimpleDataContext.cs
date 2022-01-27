@@ -81,9 +81,14 @@ namespace Infrastructure
             ;
         }
 
-        public IEnumerable<string> GetNamesMatchingDate(string date)
+        public IEnumerable<string>
+        GetNamesMatchingDate(
+                string date,
+                string format,  // = MyForms.Formats.DATE_FORMAT
+                string pattern  // = MyForms.Formats.DATE_PATTERN_NONCAPTURE
+            )
         {
-            if (!Regex.IsMatch(date, Application.DateText.DATE_PATTERN_NONCAPTURE))
+            if (!Regex.IsMatch(date, pattern))
                 return new List<string>();
 
             var outList = new List<string>();
@@ -95,7 +100,7 @@ namespace Infrastructure
 
                 foreach (var docDate in document.Dates)
                 {
-                    if (docDate.ToString(Application.DateText.DATE_FORMAT).Contains(date))
+                    if (docDate.ToString(format).Contains(date))
                     {
                         outList.Add(document.Name);
                         nextDocument = true;
@@ -110,26 +115,18 @@ namespace Infrastructure
             }
 
             return outList;
-
-            /*
-            return (
-                from document in _data.Documents
-                where (
-                    from dateStr in document.Dates
-                    select dateStr.ToString(Application.DateText.DATE_FORMAT)
-                ).Contains(date)
-                select document.Name
-            )
-            ;
-            */
         }
 
-        public IEnumerable<string> GetDatesMatchingName(string name)
+        public IEnumerable<string>
+        GetDatesMatchingName(
+                string name,
+                string format  // = MyForms.Formats.DATE_FORMAT
+            )
         {
             return (
                 from date in (GetDocumentMatchingName(name)?.Dates
                     ?? new MyEnumerable<System.DateTime>())
-                select date.ToString(Application.DateText.DATE_FORMAT)
+                select date.ToString(format)
             )
             ;
         }

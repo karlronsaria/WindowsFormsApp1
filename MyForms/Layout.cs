@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
-    public abstract class ISearchResult : System.Windows.Forms.TextBox
+    public abstract class LayoutItem : System.Windows.Forms.TextBox
     {
-        public ISearchResult() : base()
+        public LayoutItem() : base()
         {
             base.ReadOnly = true;
         }
@@ -33,7 +33,7 @@ namespace MyForms
         }
     }
 
-    public abstract class ILayout : System.Windows.Forms.FlowLayoutPanel
+    public abstract class Layout : System.Windows.Forms.FlowLayoutPanel
     {
         public const int DEFAULT_SPACING_HEIGHT = 10;
         public const FlowDirection DEFAULT_FLOW_DIRECTION = FlowDirection.LeftToRight;
@@ -77,7 +77,7 @@ namespace MyForms
 
         public abstract bool FlowPanelEmpty();
 
-        public abstract bool? Add(ISearchResult mySearchResult, RemoveOn removeWhen);
+        public abstract bool? Add(LayoutItem mySearchResult, RemoveOn removeWhen);
 
         public bool Any()
         {
@@ -89,7 +89,7 @@ namespace MyForms
     {
         public static void HandleDateTextChange(TextBox textBox)
         {
-            if (Application.DateText.TryGetDateString(textBox.Text, out string newText))
+            if (Formats.TryGetDateString(textBox.Text, out string newText))
             {
                 textBox.Text = newText;
                 textBox.Select(textBox.TextLength, 0);
@@ -98,7 +98,7 @@ namespace MyForms
 
         public static bool HandleDateKeyPress(TextBox textBox, KeyPressEventArgs e)
         {
-            if (Application.DateText.GetNextPartialDateString(
+            if (Formats.GetNextPartialDateString(
                     keyChar: e.KeyChar,
                     input: textBox.Text,
                     nextPartialDate: out string newText
@@ -124,7 +124,7 @@ namespace MyForms
         {
             ToDateTextBox<TextBox>(NewItemTextBox);
             ValidateText = text =>
-                DEFAULT_VALIDATE_TEXT(text) && Application.DateText.MatchDate(text).Success;
+                DEFAULT_VALIDATE_TEXT(text) && Formats.MatchDate(text).Success;
         }
 
         public DateLayoutWithEndButton(
@@ -175,7 +175,7 @@ namespace MyForms
     }
 
     public class LayoutWithEndButton<ButtonT> : Layout<ButtonT>
-        where ButtonT : ISearchResult, new()
+        where ButtonT : LayoutItem, new()
     {
         public delegate bool TextValidater(string text);
 
@@ -294,7 +294,6 @@ namespace MyForms
         {
             base.AddFlowPanel();
             Add(NewItemButton);
-
             NewItemButton.Click += ProcessNewItemButton;
             NewItemButton.GotFocus += ProcessNewItemButton;
         }
@@ -307,8 +306,8 @@ namespace MyForms
         }
     }
 
-    public class Layout<ButtonT> : ILayout
-        where ButtonT : ISearchResult, new()
+    public class Layout<ButtonT> : Layout
+        where ButtonT : LayoutItem, new()
     {
         private readonly Control _parent = null;
         private Panel _spacing;
@@ -491,7 +490,7 @@ namespace MyForms
             );
         }
 
-        public override bool? Add(ISearchResult mySearchResult, RemoveOn removeWhen = RemoveOn.NONE)
+        public override bool? Add(LayoutItem mySearchResult, RemoveOn removeWhen = RemoveOn.NONE)
         {
             if (!HasInstance())
                 Build();

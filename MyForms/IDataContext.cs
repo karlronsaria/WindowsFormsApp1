@@ -23,6 +23,14 @@ namespace MyForms
         void SetTags(IEnumerable<string> names, IEnumerable<string> tags);
 
         void SetDates(IEnumerable<string> names, IEnumerable<string> dates, string format);
+
+        void ToJson(string filePath);
+
+        void FromJson(string filePath);
     }
 }
+
+
+
+
 

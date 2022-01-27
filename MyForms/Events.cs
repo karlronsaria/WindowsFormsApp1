@@ -18,6 +18,60 @@ namespace MyForms
                 MyTreeViewPane.Load(dialog.SelectedPath);
         }
 
+        private void ImportToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            var dialog = new OpenFileDialog()
+            {
+                InitialDirectory = Directory,
+            };
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                try
+                {
+                    _database.FromJson(dialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        caption: ex.GetType().Name,
+                        text: ex.Message
+                    );
+                }
+            }
+        }
+
+        private void ExportToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            Application.File.NewDatedFilePath(
+                filePath: MostRecentJsonFile,
+                out _,
+                out string newPath
+            );
+
+            var dialogResult = MessageBox.Show(
+                text: newPath,
+                caption: "Writing to file",
+                buttons: MessageBoxButtons.OKCancel
+            );
+
+            if (dialogResult == DialogResult.OK)
+                _database.ToJson(newPath);
+        }
+
+        private void ExportAsToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            var dialog = new SaveFileDialog()
+            {
+                InitialDirectory = Directory,
+            };
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                _database.ToJson(dialog.FileName);
+            }
+        }
+
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             var what = Forms.GetActiveControl(this);

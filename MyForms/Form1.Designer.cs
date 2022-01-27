@@ -29,10 +29,11 @@
         private void InitializeComponent()
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.openDirectoryStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -47,7 +48,6 @@
             this.setPanel1 = new System.Windows.Forms.Panel();
             this.SetValuesButton1 = new System.Windows.Forms.Button();
             this.selectValueLayoutPanel1 = new MyForms.MasterPane();
-            this.exportAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -72,7 +72,6 @@
             // 
             this.menuStrip1.BackColor = System.Drawing.SystemColors.WindowFrame;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openDirectoryStripMenuItem,
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -80,20 +79,13 @@
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // openDirectoryStripMenuItem
-            // 
-            this.openDirectoryStripMenuItem.ForeColor = System.Drawing.SystemColors.Window;
-            this.openDirectoryStripMenuItem.Name = "openDirectoryStripMenuItem";
-            this.openDirectoryStripMenuItem.Size = new System.Drawing.Size(99, 20);
-            this.openDirectoryStripMenuItem.Text = "Open Directory";
-            this.openDirectoryStripMenuItem.Click += new System.EventHandler(this.OpenDirectoryStripMenuItem_Click);
-            // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.importToolStripMenuItem,
             this.exportToolStripMenuItem,
-            this.exportAsToolStripMenuItem});
+            this.exportAsToolStripMenuItem,
+            this.openDirectoryToolStripMenuItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Window;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -110,6 +102,19 @@
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportToolStripMenuItem.Text = "Export";
+            // 
+            // exportAsToolStripMenuItem
+            // 
+            this.exportAsToolStripMenuItem.Name = "exportAsToolStripMenuItem";
+            this.exportAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportAsToolStripMenuItem.Text = "Export As...";
+            // 
+            // openDirectoryToolStripMenuItem
+            // 
+            this.openDirectoryToolStripMenuItem.Name = "openDirectoryToolStripMenuItem";
+            this.openDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openDirectoryToolStripMenuItem.Text = "Open Directory...";
+            this.openDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectoryStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -248,8 +253,6 @@
             this.searchBox1.Text = "Search";
             this.searchBox1.WatermarkActive = true;
             this.searchBox1.WatermarkText = "Search";
-            this.searchBox1.TextChanged += new System.EventHandler(this.SearchBox_TextChangedAsync);
-            this.searchBox1.KeyDown += SearchBox_KeyDown;
             // 
             // searchResultLayoutPanel1
             // 
@@ -302,12 +305,6 @@
             this.selectValueLayoutPanel1.TabIndex = 1;
             this.selectValueLayoutPanel1.WrapContents = false;
             // 
-            // exportAsToolStripMenuItem
-            // 
-            this.exportAsToolStripMenuItem.Name = "exportAsToolStripMenuItem";
-            this.exportAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportAsToolStripMenuItem.Text = "Export As...";
-            // 
             // Form1
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
@@ -348,7 +345,6 @@
         #endregion
 
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem openDirectoryStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -367,6 +363,7 @@
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openDirectoryToolStripMenuItem;
     }
 }
 

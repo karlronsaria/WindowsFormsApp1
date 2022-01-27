@@ -16,6 +16,9 @@ namespace MyForms
             Select,
         }
 
+        public string Directory { get; set; }
+        public string MostRecentJsonFile { get; set; }
+
         internal class LayoutDictionary :
             Dictionary<LayoutType, MasterPane> { }
 
@@ -28,7 +31,11 @@ namespace MyForms
 
         private void InitializeMyComponent()
         {
-            this.selectValueLayoutPanel1.LayoutChanged += new System.EventHandler(this.SelectValuePane_LayoutChanged);
+            this.searchBox1.TextChanged
+                += new System.EventHandler(this.SearchBox_TextChangedAsync);
+
+            this.selectValueLayoutPanel1.LayoutChanged
+                += new System.EventHandler(this.SelectValuePane_LayoutChanged);
         }
 
         public Form1(IDataContext myDatabase, string startingDirectory)
@@ -36,6 +43,7 @@ namespace MyForms
             InitializeComponent();
             InitializeMyComponent();
 
+            Directory = startingDirectory;
             _database = myDatabase;
             _myPreviewPane = new PreviewPane(splitContainer2.Panel2);
             _myTreeViewPane = new TreeViewPane(treeView1, startingDirectory);

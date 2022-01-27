@@ -222,5 +222,20 @@ namespace Infrastructure
                         document.Dates.Add(date);
                 }
         }
+
+        public static void ToJson(Root data, string filePath)
+        {
+            NewtonsoftJsonData.Db<Root>.OutFile(data, filePath);
+        }
+
+        public void ToJson(string filePath)
+        {
+            NewtonsoftJsonData.Db<Root>.OutFile(_data, filePath);
+        }
+
+        public void FromJson(string filePath)
+        {
+            _data = NewtonsoftJsonData.Db<Root>.FromFile(filePath);
+        }
     }
 }

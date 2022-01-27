@@ -48,6 +48,7 @@
             this.setPanel1 = new System.Windows.Forms.Panel();
             this.SetValuesButton1 = new System.Windows.Forms.Button();
             this.selectValueLayoutPanel1 = new MyForms.MasterPane();
+            this.statusBar1 = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -94,25 +95,28 @@
             // importToolStripMenuItem
             // 
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.importToolStripMenuItem.Text = "Import";
+            this.importToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.exportToolStripMenuItem.Text = "Export";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
             // 
             // exportAsToolStripMenuItem
             // 
             this.exportAsToolStripMenuItem.Name = "exportAsToolStripMenuItem";
-            this.exportAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportAsToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.exportAsToolStripMenuItem.Text = "Export As...";
+            this.exportAsToolStripMenuItem.Click += new System.EventHandler(this.ExportAsToolStripMenuItem_Click);
             // 
             // openDirectoryToolStripMenuItem
             // 
             this.openDirectoryToolStripMenuItem.Name = "openDirectoryToolStripMenuItem";
-            this.openDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openDirectoryToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.openDirectoryToolStripMenuItem.Text = "Open Directory...";
             this.openDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectoryStripMenuItem_Click);
             // 
@@ -130,7 +134,7 @@
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.splitContainer1.Panel2.Controls.Add(this.listView1);
-            this.splitContainer1.Size = new System.Drawing.Size(514, 199);
+            this.splitContainer1.Size = new System.Drawing.Size(514, 200);
             this.splitContainer1.SplitterDistance = 148;
             this.splitContainer1.TabIndex = 4;
             // 
@@ -141,7 +145,7 @@
             this.treeView1.ForeColor = System.Drawing.SystemColors.Window;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(148, 199);
+            this.treeView1.Size = new System.Drawing.Size(148, 200);
             this.treeView1.TabIndex = 6;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeView1_NodeMouseClick);
             this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TreeView1_KeyDown);
@@ -158,7 +162,7 @@
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(362, 199);
+            this.listView1.Size = new System.Drawing.Size(362, 200);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -190,7 +194,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.splitContainer2.Size = new System.Drawing.Size(990, 567);
+            this.splitContainer2.Size = new System.Drawing.Size(990, 571);
             this.splitContainer2.SplitterDistance = 514;
             this.splitContainer2.TabIndex = 7;
             // 
@@ -208,8 +212,8 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer4);
-            this.splitContainer3.Size = new System.Drawing.Size(514, 567);
-            this.splitContainer3.SplitterDistance = 199;
+            this.splitContainer3.Size = new System.Drawing.Size(514, 571);
+            this.splitContainer3.SplitterDistance = 200;
             this.splitContainer3.TabIndex = 8;
             // 
             // splitContainer4
@@ -225,7 +229,7 @@
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.setPanel1);
-            this.splitContainer4.Size = new System.Drawing.Size(514, 364);
+            this.splitContainer4.Size = new System.Drawing.Size(514, 367);
             this.splitContainer4.SplitterDistance = 250;
             this.splitContainer4.TabIndex = 8;
             // 
@@ -237,7 +241,7 @@
             this.searchPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.searchPanel1.Location = new System.Drawing.Point(0, 0);
             this.searchPanel1.Name = "searchPanel1";
-            this.searchPanel1.Size = new System.Drawing.Size(250, 364);
+            this.searchPanel1.Size = new System.Drawing.Size(250, 367);
             this.searchPanel1.TabIndex = 1;
             // 
             // searchBox1
@@ -264,7 +268,7 @@
             this.searchResultLayoutPanel1.LayoutChanged = null;
             this.searchResultLayoutPanel1.Location = new System.Drawing.Point(3, 29);
             this.searchResultLayoutPanel1.Name = "searchResultLayoutPanel1";
-            this.searchResultLayoutPanel1.Size = new System.Drawing.Size(240, 328);
+            this.searchResultLayoutPanel1.Size = new System.Drawing.Size(240, 331);
             this.searchResultLayoutPanel1.TabIndex = 6;
             this.searchResultLayoutPanel1.WrapContents = false;
             // 
@@ -276,7 +280,7 @@
             this.setPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.setPanel1.Location = new System.Drawing.Point(0, 0);
             this.setPanel1.Name = "setPanel1";
-            this.setPanel1.Size = new System.Drawing.Size(260, 364);
+            this.setPanel1.Size = new System.Drawing.Size(260, 367);
             this.setPanel1.TabIndex = 2;
             // 
             // SetValuesButton1
@@ -301,14 +305,27 @@
             this.selectValueLayoutPanel1.LayoutChanged = null;
             this.selectValueLayoutPanel1.Location = new System.Drawing.Point(3, 29);
             this.selectValueLayoutPanel1.Name = "selectValueLayoutPanel1";
-            this.selectValueLayoutPanel1.Size = new System.Drawing.Size(250, 328);
+            this.selectValueLayoutPanel1.Size = new System.Drawing.Size(250, 331);
             this.selectValueLayoutPanel1.TabIndex = 1;
             this.selectValueLayoutPanel1.WrapContents = false;
+            // 
+            // statusBar1
+            // 
+            this.statusBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.statusBar1.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.statusBar1.Location = new System.Drawing.Point(12, 604);
+            this.statusBar1.Multiline = true;
+            this.statusBar1.Name = "statusBar1";
+            this.statusBar1.ReadOnly = true;
+            this.statusBar1.Size = new System.Drawing.Size(990, 20);
+            this.statusBar1.TabIndex = 8;
             // 
             // Form1
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(1014, 606);
+            this.ClientSize = new System.Drawing.Size(1014, 636);
+            this.Controls.Add(this.statusBar1);
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.menuStrip1);
             this.ForeColor = System.Drawing.Color.White;
@@ -364,6 +381,7 @@
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openDirectoryToolStripMenuItem;
+        private System.Windows.Forms.TextBox statusBar1;
     }
 }
 

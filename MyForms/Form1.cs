@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace MyForms
 {
@@ -197,6 +198,9 @@ namespace MyForms
             catch (OperationCanceledException) { }
         }
 
+        public delegate System.Collections.Generic.IEnumerable<string>
+        GetCollection(string str);
+
         private async Task
         ChangeResultsAsync(
                 CancellationToken myCancellationToken,
@@ -207,45 +211,166 @@ namespace MyForms
             string text = searchBox1.Text;
 
             if (text.Length == 0)
+            {
+                statusBar1.Text = "";
                 return;
+            }
 
-            Match exact = Regex.Match(text, "(?<=^\\s*\").*(?=\"\\s*$)");
+            Match modesCapture;
+            bool hasModes;
+            bool regex = false;
+            bool exact = false;
+            bool document = false;
+            bool tag = false;
+            bool date = false;
 
-            if (exact.Success)
-                text = exact.Groups[1].Value;
+            modesCapture = Regex.Match(
+                input: text,
+                pattern: @"^\s*(?<modes>\w+(\s*,\s*\w+)*)\s*\:\s*(?<searchstr>.*)$"
+            );
+
+            hasModes = modesCapture.Success;
+
+            if (hasModes)
+            {
+                statusBar1.Text = "Modes:";
+
+                var modes = from mode in modesCapture.Groups["modes"].Value.Split(',')
+                            select mode.Trim().ToLowerInvariant();
+
+                text = modesCapture.Groups["searchstr"].Value.Trim();
+                var actualModes = new HashSet<string>();
+
+                foreach (var mode in modes)
+                {
+                    switch (mode)
+                    {
+                        case "r":
+                        case "re":
+                        case "regex":
+                            regex = true;
+                            actualModes.Add("regex");
+                            break;
+                        case "e":
+                        case "ex":
+                        case "exact":
+                            exact = true;
+                            actualModes.Add("exact");
+                            break;
+                        case "doc":
+                        case "document":
+                        case "documents":
+                            document = true;
+                            actualModes.Add("document");
+                            break;
+                        case "tag":
+                        case "tags":
+                            tag = true;
+                            actualModes.Add("tag");
+                            break;
+                        case "date":
+                        case "dates":
+                            date = true;
+                            actualModes.Add("date");
+                            break;
+                    }
+                }
+
+                foreach (var mode in actualModes)
+                    statusBar1.AppendText($" <{mode}>");
+            }
+
+            if (!document && !tag && !date)
+            {
+                document = true;
+                tag = true;
+            }
+
+            if (!exact)
+            {
+                Match exactCapture = Regex.Match(text, "(?<=^\\s*\")(?<exacttext>.*)(?=\"\\s*$)");
+
+                if (exactCapture.Success)
+                {
+                    exact = true;
+                    text = exactCapture.Groups["exacttext"].Value;
+
+                    if (!hasModes)
+                        statusBar1.Text = "Modes:";
+
+                    statusBar1.AppendText(" <exact>");
+                }
+            }
+
+            GetCollection collectionHandler;
 
             try
             {
-                foreach (string item in _database.GetNamesMatchingSubstring(text, exact.Success))
+                if (document)
                 {
-                    myCancellationToken.ThrowIfCancellationRequested();
-                    var mySearchResult = new SearchResult() { Text = item };
-                    mySearchResult.Click += DocumentSearchResult_ClickAsync;
-                    mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
+                    if (regex)
+                        collectionHandler = str => _database.GetNamesMatchingPattern(str);
+                    else
+                        collectionHandler = str => _database.GetNamesMatchingSubstring(str, exact);
 
-                    await Task.Run(() =>
-                        MainPanels[LayoutType.Search]
-                            .AddInOrder<SearchResultLayout>(
-                                key: MasterPane.SublayoutType.Documents,
-                                mySearchResult: mySearchResult
-                            )
-                    );
+                    foreach (string item in collectionHandler(text))
+                    {
+                        myCancellationToken.ThrowIfCancellationRequested();
+                        var mySearchResult = new SearchResult() { Text = item };
+                        mySearchResult.Click += DocumentSearchResult_ClickAsync;
+                        mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
+
+                        await Task.Run(() =>
+                            MainPanels[LayoutType.Search]
+                                .AddInOrder<SearchResultLayout>(
+                                    key: MasterPane.SublayoutType.Documents,
+                                    mySearchResult: mySearchResult
+                                )
+                        );
+                    }
                 }
 
-                foreach (string item in _database.GetTagsMatchingSubstring(text, exact.Success))
+                if (tag)
                 {
-                    myCancellationToken.ThrowIfCancellationRequested();
-                    var mySearchResult = new SearchResult() { Text = item };
-                    mySearchResult.Click += TagSearchResult_ClickAsync;
-                    mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
+                    if (regex)
+                        collectionHandler = str => _database.GetTagsMatchingPattern(str);
+                    else
+                        collectionHandler = str => _database.GetTagsMatchingSubstring(str, exact);
 
-                    await Task.Run(() =>
-                        MainPanels[LayoutType.Search]
-                            .AddInOrder<SearchResultLayout>(
-                                key: MasterPane.SublayoutType.Tags,
-                                mySearchResult: mySearchResult
-                            )
-                    );
+                    foreach (string item in collectionHandler(text))
+                    {
+                        myCancellationToken.ThrowIfCancellationRequested();
+                        var mySearchResult = new SearchResult() { Text = item };
+                        mySearchResult.Click += TagSearchResult_ClickAsync;
+                        mySearchResult.DoubleClick += TagSearchResult_DoubleClickAsync;
+
+                        await Task.Run(() =>
+                            MainPanels[LayoutType.Search]
+                                .AddInOrder<SearchResultLayout>(
+                                    key: MasterPane.SublayoutType.Tags,
+                                    mySearchResult: mySearchResult
+                                )
+                        );
+                    }
+                }
+
+                if (date)
+                {
+                    foreach (string item in _database.GetNamesMatchingDate(text))
+                    {
+                        myCancellationToken.ThrowIfCancellationRequested();
+                        var mySearchResult = new SearchResult() { Text = item };
+                        mySearchResult.Click += DocumentSearchResult_ClickAsync;
+                        mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
+
+                        await Task.Run(() =>
+                            MainPanels[LayoutType.Search]
+                                .AddInOrder<SearchResultLayout>(
+                                    key: MasterPane.SublayoutType.Documents,
+                                    mySearchResult: mySearchResult
+                                )
+                        );
+                    }
                 }
             }
             catch (OperationCanceledException) { }

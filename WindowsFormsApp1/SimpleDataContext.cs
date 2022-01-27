@@ -83,16 +83,45 @@ namespace Infrastructure
 
         public IEnumerable<string> GetNamesMatchingDate(string date)
         {
+            if (!Regex.IsMatch(date, Application.DateText.DATE_PATTERN_NONCAPTURE))
+                return new List<string>();
+
+            var outList = new List<string>();
+            bool nextDocument;
+
+            foreach (var document in _data.Documents)
+            {
+                nextDocument = false;
+
+                foreach (var docDate in document.Dates)
+                {
+                    if (docDate.ToString(Application.DateText.DATE_FORMAT).Contains(date))
+                    {
+                        outList.Add(document.Name);
+                        nextDocument = true;
+                    }
+
+                    if (nextDocument)
+                        continue;
+                }
+
+                if (nextDocument)
+                    continue;
+            }
+
+            return outList;
+
+            /*
             return (
                 from document in _data.Documents
-                where document.Dates.Contains(System.DateTime.ParseExact(
-                    date,
-                    format: Application.DateText.DATE_FORMAT,
-                    provider: null
-                ))
+                where (
+                    from dateStr in document.Dates
+                    select dateStr.ToString(Application.DateText.DATE_FORMAT)
+                ).Contains(date)
                 select document.Name
             )
             ;
+            */
         }
 
         public IEnumerable<string> GetDatesMatchingName(string name)

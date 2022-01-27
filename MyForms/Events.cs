@@ -190,7 +190,12 @@ namespace MyForms
         private async void SearchBox_TextChangedAsync(object sender, EventArgs e)
         {
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
-            await ChangeResultsAsync(SearchBoxChanged.Token, LayoutType.Search);
+
+            try
+            {
+                await ChangeResultsAsync(SearchBoxChanged.Token, LayoutType.Search);
+            }
+            catch (ArgumentException) { }
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)

@@ -45,6 +45,11 @@ namespace Application
         };
 
         public static readonly string
+        DATE_PATTERN_NONCAPTURE =
+               @"\d{4}" + DELIMITER + @"?|" + DELIMITER + @"?\d{2}" + DELIMITER + @"?"
+            + @"|\d{4}" + DELIMITER + @"\d{2}" + DELIMITER + @"\d{2}";
+ 
+        public static readonly string
         DATE_PATTERN =
               @"(?<year>\d{4})" + DELIMITER
             + @"(?<month>\d{2})" + DELIMITER

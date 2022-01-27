@@ -18,7 +18,7 @@ namespace MyForms
                 MyTreeViewPane.Load(dialog.SelectedPath);
         }
 
-        private void ImportToolStripMenuItem_Click(object sender, System.EventArgs e)
+        private async void ImportToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             var dialog = new OpenFileDialog()
             {
@@ -30,6 +30,8 @@ namespace MyForms
                 try
                 {
                     _database.FromJson(dialog.FileName);
+                    await Task.Run(() => this.SearchBox_TextChangedAsync(null, null));
+                    statusBar1.Text = $"Importing from file: {dialog.FileName}";
                 }
                 catch (Exception ex)
                 {
@@ -56,7 +58,10 @@ namespace MyForms
             );
 
             if (dialogResult == DialogResult.OK)
+            {
                 _database.ToJson(newPath);
+                statusBar1.Text = $"Saved to file: {newPath}";
+            }
         }
 
         private void ExportAsToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -69,15 +74,19 @@ namespace MyForms
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 _database.ToJson(dialog.FileName);
+                statusBar1.Text = $"Saved to file: {dialog.FileName}";
             }
         }
 
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        private async void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             var what = Forms.GetActiveControl(this);
 
             switch (e.KeyCode)
             {
+                case Keys.F5:
+                    await Task.Run(() => this.SearchBox_TextChangedAsync(null, null));
+                    break;
                 case Keys.N:
                     if (!Forms.IsTextWritable(what))
                         MainPanels[LayoutType.Select].Tags.NewItemButton.Focus();
@@ -189,13 +198,27 @@ namespace MyForms
 
         private async void SearchBox_TextChangedAsync(object sender, EventArgs e)
         {
+            string text = searchBox1.Text;
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
+            GetSearchModes(text, out string newText, out var modes);
+
+            if (text.Length > 0)
+                SetStatusText("");
+
+            var statusTask = Task.Run(() => SetStatusText(GetStatusMessage(modes, newText)));
 
             try
             {
-                await ChangeResultsAsync(SearchBoxChanged.Token, LayoutType.Search);
+                await ChangeResultsAsync(
+                    SearchBoxChanged.Token,
+                    LayoutType.Search,
+                    newText,
+                    modes
+                );
             }
             catch (ArgumentException) { }
+
+            await statusTask;
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)

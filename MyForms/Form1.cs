@@ -201,117 +201,168 @@ namespace MyForms
         public delegate System.Collections.Generic.IEnumerable<string>
         GetCollection(string str);
 
-        private async Task
-        ChangeResultsAsync(
-                CancellationToken myCancellationToken,
-                LayoutType mainPanelKey
-            )
+        public enum SearchMode : int
         {
-            MainPanels[mainPanelKey].Clear();
-            string text = searchBox1.Text;
+            Exact,
+            Regex,
+            Document,
+            Tag,
+            Date,
+        }
 
-            if (text.Length == 0)
-            {
-                statusBar1.Text = "";
-                return;
-            }
-
+        private bool
+        GetSearchModes(string inputText, out string newText, out HashSet<SearchMode> modes)
+        {
             Match modesCapture;
+
             bool hasModes;
-            bool regex = false;
             bool exact = false;
             bool document = false;
             bool tag = false;
             bool date = false;
 
             modesCapture = Regex.Match(
-                input: text,
+                input: inputText,
                 pattern: @"^\s*(?<modes>\w+(\s*,\s*\w+)*)\s*\:\s*(?<searchstr>.*)$"
             );
 
             hasModes = modesCapture.Success;
+            modes = new HashSet<SearchMode>();
 
             if (hasModes)
             {
-                statusBar1.Text = "Modes:";
+                var capturedModes =
+                    from mode in modesCapture.Groups["modes"].Value.Split(',')
+                    select mode.Trim().ToLowerInvariant();
 
-                var modes = from mode in modesCapture.Groups["modes"].Value.Split(',')
-                            select mode.Trim().ToLowerInvariant();
+                inputText = modesCapture.Groups["searchstr"].Value.Trim();
 
-                text = modesCapture.Groups["searchstr"].Value.Trim();
-                var actualModes = new HashSet<string>();
-
-                foreach (var mode in modes)
+                foreach (var mode in capturedModes)
                 {
                     switch (mode)
                     {
                         case "r":
                         case "re":
                         case "regex":
-                            regex = true;
-                            actualModes.Add("regex");
+                            modes.Add(SearchMode.Regex);
                             break;
                         case "e":
                         case "ex":
                         case "exact":
                             exact = true;
-                            actualModes.Add("exact");
+                            modes.Add(SearchMode.Exact);
                             break;
                         case "doc":
                         case "document":
                         case "documents":
                             document = true;
-                            actualModes.Add("document");
+                            modes.Add(SearchMode.Document);
                             break;
                         case "tag":
                         case "tags":
                             tag = true;
-                            actualModes.Add("tag");
+                            modes.Add(SearchMode.Tag);
                             break;
                         case "date":
                         case "dates":
-                            date = true;
-                            actualModes.Add("date");
-                            break;
+                            modes.Clear();
+                            modes.Add(SearchMode.Date);
+                            newText = inputText;
+                            return true;
                     }
                 }
-
-                foreach (var mode in actualModes)
-                    statusBar1.AppendText($" <{mode}>");
             }
 
-            if (!document && !tag && !date)
+            if (!document && !tag)
             {
-                document = true;
-                tag = true;
+                modes.Add(SearchMode.Document);
+                modes.Add(SearchMode.Tag);
             }
 
             if (!exact)
             {
-                Match exactCapture = Regex.Match(text, "(?<=^\\s*\")(?<exacttext>.*)(?=\"\\s*$)");
+                Match exactCapture = Regex.Match(
+                    input: inputText,
+                    pattern: "(?<=^\\s*\")(?<exacttext>.*)(?=\"\\s*$)"
+                );
 
                 if (exactCapture.Success)
                 {
-                    exact = true;
-                    text = exactCapture.Groups["exacttext"].Value;
-
-                    if (!hasModes)
-                        statusBar1.Text = "Modes:";
-
-                    statusBar1.AppendText(" <exact>");
+                    modes.Add(SearchMode.Exact);
+                    inputText = exactCapture.Groups["exacttext"].Value;
+                    hasModes = true;
                 }
             }
+
+            newText = inputText;
+            return hasModes;
+        }
+
+        private static string
+        GetStatusMessage(HashSet<SearchMode> modes, string searchStr)
+        {
+            string modeStatus = String.Join(
+                separator: " ",
+                values: (
+                    from mode in modes
+                    select $"<{mode.ToString().ToLower()}>"
+                )
+            );
+
+            string queryStatus = $"Query: {searchStr}";
+            modeStatus = $"Modes: {modeStatus}";
+
+            if (!string.IsNullOrEmpty(queryStatus) && !string.IsNullOrEmpty(modeStatus))
+                return $"{modeStatus}   {queryStatus}";
+            else if (!string.IsNullOrEmpty(modeStatus))
+                return $"{modeStatus}";
+            else if (!string.IsNullOrEmpty(queryStatus))
+                return $"{queryStatus}";
+
+            return "";
+        }
+
+        private void SetStatusText(string text)
+        {
+            var myMethod = new Func<TextBox, bool>(c =>
+            {
+                c.Text = text;
+                return true;
+            });
+
+            MyForms.Forms.InvokeIfHandled(
+                statusBar1,
+                s => myMethod.Invoke(s as TextBox),
+                IsHandleCreated
+            );
+        }
+
+        private async Task
+        ChangeResultsAsync(
+                CancellationToken myCancellationToken,
+                LayoutType mainPanelKey,
+                string text,
+                HashSet<SearchMode> modes
+            )
+        {
+            MainPanels[mainPanelKey].Clear();
+
+            if (text.Length == 0)
+                return;
 
             GetCollection collectionHandler;
 
             try
             {
-                if (document)
+                if (modes.Contains(SearchMode.Document))
                 {
-                    if (regex)
+                    if (modes.Contains(SearchMode.Regex))
                         collectionHandler = str => _database.GetNamesMatchingPattern(str);
                     else
-                        collectionHandler = str => _database.GetNamesMatchingSubstring(str, exact);
+                        collectionHandler = str => _database.GetNamesMatchingSubstring(
+                            substring: str,
+                            exact: modes.Contains(SearchMode.Exact)
+                        );
 
                     foreach (string item in collectionHandler(text))
                     {
@@ -330,12 +381,15 @@ namespace MyForms
                     }
                 }
 
-                if (tag)
+                if (modes.Contains(SearchMode.Tag))
                 {
-                    if (regex)
+                    if (modes.Contains(SearchMode.Regex))
                         collectionHandler = str => _database.GetTagsMatchingPattern(str);
                     else
-                        collectionHandler = str => _database.GetTagsMatchingSubstring(str, exact);
+                        collectionHandler = str => _database.GetTagsMatchingSubstring(
+                            substring: str,
+                            exact: modes.Contains(SearchMode.Exact)
+                        );
 
                     foreach (string item in collectionHandler(text))
                     {
@@ -354,7 +408,7 @@ namespace MyForms
                     }
                 }
 
-                if (date)
+                if (modes.Contains(SearchMode.Date))
                 {
                     foreach (string item in _database.GetNamesMatchingDate(text))
                     {

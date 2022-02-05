@@ -1,4 +1,6 @@
-﻿namespace WindowsFormsApp1
+﻿using Infrastructure;
+
+namespace WindowsFormsApp1
 {
     internal static class Program
     {
@@ -10,6 +12,9 @@
         static readonly string
         JSON_FILE_PATH = $@"{STARTING_DIRECTORY}\__NEW_2021_12_11_153848\db.json";
 
+        const string
+        DEFAULT_CONNECTION_STRING = @"Data Source=D:\Databases\Sample3.db";
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -17,12 +22,22 @@
         static void Main()
         {
             // MyForms.IDataContext myDatabase = new Infrastructure.ExampleDatabase();
-            MyForms.IDataContext myDatabase = new Infrastructure.JsonFileContext(JSON_FILE_PATH);
+            MyForms.IDataConnector myDatabase = new Infrastructure.JsonFileSimpleDataConnector(JSON_FILE_PATH);
+
+            MyForms.IDataConnector myDatabase2
+                = new Infrastructure.FrameworkConnector
+                    <PersistentConnector, JsonFileConnector, Application.Root>
+                    (
+                        new Infrastructure.PersistentConnector(
+                            connectionString: DEFAULT_CONNECTION_STRING
+                        ),
+                        new Infrastructure.JsonFileConnector()
+                    );
 
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             System.Windows.Forms.Application.Run(
-                new MyForms.Form1(myDatabase, STARTING_DIRECTORY)
+                new MyForms.Form1(myDatabase2, STARTING_DIRECTORY)
                 {
                     MostRecentJsonFile = JSON_FILE_PATH,
                 }

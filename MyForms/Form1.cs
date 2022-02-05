@@ -23,7 +23,7 @@ namespace MyForms
         internal class LayoutDictionary :
             Dictionary<LayoutType, MasterPane> { }
 
-        private readonly IDataContext _database;
+        private readonly IDataConnector _database;
         private readonly PreviewPane _myPreviewPane;
         private readonly TreeViewPane _myTreeViewPane;
         private readonly ListViewPane _myListViewPane;
@@ -39,7 +39,7 @@ namespace MyForms
                 += new System.EventHandler(this.SelectValuePane_LayoutChanged);
         }
 
-        public Form1(IDataContext myDatabase, string startingDirectory)
+        public Form1(IDataConnector myDatabase, string startingDirectory)
         {
             InitializeComponent();
             InitializeMyComponent();
@@ -464,12 +464,12 @@ namespace MyForms
             var tags = mainPanel.GetValues(MasterPane.SublayoutType.Tags);
 
             if (tags != null)
-                _database.SetTags(documents, tags);
+                _database.AddTags(documents, tags);
 
             var dates = mainPanel.GetValues(MasterPane.SublayoutType.Dates);
 
             if (dates != null)
-                _database.SetDates(documents, dates, Formats.DATE_FORMAT);
+                _database.AddDates(documents, dates, Formats.DATE_FORMAT);
         }
     }
 }

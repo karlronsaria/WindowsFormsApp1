@@ -29,7 +29,7 @@ namespace MyForms
             {
                 try
                 {
-                    _database.FromJson(dialog.FileName);
+                    _database.SetFromJson(dialog.FileName);
                     await Task.Run(() => this.SearchBox_TextChangedAsync(null, null));
                     statusBar1.Text = $"Imported from file: {dialog.FileName}";
                 }

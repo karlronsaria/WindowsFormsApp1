@@ -73,12 +73,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExampleContext.cs" />
-    <Compile Include="JsonFileContext.cs" />
+    <Compile Include="JsonFileConnector.cs" />
+    <Compile Include="PersistentConnector.cs" />
+    <Compile Include="ExampleConnector.cs" />
+    <Compile Include="FrameworkConnector.cs" />
+    <Compile Include="JsonFileSimpleDataConnector.cs" />
     <Compile Include="MySampleData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleDataContext.cs" />
+    <Compile Include="SimpleDataConnector.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -120,6 +123,10 @@
       <Project>{44e11874-e70e-4257-babf-3efc84e6abe2}</Project>
       <Name>Application</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JsonApplication\JsonApplication.csproj">
+      <Project>{8c38cbb3-3fde-482a-b7fe-c051108184d4}</Project>
+      <Name>JsonApplication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MyForms\MyForms.csproj">
       <Project>{ac7b4624-8d07-4e2a-8acb-a82e000b11ae}</Project>
       <Name>MyForms</Name>
@@ -127,6 +134,14 @@
     <ProjectReference Include="..\NewtonsoftJsonData\NewtonsoftJsonData.csproj">
       <Project>{cdf718a1-4911-401f-9b42-dfd3b1fd50ea}</Project>
       <Name>NewtonsoftJsonData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PersistentApplication\PersistentApplication.csproj">
+      <Project>{bdbca2bc-0651-4ab1-9d3c-a9ca61fe7484}</Project>
+      <Name>PersistentApplication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleDataApplication\SimpleDataApplication.csproj">
+      <Project>{c2a61229-a314-42a0-b8ff-97c10da60c9d}</Project>
+      <Name>SimpleDataApplication</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

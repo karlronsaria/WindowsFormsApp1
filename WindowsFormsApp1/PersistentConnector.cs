@@ -90,9 +90,9 @@ namespace Infrastructure
                 // // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities?redirectedfrom=MSDN
                 // // retrieved: 2022_02_05
 
-                // predicate: f => (exact
-                //     ? f.Name
-                //     : f.Name.ToLowerInvariant()).Contains(substring),
+                // predicate: f => exact
+                //     ? f.Name.Contains(substring)
+                //     : f.Name.ToLowerInvariant().Contains(substring.ToLowerInvariant()),
 
                 // predicate: f => f.Name.Contains(substring),
 
@@ -139,9 +139,9 @@ namespace Infrastructure
                 // // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities?redirectedfrom=MSDN
                 // // retrieved: 2022_02_05
 
-                // predicate: f => (exact
-                //     ? f.Name
-                //     : f.Name.ToLowerInvariant()).Contains(substring),
+                // predicate: f => exact
+                //     ? f.Name.Contains(substring)
+                //     : f.Name.ToLowerInvariant().Contains(substring.ToLowerInvariant()),
 
                 // predicate: f => f.Name.Contains(substring),
 

@@ -26,11 +26,11 @@ namespace Infrastructure
         {
             return new Application.Root()
             {
-                Documents = _context.Documents(),
-                Dates = _context.Dates(),
-                Tags = _context.Tags(),
-                DocumentDates = _context.DocumentDates(),
-                DocumentTags = _context.DocumentTags(),
+                Documents = _context.Documents<Application.Document>(),
+                Dates = _context.Dates<Application.Date>(),
+                Tags = _context.Tags<Application.Tag>(),
+                DocumentDates = _context.DocumentDates<Application.DocumentDate>(),
+                DocumentTags = _context.DocumentTags<Application.DocumentTag>(),
             };
         }
 
@@ -47,6 +47,7 @@ namespace Infrastructure
             _context.Add(root.Documents);
             _context.Add(root.Dates);
             _context.Add(root.Tags);
+            _context.Push();
             _context.Add(root.DocumentDates);
             _context.Add(root.DocumentTags);
             _context.Push();
@@ -67,10 +68,17 @@ namespace Infrastructure
             if (!Regex.IsMatch(date, pattern))
                 return new List<string>();
 
-            return _context.DocumentDates(
-                predicate: f => f.Date.Value.ToString(format).Contains(date),
-                selector: f => f.Document.Name
-            );
+            return _context
+                .DocumentDates<Persistent.DocumentDate>()
+                .ToList()
+                .Where(f => f.Date.Value.ToString(format).Contains(date))
+                .Select(f => f.Document.Name)
+                ;
+
+            // return _context.DocumentDates(
+            //     predicate: f => f.Date.Value.ToString(format).Contains(date),
+            //     selector: f => f.Document.Name
+            // );
         }
 
         public IEnumerable<string>

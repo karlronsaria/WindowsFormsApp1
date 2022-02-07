@@ -22,57 +22,57 @@ namespace Persistent
             _context = new Persistent.Context(connectionString, reset);
         }
 
-        public Application.MyEnumerable<Application.Document>
-        Documents()
+        public Application.MyEnumerable<T>
+        Documents<T>() where T : Application.Document
         {
-            var collection = new Application.MyEnumerable<Application.Document>();
+            var collection = new Application.MyEnumerable<T>();
 
             foreach (var document in _context.Documents)
-                collection.Add(document);
+                collection.Add(document as T);
 
             return collection;
         }
 
-        public Application.MyEnumerable<Application.Date>
-        Dates()
+        public Application.MyEnumerable<T>
+        Dates<T>() where T : Application.Date
         {
-            var collection = new Application.MyEnumerable<Application.Date>();
+            var collection = new Application.MyEnumerable<T>();
 
             foreach (var date in _context.Dates)
-                collection.Add(date);
+                collection.Add(date as T);
 
             return collection;
         }
 
-        public Application.MyEnumerable<Application.Tag>
-        Tags()
+        public Application.MyEnumerable<T>
+        Tags<T>() where T : Application.Tag
         {
-            var collection = new Application.MyEnumerable<Application.Tag>();
+            var collection = new Application.MyEnumerable<T>();
 
             foreach (var tag in _context.Tags)
-                collection.Add(tag);
+                collection.Add(tag as T);
 
             return collection;
         }
 
-        public Application.MyEnumerable<Application.DocumentDate>
-        DocumentDates()
+        public Application.MyEnumerable<T>
+        DocumentDates<T>() where T : Application.DocumentDate
         {
-            var collection = new Application.MyEnumerable<Application.DocumentDate>();
+            var collection = new Application.MyEnumerable<T>();
 
             foreach (var e in _context.DocumentDates)
-                collection.Add(e);
+                collection.Add(e as T);
 
             return collection;
         }
 
-        public Application.MyEnumerable<Application.DocumentTag>
-        DocumentTags()
+        public Application.MyEnumerable<T>
+        DocumentTags<T>() where T : Application.DocumentTag
         {
-            var collection = new Application.MyEnumerable<Application.DocumentTag>();
+            var collection = new Application.MyEnumerable<T>();
 
             foreach (var e in _context.DocumentTags)
-                collection.Add(e);
+                collection.Add(e as T);
 
             return collection;
         }
@@ -223,7 +223,8 @@ namespace Persistent
                 {
                     Name = document.Name,
                     Description = document.Description,
-                });
+                }
+            );
         }
 
         public void
@@ -233,7 +234,8 @@ namespace Persistent
                 new Persistent.Date()
                 {
                     Value = date.Value,
-                });
+                }
+            );
         }
 
         public void
@@ -243,41 +245,66 @@ namespace Persistent
                 new Persistent.Tag()
                 {
                     Name = tag.Name,
-                });
+                }
+            );
         }
 
-        public void
+        public bool
         Add(Application.DocumentDate documentDate)
         {
-            _context.DocumentDates.AddIfNotExists(
+            Document myDocument = _context
+                .Documents
+                .SingleOrDefault(e => e.Id == documentDate.DocumentId);
+
+            Date myDate = _context
+                .Dates
+                .SingleOrDefault(e => e.Id == documentDate.DateId);
+
+            bool success = myDocument != null && myDate != null;
+
+            if (!success)
+                return false;
+
+            _context.DocumentDates.Add(
                 new Persistent.DocumentDate()
                 {
                     DocumentId = documentDate.DocumentId,
-                    Document = _context
-                        .Documents
-                        .SingleOrDefault(e => e.Id == documentDate.DocumentId),
+                    Document = myDocument,
                     DateId = documentDate.DateId,
-                    Date = _context
-                        .Dates
-                        .SingleOrDefault(e => e.Id == documentDate.DateId),
-                });
+                    Date = myDate,
+                }
+            );
+
+            return success;
         }
 
-        public void
+        public bool
         Add(Application.DocumentTag documentTag)
         {
-            _context.DocumentTags.AddIfNotExists(
+            Document myDocument = _context
+                .Documents
+                .SingleOrDefault(e => e.Id == documentTag.DocumentId);
+
+            Tag myTag = _context
+                .Tags
+                .SingleOrDefault(e => e.Id == documentTag.TagId);
+
+            bool success = myDocument != null && myTag != null;
+
+            if (!success)
+                return false;
+
+            _context.DocumentTags.Add(
                 new Persistent.DocumentTag()
                 {
                     DocumentId = documentTag.DocumentId,
-                    Document = _context
-                        .Documents
-                        .SingleOrDefault(e => e.Id == documentTag.DocumentId),
+                    Document = myDocument,
                     TagId = documentTag.TagId,
-                    Tag = _context
-                        .Tags
-                        .SingleOrDefault(e => e.Id == documentTag.TagId),
-                });
+                    Tag = myTag,
+                }
+            );
+
+            return success;
         }
 
         public void

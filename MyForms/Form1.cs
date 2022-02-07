@@ -162,6 +162,7 @@ namespace MyForms
             var label = MyForms.Layout.NewLabel;
             label.Text = $"Document: {text}";
 
+            MainPanels[LayoutType.Search].Controls.Add(MyForms.Layout.NewSpacing);
             MainPanels[LayoutType.Search].Controls.Add(label);
             MainPanels[LayoutType.Search].Controls.Add(MyForms.Layout.NewSpacing);
 

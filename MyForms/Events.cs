@@ -6,6 +6,9 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
+    // link: https://social.msdn.microsoft.com/Forums/windows/en-US/19be830d-12ff-4a03-9893-0733ca67bd85/how-do-i-prevent-the-designer-from-trying-to-design-my-partial-component?forum=winformsdesigner
+    // retrieved: 2022_02_07
+    [System.ComponentModel.DesignerCategory("")]
     public partial class Form1 : Form
     {
         private EventHandler _setValuesButton_onClick = delegate { };
@@ -37,7 +40,7 @@ namespace MyForms
                 {
                     MessageBox.Show(
                         caption: ex.GetType().Name,
-                        text: ex.Message
+                        text: $"{ex.Message}\n\n{ex}"
                     );
                 }
             }

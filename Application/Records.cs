@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-
-// TODO: Remove property instantiations
-
-namespace Application
+﻿namespace Application
 {
-    public class MyEnumerable<T> : HashSet<T> { }
+    public class MyEnumerable<T> : System.Collections.Generic.HashSet<T> { }
 
     public class Document
     {

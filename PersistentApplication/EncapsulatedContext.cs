@@ -151,7 +151,7 @@ namespace Persistent
                 if (prop is Microsoft.EntityFrameworkCore.DbSet<P>
                     && prop.Name == typeof(A).Name)
                     (prop.GetValue(_context) as Microsoft.EntityFrameworkCore.DbSet<P>)
-                        .AddIfNotExists(value as P);
+                        .Add(value as P);
         }
 
         public void
@@ -160,7 +160,7 @@ namespace Persistent
             where A : class
         {
             foreach (var value in values)
-                Add<P, A>(value)
+                Add<P, A>(value);
         }
 
         public void
@@ -181,46 +181,47 @@ namespace Persistent
             where A : class
         {
             foreach (var value in values)
-                Remove<P, A>(value)
+                Remove<P, A>(value);
         }
         */
 
         public void
         Add(Persistent.Document document)
         {
-            _context.Documents.AddIfNotExists(document);
+            _context.Documents.Add(document);
         }
 
         public void
         Add(Persistent.Date date)
         {
-            _context.Dates.AddIfNotExists(date);
+            _context.Dates.Add(date);
         }
 
         public void
         Add(Persistent.Tag tag)
         {
-            _context.Tags.AddIfNotExists(tag);
+            _context.Tags.Add(tag);
         }
 
         public void
         Add(Persistent.DocumentDate documentDate)
         {
-            _context.DocumentDates.AddIfNotExists(documentDate);
+            _context.DocumentDates.Add(documentDate);
         }
 
         public void
         Add(Persistent.DocumentTag documentTag)
         {
-            _context.DocumentTags.AddIfNotExists(documentTag);
+            _context.DocumentTags.Add(documentTag);
         }
 
         public void
         Add(Application.Document document)
         {
-            _context.Documents.AddIfNotExists(
+            _context.Documents.Add(
                 new Persistent.Document()
                 {
+                    Id = document.Id,
                     Name = document.Name,
                     Description = document.Description,
                 }
@@ -230,9 +231,10 @@ namespace Persistent
         public void
         Add(Application.Date date)
         {
-            _context.Dates.AddIfNotExists(
+            _context.Dates.Add(
                 new Persistent.Date()
                 {
+                    Id = date.Id,
                     Value = date.Value,
                 }
             );
@@ -241,9 +243,10 @@ namespace Persistent
         public void
         Add(Application.Tag tag)
         {
-            _context.Tags.AddIfNotExists(
+            _context.Tags.Add(
                 new Persistent.Tag()
                 {
+                    Id = tag.Id,
                     Name = tag.Name,
                 }
             );
@@ -311,35 +314,35 @@ namespace Persistent
         Add(IEnumerable<Persistent.Document> documents)
         {
             foreach (var document in documents)
-                _context.Documents.AddIfNotExists(document);
+                _context.Documents.Add(document);
         }
 
         public void
         Add(IEnumerable<Persistent.Date> dates)
         {
             foreach (var date in dates)
-                _context.Dates.AddIfNotExists(date);
+                _context.Dates.Add(date);
         }
 
         public void
         Add(IEnumerable<Persistent.Tag> tags)
         {
             foreach (var tag in tags)
-                _context.Tags.AddIfNotExists(tag);
+                _context.Tags.Add(tag);
         }
 
         public void
         Add(IEnumerable<Persistent.DocumentDate> documentDates)
         {
             foreach (var e in documentDates)
-                _context.DocumentDates.AddIfNotExists(e);
+                _context.DocumentDates.Add(e);
         }
 
         public void
         Add(IEnumerable<Persistent.DocumentTag> documentTags)
         {
             foreach (var e in documentTags)
-                _context.DocumentTags.AddIfNotExists(e);
+                _context.DocumentTags.Add(e);
         }
 
         public void

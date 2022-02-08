@@ -25,10 +25,10 @@ namespace Infrastructure
         private readonly DataT _data;
         private readonly JsonT _json;
 
-        public FrameworkConnector(DataT dataContext, JsonT jsonContext)
+        public FrameworkConnector(DataT dataConnector, JsonT jsonConnector)
         {
-            _data = dataContext;
-            _json = jsonContext;
+            _data = dataConnector;
+            _json = jsonConnector;
         }
 
         public void SetFromJson(string filePath)

@@ -4,22 +4,15 @@ using System.Linq.Expressions;
 
 namespace Persistent
 {
-    public class EncapsulatedContext
+    public class EncapsulatedContext<T>
+        where T : Persistent.Context, new()
     {
-        private readonly Persistent.Context
+        private readonly T
         _context;
 
-        public EncapsulatedContext(Persistent.Context context)
+        public EncapsulatedContext(T context)
         {
             _context = context;
-        }
-
-        public EncapsulatedContext(
-                string connectionString = Persistent.Context.DEFAULT_CONNECTION_STRING,
-                bool reset = false
-            )
-        {
-            _context = new Persistent.Context(connectionString, reset);
         }
 
         public Application.MyEnumerable<T>
@@ -139,51 +132,6 @@ namespace Persistent
         {
             _context.SaveChanges();
         }
-
-        /*
-        // TODO
-        public void
-        Add<P, A>(A value)
-            where P : class, new()
-            where A : class
-        {
-            foreach (var prop in _context.GetType().GetProperties())
-                if (prop is Microsoft.EntityFrameworkCore.DbSet<P>
-                    && prop.Name == typeof(A).Name)
-                    (prop.GetValue(_context) as Microsoft.EntityFrameworkCore.DbSet<P>)
-                        .Add(value as P);
-        }
-
-        public void
-        Add<P, A>(IEnumerable<A> values)
-            where P : class, new()
-            where A : class
-        {
-            foreach (var value in values)
-                Add<P, A>(value);
-        }
-
-        public void
-        Remove<P, A>(A value)
-            where P : class, new()
-            where A : class
-        {
-            foreach (var prop in _context.GetType().GetProperties())
-                if (prop is Microsoft.EntityFrameworkCore.DbSet<P>
-                    && prop.Name == typeof(A).Name)
-                    (prop.GetValue(_context) as Microsoft.EntityFrameworkCore.DbSet<P>)
-                        .Remove(value as P);
-        }
-
-        public void
-        Remove<P, A>(IEnumerable<A> values)
-            where P : class, new()
-            where A : class
-        {
-            foreach (var value in values)
-                Remove<P, A>(value);
-        }
-        */
 
         public void
         Add(Persistent.Document document)

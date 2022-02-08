@@ -5,14 +5,21 @@ using System.Text.RegularExpressions;
 
 namespace Infrastructure
 {
-    public class PersistentConnector :
+    public class PersistentConnector<ContextT> :
         IData<Application.Root>,
         MyForms.IDataReader,
         MyForms.IDataWriter
+        where ContextT : Persistent.Context, new()
     {
-        private readonly Persistent.EncapsulatedContext
+        private readonly Persistent.EncapsulatedContext<ContextT>
         _context;
 
+        public PersistentConnector(ContextT context)
+        {
+            _context = new Persistent.EncapsulatedContext<ContextT>(context);
+        }
+
+        /*
         public PersistentConnector(
                 string connectionString = Persistent.Context.DEFAULT_CONNECTION_STRING,
                 bool reset = false
@@ -20,6 +27,7 @@ namespace Infrastructure
         {
             _context = new Persistent.EncapsulatedContext(connectionString, reset);
         }
+        */
 
         public Application.Root
         Get()

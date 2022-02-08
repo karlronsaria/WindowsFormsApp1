@@ -152,6 +152,7 @@
     <Compile Include="Context.cs" />
     <Compile Include="EncapsulatedContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqliteContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

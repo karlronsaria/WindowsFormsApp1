@@ -19,24 +19,31 @@ namespace WindowsFormsApp1
         [System.STAThread]
         static void Main()
         {
-            // MyForms.IDataContext myDatabase = new Infrastructure.ExampleDatabase();
-            // MyForms.IDataConnector myDatabase = new Infrastructure.JsonFileSimpleDataConnector(JSON_FILE_PATH);
+            var context = new Persistent.SqliteContext(
+                connectionString: DEFAULT_CONNECTION_STRING
+            );
 
-            MyForms.IDataConnector myDatabase2
+            var dataConnector = new Infrastructure.PersistentConnector<Persistent.SqliteContext>(
+                context: context
+            );
+
+            var jsonConnector = new Infrastructure.JsonFileConnector();
+
+            MyForms.IDataConnector myData
                 = new Infrastructure.FrameworkConnector
-                    <PersistentConnector, JsonFileConnector, Application.Root>
+                    <PersistentConnector<Persistent.SqliteContext>,
+                    JsonFileConnector,
+                    Application.Root>
                     (
-                        new Infrastructure.PersistentConnector(
-                            connectionString: DEFAULT_CONNECTION_STRING
-                        ),
-                        new Infrastructure.JsonFileConnector()
+                        dataConnector: dataConnector,
+                        jsonConnector: jsonConnector
                     );
 
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
             System.Windows.Forms.Application.Run(
-                new MyForms.Form1(myDatabase2, STARTING_DIRECTORY)
+                new MyForms.Form1(myData, STARTING_DIRECTORY)
                 {
                     MostRecentJsonFile = JSON_FILE_PATH,
                 }

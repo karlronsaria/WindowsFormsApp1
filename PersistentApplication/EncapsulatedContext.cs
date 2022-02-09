@@ -15,57 +15,101 @@ namespace Persistent
             _context = context;
         }
 
-        public Application.MyEnumerable<T>
-        Documents<T>() where T : Application.Document
+        public Application.Root
+        Root()
         {
-            var collection = new Application.MyEnumerable<T>();
+            return new Application.Root()
+            {
+                Documents = Documents(),
+                Dates = Dates(),
+                Tags = Tags(),
+                DocumentDates = DocumentDates(),
+                DocumentTags = DocumentTags(),
+            };
+        }
+
+        public Application.MyEnumerable<Application.Document>
+        Documents()
+        {
+            var collection = new Application.MyEnumerable<Application.Document>();
 
             foreach (var document in _context.Documents)
-                collection.Add(document as T);
+                collection.Add(
+                    new Application.Document()
+                    {
+                        Id = document.Id,
+                        Name = document.Name,
+                        Description = document.Description,
+                    }
+                );
 
             return collection;
         }
 
-        public Application.MyEnumerable<T>
-        Dates<T>() where T : Application.Date
+        public Application.MyEnumerable<Application.Date>
+        Dates()
         {
-            var collection = new Application.MyEnumerable<T>();
+            var collection = new Application.MyEnumerable<Application.Date>();
 
             foreach (var date in _context.Dates)
-                collection.Add(date as T);
+                collection.Add(
+                    new Application.Date()
+                    {
+                        Id = date.Id,
+                        Value = date.Value,
+                    }
+                );
 
             return collection;
         }
 
-        public Application.MyEnumerable<T>
-        Tags<T>() where T : Application.Tag
+        public Application.MyEnumerable<Application.Tag>
+        Tags()
         {
-            var collection = new Application.MyEnumerable<T>();
+            var collection = new Application.MyEnumerable<Application.Tag>();
 
             foreach (var tag in _context.Tags)
-                collection.Add(tag as T);
+                collection.Add(
+                    new Application.Tag()
+                    {
+                        Id = tag.Id,
+                        Name = tag.Name,
+                    }
+                );
 
             return collection;
         }
 
-        public Application.MyEnumerable<T>
-        DocumentDates<T>() where T : Application.DocumentDate
+        public Application.MyEnumerable<Application.DocumentDate>
+        DocumentDates()
         {
-            var collection = new Application.MyEnumerable<T>();
+            var collection = new Application.MyEnumerable<Application.DocumentDate>();
 
             foreach (var e in _context.DocumentDates)
-                collection.Add(e as T);
+                collection.Add(
+                    new Application.DocumentDate()
+                    {
+                        DocumentId = e.DocumentId,
+                        DateId = e.DateId,
+                    }
+                );
 
             return collection;
         }
 
-        public Application.MyEnumerable<T>
-        DocumentTags<T>() where T : Application.DocumentTag
+        public Application.MyEnumerable<Application.DocumentTag>
+        DocumentTags()
         {
-            var collection = new Application.MyEnumerable<T>();
+            var collection = new Application.MyEnumerable<Application.DocumentTag>();
 
             foreach (var e in _context.DocumentTags)
-                collection.Add(e as T);
+                collection.Add(
+                    new Application.DocumentTag()
+                    {
+                        DocumentId = e.DocumentId,
+                        TagId = e.TagId,
+                    }
+                );
 
             return collection;
         }

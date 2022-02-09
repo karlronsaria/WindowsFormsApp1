@@ -33,6 +33,7 @@ namespace MyForms
                 try
                 {
                     _database.SetFromJson(dialog.FileName);
+                    MostRecentJsonFile = dialog.FileName;
                     await Task.Run(() => this.SearchBox_TextChangedAsync(null, null));
                     statusBar1.Text = $"Imported from file: {dialog.FileName}";
                 }
@@ -63,6 +64,7 @@ namespace MyForms
             if (dialogResult == DialogResult.OK)
             {
                 _database.ToJson(newPath);
+                MostRecentJsonFile = newPath;
                 statusBar1.Text = $"Saved to file: {newPath}";
             }
         }

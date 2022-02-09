@@ -93,6 +93,16 @@ namespace MyForms
         // TODO: unit test
         public static bool TryGetDateTimeString(string input, out string outString)
         {
+            var capture = Regex.Match(input, DATETIME_PATTERN);
+
+            if (!capture.Success)
+            {
+                outString = input;
+                return false;
+            }
+
+            input = capture.Value;
+
             if (input.Length > DATETIME_STRING_LENGTH)
             {
                 outString = input.Substring(0, DATETIME_STRING_LENGTH);
@@ -119,7 +129,14 @@ namespace MyForms
                 return false;
             }
 
-            outString = Regex.Replace(input, DATETIME_PATTERN, replacement); 
+            // outString = Regex.Replace(input, DATETIME_PATTERN, replacement); 
+
+            outString = Regex.Replace(
+                input: input,
+                pattern: DATETIME_PATTERN,
+                replacement: DateTime.Now.ToString(DATETIME_FORMAT)
+            ); 
+
             return true;
         }
 
@@ -193,7 +210,7 @@ namespace MyForms
             else if (second > 59)
                 second = 59;
 
-            return $"{hour:D2}{DELIMITER}{minute:D2}{DELIMITER}{second:D2}";
+            return $"{hour:D2}{minute:D2}{second:D2}";
         }
 
         // TODO: unit test

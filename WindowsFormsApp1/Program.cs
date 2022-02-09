@@ -5,13 +5,20 @@ namespace WindowsFormsApp1
     internal static class Program
     {
         const string
-        STARTING_DIRECTORY = @"C:\Users\karlr\OneDrive\__POOL";
-
-        static readonly string
-        JSON_FILE_PATH = $@"{STARTING_DIRECTORY}\__NEW_2021_12_11_153848\db.json";
+        SETTINGS_FILE = @".\settings.json";
 
         const string
-        DEFAULT_CONNECTION_STRING = @"Data Source=D:\Databases\Sample9.db";
+        STARTING_DIRECTORY = @"C:\Users\karlr\OneDrive\__POOL";
+
+        static readonly Settings
+        DEFAULT_SETTINGS = new Settings()
+        {
+            StartingDirectory = STARTING_DIRECTORY,
+            MostRecentJsonFile = $@"{STARTING_DIRECTORY}\__NEW_2021_12_11_153848\db.json",
+            ConnectionString = @"Data Source=D:\Databases\Sample9.db",
+        };
+
+        static Settings mySettings;
 
         /// <summary>
         /// The main entry point for the application.
@@ -19,8 +26,11 @@ namespace WindowsFormsApp1
         [System.STAThread]
         static void Main()
         {
+            mySettings = Settings.Read(SETTINGS_FILE);
+            Settings.Complete(mySettings, DEFAULT_SETTINGS);
+
             var context = new Persistent.SqliteContext(
-                connectionString: DEFAULT_CONNECTION_STRING
+                connectionString: mySettings.ConnectionString
             );
 
             var dataConnector = new Infrastructure.PersistentConnector<Persistent.SqliteContext>(
@@ -30,24 +40,29 @@ namespace WindowsFormsApp1
             var jsonConnector = new Infrastructure.JsonFileConnector();
 
             MyForms.IDataConnector myData
-                = new Infrastructure.FrameworkConnector
-                    <PersistentConnector<Persistent.SqliteContext>,
+                = new Infrastructure.FrameworkConnector<
+                    PersistentConnector<Persistent.SqliteContext>,
                     JsonFileConnector,
-                    Application.Root>
-                    (
-                        dataConnector: dataConnector,
-                        jsonConnector: jsonConnector
-                    );
+                    Application.Root
+                >(
+                    dataConnector: dataConnector,
+                    jsonConnector: jsonConnector
+                );
 
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
+            var mainForm = new MyForms.Form1(myData, STARTING_DIRECTORY)
+            {
+                MostRecentJsonFile = mySettings.MostRecentJsonFile,
+            };
+
             System.Windows.Forms.Application.Run(
-                new MyForms.Form1(myData, STARTING_DIRECTORY)
-                {
-                    MostRecentJsonFile = JSON_FILE_PATH,
-                }
+                mainForm: mainForm
             );
+
+            mySettings.MostRecentJsonFile = mainForm.MostRecentJsonFile;
+            Settings.Write(mySettings, SETTINGS_FILE);
         }
     }
 }

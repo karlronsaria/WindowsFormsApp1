@@ -32,14 +32,7 @@ namespace Infrastructure
         public Application.Root
         Get()
         {
-            return new Application.Root()
-            {
-                Documents = _context.Documents<Application.Document>(),
-                Dates = _context.Dates<Application.Date>(),
-                Tags = _context.Tags<Application.Tag>(),
-                DocumentDates = _context.DocumentDates<Application.DocumentDate>(),
-                DocumentTags = _context.DocumentTags<Application.DocumentTag>(),
-            };
+            return _context.Root();
         }
 
         public void
@@ -77,7 +70,7 @@ namespace Infrastructure
                 return new List<string>();
 
             return _context
-                .DocumentDates<Persistent.DocumentDate>()
+                .DocumentDates(f => true, f => f)
                 .ToList()
                 .Where(f => f.Date.Value.ToString(format).Contains(date))
                 .Select(f => f.Document.Name)

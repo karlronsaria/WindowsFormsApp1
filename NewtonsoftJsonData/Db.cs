@@ -38,9 +38,11 @@ namespace NewtonsoftJsonData
         {
             var serializer = NewSerializer;
 
+            T proxy = data;
+
             using (var sw = new StreamWriter(filePath))
             using (var writer = new JsonTextWriter(sw))
-                serializer.Serialize(writer, data);
+                serializer.Serialize(writer, proxy);
         }
 
         public void OutFile(string filePath)

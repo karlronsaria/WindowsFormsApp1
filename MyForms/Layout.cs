@@ -186,7 +186,9 @@ namespace MyForms
             ) : base(parent, labelText, spacingHeight) { }
     }
 
-    public class LayoutWithEndButton<ButtonT> : Layout<ButtonT>
+    public interface ILayoutWithEndButton { }
+
+    public class LayoutWithEndButton<ButtonT> : Layout<ButtonT>, ILayoutWithEndButton
         where ButtonT : LayoutItem, new()
     {
         public delegate bool TextValidater(string text);

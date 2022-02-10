@@ -474,7 +474,7 @@ namespace MyForms
             foreach (
                 var layout in
                     from l in selectPanel.Layouts.Values
-                    where l is SearchResultLayoutWithEndButton
+                    where l is ILayoutWithEndButton
                     select l
                 )
                 valuesAreSettable |= layout.Count > 0;

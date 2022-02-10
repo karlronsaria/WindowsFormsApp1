@@ -165,22 +165,38 @@ namespace Infrastructure
         public void
         AddDates(IEnumerable<string> names, IEnumerable<string> dates, string format)
         {
-            foreach (string date in dates)
-                _context.Add(
-                    new Persistent.Date()
-                    {
-                        Value = DateTime.ParseExact(date, format, null),
-                    }
-                );
+            foreach (string dateString in dates)
+            {
+                var date = _context.Dates(
+                    predicate: e => true,
+                    selector: e => e
+                )
+                .ToList()
+                .Where(e => e.Value.ToString(format) == dateString)
+                .Select(e => e)
+                .SingleOrDefault();
+
+                if (date == null)
+                    _context.Add(
+                        new Persistent.Date()
+                        {
+                            Value = DateTime.ParseExact(dateString, format, null),
+                        }
+                    );
+            }
+
+            _context.Push();
 
             foreach (string name in names)
             {
+                /*
                 _context.Add(
                     new Persistent.Document()
                     {
                         Name = name,
                     }
                 );
+                */
 
                 var doc = _context.Documents(
                     predicate: e => e.Name == name,
@@ -188,21 +204,33 @@ namespace Infrastructure
                 )
                 .SingleOrDefault();
 
-                foreach (string dateStr in dates)
+                foreach (string dateString in dates)
                 {
                     var date = _context.Dates(
-                        predicate: e => e.Value.ToString(format) == dateStr,
+                        predicate: e => true,
+                        selector: e => e
+                    )
+                    .ToList()
+                    .Where(e => e.Value.ToString(format) == dateString)
+                    .Select(e => e)
+                    .SingleOrDefault();
+
+                    var entity = _context.DocumentDates(
+                        predicate: e => e.DocumentId == doc.Id && e.DateId == date.Id,
                         selector: e => e
                     )
                     .SingleOrDefault();
 
-                    _context.Add(
-                        new Persistent.DocumentDate()
-                        {
-                            Document = doc,
-                            Date = date,
-                        }
-                    );
+                    if (entity == null)
+                        _context.Add(
+                            new Persistent.DocumentDate()
+                            {
+                                DocumentId = doc.Id,
+                                Document = doc,
+                                DateId = date.Id,
+                                Date = date,
+                            }
+                        );
                 }
             }
 
@@ -212,22 +240,35 @@ namespace Infrastructure
         public void
         AddTags(IEnumerable<string> names, IEnumerable<string> tags)
         {
-            foreach (string tag in tags)
-                _context.Add(
-                    new Persistent.Tag()
-                    {
-                        Name = tag,
-                    }
-                );
+            foreach (string tagName in tags)
+            {
+                var tag = _context.Tags(
+                    predicate: e => e.Name == tagName,
+                    selector: e => e
+                )
+                .SingleOrDefault();
+
+                if (tag == null)
+                    _context.Add(
+                        new Persistent.Tag()
+                        {
+                            Name = tagName,
+                        }
+                    );
+            }
+
+            _context.Push();
 
             foreach (string name in names)
             {
+                /*
                 _context.Add(
                     new Persistent.Document()
                     {
                         Name = name,
                     }
                 );
+                */
 
                 var doc = _context.Documents(
                     predicate: e => e.Name == name,
@@ -243,13 +284,22 @@ namespace Infrastructure
                     )
                     .SingleOrDefault();
 
-                    _context.Add(
-                        new Persistent.DocumentTag()
-                        {
-                            Document = doc,
-                            Tag = tag,
-                        }
-                    );
+                    var entity = _context.DocumentTags(
+                        predicate: e => e.DocumentId == doc.Id && e.TagId == tag.Id,
+                        selector: e => e
+                    )
+                    .SingleOrDefault();
+
+                    if (entity == null)
+                        _context.Add(
+                            new Persistent.DocumentTag()
+                            {
+                                DocumentId = doc.Id,
+                                Document = doc,
+                                TagId = tag.Id,
+                                Tag = tag,
+                            }
+                        );
                 }
             }
 

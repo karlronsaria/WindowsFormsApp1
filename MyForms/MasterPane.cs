@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
+    // link: https://social.msdn.microsoft.com/Forums/windows/en-US/19be830d-12ff-4a03-9893-0733ca67bd85/how-do-i-prevent-the-designer-from-trying-to-design-my-partial-component?forum=winformsdesigner
+    // retrieved: 2022_02_07
+    [System.ComponentModel.DesignerCategory("")]
     public class MasterPane : FlowLayoutPanel
     {
         public const string TOSTRING_SPACING = "    ";
@@ -52,7 +55,7 @@ namespace MyForms
                 var key = SublayoutType.Tags;
 
                 if (!Layouts.ContainsKey(key))
-                    AddInOrder<SearchResultLayoutWithEndButton>(key);
+                    AddInOrder<SearchResultLayoutWithEndButton>(key, LayoutChanged);
 
                 return Layouts[key] as SearchResultLayoutWithEndButton;
             }
@@ -65,7 +68,7 @@ namespace MyForms
                 var key = SublayoutType.Dates;
 
                 if (!Layouts.ContainsKey(key))
-                    AddInOrder<DateLayoutWithEndButton>(key);
+                    AddInOrder<DateLayoutWithEndButton>(key, LayoutChanged);
 
                 return Layouts[key] as DateLayoutWithEndButton;
             }
@@ -126,23 +129,25 @@ namespace MyForms
         public bool? AddInOrder<LayoutT>(
                 SublayoutType key,
                 SearchResult mySearchResult,
-                Layout.RemoveOn removeWhen = MyForms.Layout.RemoveOn.NONE
+                Layout.RemoveOn removeWhen = MyForms.Layout.RemoveOn.NONE,
+                EventHandler onContentChange = null
             ) where LayoutT : Layout, new()
         {
-            return AddInOrder<LayoutT>(key, mySearchResult, null, removeWhen);
+            return AddInOrder<LayoutT>(key, mySearchResult, null, removeWhen, onContentChange);
         }
 
         public bool? AddInOrder<LayoutT>(
                 SublayoutType key,
                 SearchResult mySearchResult,
                 string labelText,
-                Layout.RemoveOn removeWhen = MyForms.Layout.RemoveOn.NONE
+                Layout.RemoveOn removeWhen = MyForms.Layout.RemoveOn.NONE,
+                EventHandler onContentChange = null
             ) where LayoutT : Layout, new()
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
             {
                 labelText = labelText ?? $"{key}:";
-                pane.AddInOrder(key, new LayoutT() { LabelText = labelText });
+                pane.AddInOrder(key, new LayoutT() { LabelText = labelText }, onContentChange);
                 bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
                 // pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return success;
@@ -156,11 +161,16 @@ namespace MyForms
         }
 
         public bool? AddInOrder<LayoutT>(
-                SublayoutType key
+                SublayoutType key,
+                EventHandler onContentChange = null
             ) where LayoutT : Layout, new()
         {
             var myMethod = new Func<MasterPane, bool>(pane =>
-                pane.AddInOrder(key, new LayoutT() { LabelText = $"{key}:" }) ?? false
+                pane.AddInOrder(
+                    key,
+                    new LayoutT() { LabelText = $"{key}:" },
+                    onContentChange
+                ) ?? false
             );
 
             return (bool?)MyForms.Forms.InvokeIfHandled(
@@ -178,13 +188,18 @@ namespace MyForms
                 Remove(key);
         }
 
-        public bool? AddInOrder(SublayoutType key, Layout value)
+        public bool? AddInOrder(SublayoutType key, Layout value, EventHandler onContentChange = null)
         {
+            if (onContentChange == null)
+                onContentChange = LayoutChanged;
+
             var myMethod = new Func<MasterPane, bool>(pane =>
             {
                 if (pane.Layouts.ContainsKey(key))
                     return false;
 
+                value.ItemAdded += onContentChange;
+                value.ItemRemoved += onContentChange;
                 pane.Layouts.Add(key, value);
                 pane.ReorderLayouts();
 

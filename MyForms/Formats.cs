@@ -121,7 +121,9 @@ namespace MyForms
         // TODO: unit test
         public static bool TryReplaceDateTimeString(string input, out string outString)
         {
-            bool success = TryGetDateTimeString(input, out string replacement);
+            // bool success = TryGetDateTimeString(input, out string replacement);
+
+            bool success = TryGetDateTimeString(input, out _);
 
             if (!success)
             {

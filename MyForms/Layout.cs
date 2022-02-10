@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
+    // link: https://social.msdn.microsoft.com/Forums/windows/en-US/19be830d-12ff-4a03-9893-0733ca67bd85/how-do-i-prevent-the-designer-from-trying-to-design-my-partial-component?forum=winformsdesigner
+    // retrieved: 2022_02_07
+    [System.ComponentModel.DesignerCategory("")]
     public abstract class LayoutItem : System.Windows.Forms.TextBox
     {
         public LayoutItem() : base()
@@ -69,6 +72,8 @@ namespace MyForms
 
         public EventHandler ItemRemoved { get; set; } = delegate { };
 
+        public EventHandler ItemAdded { get; set; } = delegate { };
+
         public abstract string LabelText { get; set; }
 
         public abstract int Count { get; }
@@ -77,7 +82,14 @@ namespace MyForms
 
         public abstract bool FlowPanelEmpty();
 
-        public abstract bool? Add(LayoutItem mySearchResult, RemoveOn removeWhen);
+        protected abstract bool? _AddItem(LayoutItem mySearchResult, RemoveOn removeWhen);
+
+        public bool? Add(LayoutItem mySearchResult, RemoveOn removeWhen = RemoveOn.NONE)
+        {
+            var result = _AddItem(mySearchResult, removeWhen);
+            ItemAdded?.Invoke(this, new EventArgs());
+            return result;
+        }
 
         public bool Any()
         {
@@ -490,7 +502,7 @@ namespace MyForms
             );
         }
 
-        public override bool? Add(LayoutItem mySearchResult, RemoveOn removeWhen = RemoveOn.NONE)
+        protected override bool? _AddItem(LayoutItem mySearchResult, RemoveOn removeWhen = RemoveOn.NONE)
         {
             if (!HasInstance())
                 Build();

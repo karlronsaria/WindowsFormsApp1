@@ -8,13 +8,22 @@ namespace external
     ///   https://stackoverflow.com/questions/2487104/how-do-i-implement-a-textbox-that-displays-type-here/11575975
     ///   https://stackoverflow.com/users/837726/joel
     ///   </url>
-    ///   <retrievedata>
+    ///   <retrievedate>
     ///   2021_12_18
-    ///   </retrievedata>
+    ///   </retrievedate>
+    /// </link>
+    /// <link>
+    ///   <url>
+    ///   https://social.msdn.microsoft.com/Forums/windows/en-US/19be830d-12ff-4a03-9893-0733ca67bd85/how-do-i-prevent-the-designer-from-trying-to-design-my-partial-component?forum=winformsdesigner
+    ///   </url>
+    ///   <retreivedate>
+    ///   2022_02_07
+    ///   </retreivedate>
     /// </link>
     /// <summary>
     /// A textbox that supports a watermak hint.
     /// </summary>
+    [System.ComponentModel.DesignerCategory("")]
     public class WatermarkTextBox : TextBox
     {
         /// <summary>

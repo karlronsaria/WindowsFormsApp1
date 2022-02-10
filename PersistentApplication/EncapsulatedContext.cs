@@ -4,13 +4,52 @@ using System.Linq.Expressions;
 
 namespace Persistent
 {
-    public class EncapsulatedContext<T>
-        where T : Persistent.Context, new()
+    public class EncapsulatedContext<ContextT>
+        where ContextT : Persistent.Context, new()
     {
-        private readonly T
+        public static class Clones
+        {
+            public static BaseT
+            ToBase<BaseT, DerivT>(DerivT entity)
+                where BaseT : class, new()
+            {
+                var baseEntity = new BaseT();
+
+                foreach (var prop in typeof(BaseT).GetProperties())
+                    prop.SetValue(baseEntity, prop.GetValue(entity));
+
+                return baseEntity;
+            }
+
+            public static DerivT
+            ToDerived<BaseT, DerivT>(BaseT entity)
+                where DerivT : class, new()
+            {
+                var derivedEntity = new DerivT();
+
+                foreach (var prop in typeof(BaseT).GetProperties())
+                    prop.SetValue(derivedEntity, prop.GetValue(entity));
+
+                return derivedEntity;
+            }
+
+            public static Application.MyEnumerable<BaseT>
+            ToEnumerable<BaseT, DerivT>(IEnumerable<DerivT> collection)
+                where BaseT : class, new()
+            {
+                var baseCollection = new Application.MyEnumerable<BaseT>();
+
+                foreach (var entity in collection)
+                    baseCollection.Add(Clones.ToBase<BaseT, DerivT>(entity));
+
+                return baseCollection;
+            }
+        }
+
+        private readonly ContextT
         _context;
 
-        public EncapsulatedContext(T context)
+        public EncapsulatedContext(ContextT context)
         {
             _context = context;
         }
@@ -20,98 +59,17 @@ namespace Persistent
         {
             return new Application.Root()
             {
-                Documents = Documents(),
-                Dates = Dates(),
-                Tags = Tags(),
-                DocumentDates = DocumentDates(),
-                DocumentTags = DocumentTags(),
+                Documents =
+                    Clones.ToEnumerable<Application.Document, Persistent.Document>(_context.Documents),
+                Dates = 
+                    Clones.ToEnumerable<Application.Date, Persistent.Date>(_context.Dates),
+                Tags = 
+                    Clones.ToEnumerable<Application.Tag, Persistent.Tag>(_context.Tags),
+                DocumentDates = 
+                    Clones.ToEnumerable<Application.DocumentDate, Persistent.DocumentDate>(_context.DocumentDates),
+                DocumentTags = 
+                    Clones.ToEnumerable<Application.DocumentTag, Persistent.DocumentTag>(_context.DocumentTags),
             };
-        }
-
-        public Application.MyEnumerable<Application.Document>
-        Documents()
-        {
-            var collection = new Application.MyEnumerable<Application.Document>();
-
-            foreach (var document in _context.Documents)
-                collection.Add(
-                    new Application.Document()
-                    {
-                        Id = document.Id,
-                        Name = document.Name,
-                        Description = document.Description,
-                    }
-                );
-
-            return collection;
-        }
-
-        public Application.MyEnumerable<Application.Date>
-        Dates()
-        {
-            var collection = new Application.MyEnumerable<Application.Date>();
-
-            foreach (var date in _context.Dates)
-                collection.Add(
-                    new Application.Date()
-                    {
-                        Id = date.Id,
-                        Value = date.Value,
-                    }
-                );
-
-            return collection;
-        }
-
-        public Application.MyEnumerable<Application.Tag>
-        Tags()
-        {
-            var collection = new Application.MyEnumerable<Application.Tag>();
-
-            foreach (var tag in _context.Tags)
-                collection.Add(
-                    new Application.Tag()
-                    {
-                        Id = tag.Id,
-                        Name = tag.Name,
-                    }
-                );
-
-            return collection;
-        }
-
-        public Application.MyEnumerable<Application.DocumentDate>
-        DocumentDates()
-        {
-            var collection = new Application.MyEnumerable<Application.DocumentDate>();
-
-            foreach (var e in _context.DocumentDates)
-                collection.Add(
-                    new Application.DocumentDate()
-                    {
-                        DocumentId = e.DocumentId,
-                        DateId = e.DateId,
-                    }
-                );
-
-            return collection;
-        }
-
-        public Application.MyEnumerable<Application.DocumentTag>
-        DocumentTags()
-        {
-            var collection = new Application.MyEnumerable<Application.DocumentTag>();
-
-            foreach (var e in _context.DocumentTags)
-                collection.Add(
-                    new Application.DocumentTag()
-                    {
-                        DocumentId = e.DocumentId,
-                        TagId = e.TagId,
-                    }
-                );
-
-            return collection;
         }
 
         public IEnumerable<ColumnT>
@@ -210,38 +168,19 @@ namespace Persistent
         public void
         Add(Application.Document document)
         {
-            _context.Documents.Add(
-                new Persistent.Document()
-                {
-                    Id = document.Id,
-                    Name = document.Name,
-                    Description = document.Description,
-                }
-            );
+            _context.Documents.Add(Clones.ToDerived<Application.Document, Persistent.Document>(document));
         }
 
         public void
         Add(Application.Date date)
         {
-            _context.Dates.Add(
-                new Persistent.Date()
-                {
-                    Id = date.Id,
-                    Value = date.Value,
-                }
-            );
+            _context.Dates.Add(Clones.ToDerived<Application.Date, Persistent.Date>(date));
         }
 
         public void
         Add(Application.Tag tag)
         {
-            _context.Tags.Add(
-                new Persistent.Tag()
-                {
-                    Id = tag.Id,
-                    Name = tag.Name,
-                }
-            );
+            _context.Tags.Add(Clones.ToDerived<Application.Tag, Persistent.Tag>(tag));
         }
 
         public bool

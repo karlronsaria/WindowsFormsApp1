@@ -69,17 +69,37 @@ namespace Infrastructure
             if (!Regex.IsMatch(date, pattern))
                 return new List<string>();
 
-            return _context
-                .DocumentDates(f => true, f => f)
+            // Converting to list pulls all items from the database, making them unqueryable
+            // from the database end and truncating the entity so that it no longer contains
+            // pointers to any associated entities.
+            // 
+            //     var entity = _context
+            //         .DocumentDates(f => true, f => f)
+            //         .ToList()
+            //         .Where(f => f.Date.Value.ToString(format).Contains(date))
+            //         .Select(f => f)
+            //         ;
+            //         
+            //     entity == new DocumentDate()
+            //     {
+            //         DocumentId = 157,
+            //         Document = null,
+            //         DateId = 1,
+            //         Date = null
+            //     };
+            //     
+            var dateIds = _context
+                .Dates(e => true, e => e)
                 .ToList()
-                .Where(f => f.Date.Value.ToString(format).Contains(date))
-                .Select(f => f.Document.Name)
+                .Where(e => e.Value.ToString(format).Contains(date))
+                .Select(e => e.Id)
                 ;
 
-            // return _context.DocumentDates(
-            //     predicate: f => f.Date.Value.ToString(format).Contains(date),
-            //     selector: f => f.Document.Name
-            // );
+            return _context
+                .DocumentDates(
+                    predicate: f => dateIds.Contains(f.DateId),
+                    selector: f => f.Document.Name
+                );
         }
 
         public IEnumerable<string>
@@ -98,12 +118,6 @@ namespace Infrastructure
                 // // link: https://stackoverflow.com/questions/57872910/the-linq-expression-could-not-be-translated-and-will-be-evaluated-locally
                 // // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities?redirectedfrom=MSDN
                 // // retrieved: 2022_02_05
-
-                // predicate: f => exact
-                //     ? f.Name.Contains(substring)
-                //     : f.Name.ToLowerInvariant().Contains(substring.ToLowerInvariant()),
-
-                // predicate: f => f.Name.Contains(substring),
 
                 predicate: f => exact
                     ? f.Name.Contains(substring)
@@ -147,12 +161,6 @@ namespace Infrastructure
                 // // link: https://stackoverflow.com/questions/57872910/the-linq-expression-could-not-be-translated-and-will-be-evaluated-locally
                 // // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities?redirectedfrom=MSDN
                 // // retrieved: 2022_02_05
-
-                // predicate: f => exact
-                //     ? f.Name.Contains(substring)
-                //     : f.Name.ToLowerInvariant().Contains(substring.ToLowerInvariant()),
-
-                // predicate: f => f.Name.Contains(substring),
 
                 predicate: f => exact
                     ? f.Name.Contains(substring)

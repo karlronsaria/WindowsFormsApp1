@@ -446,14 +446,7 @@ namespace MyForms
                 out var documentsPanel
             );
 
-            if (documentsPanel == null)
-            {
-                SetValuesButton1.Text = "New";
-                _setValuesButton_onClick = ProcessAddNewItemToPanel;
-                return;
-            }
-
-            if (!documentsPanel.Any())
+            if (documentsPanel == null || !documentsPanel.Any())
             {
                 SetValuesButton1.Text = "New";
                 _setValuesButton_onClick = ProcessAddNewItemToPanel;

@@ -376,5 +376,32 @@ namespace Persistent
             foreach (var e in documentTags)
                 _context.DocumentTags.Remove(e);
         }
+
+        public int
+        NextDocumentId()
+        {
+            return _context.Documents.Any()
+                ? _context.Documents.Max(e => e.Id) + 1
+                : 1
+                ;
+        }
+
+        public int
+        NextDateId()
+        {
+            return _context.Dates.Any()
+                ? _context.Dates.Max(e => e.Id) + 1
+                : 1
+                ;
+        }
+
+        public int
+        NextTagId()
+        {
+            return _context.Tags.Any()
+                ? _context.Tags.Max(e => e.Id) + 1
+                : 1
+                ;
+        }
     }
 }

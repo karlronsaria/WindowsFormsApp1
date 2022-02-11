@@ -174,12 +174,15 @@ namespace Infrastructure
                 .SingleOrDefault();
 
                 if (date == null)
+                {
                     _context.Add(
                         new Persistent.Date()
                         {
+                            Id = _context.NextDateId(),
                             Value = DateTime.ParseExact(dateString, format, null),
                         }
                     );
+                }
             }
 
             _context.Push();
@@ -237,12 +240,15 @@ namespace Infrastructure
                 .SingleOrDefault();
 
                 if (tag == null)
+                {
                     _context.Add(
                         new Persistent.Tag()
                         {
+                            Id = _context.NextTagId(),
                             Name = tagName,
                         }
                     );
+                }
             }
 
             _context.Push();

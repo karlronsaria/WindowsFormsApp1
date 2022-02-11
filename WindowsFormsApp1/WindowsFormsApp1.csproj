@@ -158,6 +158,10 @@
       <Project>{c2a61229-a314-42a0-b8ff-97c10da60c9d}</Project>
       <Name>SimpleDataApplication</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SqliteApplication\SqliteApplication.csproj">
+      <Project>{dc37188d-d9f2-4e57-98ce-bbdfe9cda6c8}</Project>
+      <Name>SqliteApplication</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

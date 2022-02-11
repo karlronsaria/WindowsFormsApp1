@@ -93,8 +93,8 @@ namespace Infrastructure
         public IEnumerable<string>
         GetNamesMatchingDate(
                 string date,
-                string format,  // = MyForms.Formats.DATE_FORMAT
-                string pattern  // = MyForms.Formats.DATE_PATTERN_NONCAPTURE
+                string format,
+                string pattern
             )
         {
             if (!Regex.IsMatch(date, pattern))
@@ -129,7 +129,7 @@ namespace Infrastructure
         public IEnumerable<string>
         GetDatesMatchingName(
                 string name,
-                string format  // = MyForms.Formats.DATE_FORMAT
+                string format
             )
         {
             return (

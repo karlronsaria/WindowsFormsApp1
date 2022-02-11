@@ -415,7 +415,6 @@ namespace MyForms
         {
             // link: https://stackoverflow.com/questions/3845695/is-there-a-builtin-confirmation-dialog-in-windows-forms
             // retrieved: 2022_01_20
-
             var confirmResult = MessageBox.Show(
                 text: MainPanels[LayoutType.Select].ToString(),
                 caption: "Confirm setting values",

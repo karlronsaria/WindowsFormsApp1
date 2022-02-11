@@ -25,7 +25,6 @@ namespace Persistent
 {
     // link: https://www.learnentityframeworkcore.com/configuration/many-to-many-relationship-configuration
     // retrieved: 2022_01_28
-
     public class Document : Application.Document
     {
         public virtual ICollection<DocumentTag> DocumentTags { get; set; }

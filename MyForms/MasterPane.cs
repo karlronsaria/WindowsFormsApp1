@@ -44,6 +44,7 @@ namespace MyForms
             get => _sublayouts;
         }
 
+        // // TODO
         // // OLD (2022_01_26)
         // public EventHandler LayoutChanged { get; set; } = delegate { };
         public EventHandler LayoutChanged { get; set; } = new EventHandler(delegate { return; });
@@ -149,7 +150,6 @@ namespace MyForms
                 labelText = labelText ?? $"{key}:";
                 pane.AddInOrder(key, new LayoutT() { LabelText = labelText }, onContentChange);
                 bool success = pane.Layouts[key].Add(mySearchResult, removeWhen) ?? false;
-                // pane.LayoutChanged.Invoke(pane, new EventArgs());
                 return success;
             });
 

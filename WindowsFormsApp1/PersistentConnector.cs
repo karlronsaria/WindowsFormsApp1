@@ -104,9 +104,9 @@ namespace Infrastructure
         GetNamesMatchingSubstring(string substring, bool exact = true)
         {
             return _context.Documents(
-                // // link: https://stackoverflow.com/questions/57872910/the-linq-expression-could-not-be-translated-and-will-be-evaluated-locally
-                // // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities?redirectedfrom=MSDN
-                // // retrieved: 2022_02_05
+                // link: https://stackoverflow.com/questions/57872910/the-linq-expression-could-not-be-translated-and-will-be-evaluated-locally
+                // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities?redirectedfrom=MSDN
+                // retrieved: 2022_02_05
 
                 predicate: f => exact
                     ? f.Name.Contains(substring)
@@ -147,9 +147,9 @@ namespace Infrastructure
         GetTagsMatchingSubstring(string substring, bool exact = true)
         {
             return _context.Tags(
-                // // link: https://stackoverflow.com/questions/57872910/the-linq-expression-could-not-be-translated-and-will-be-evaluated-locally
-                // // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities?redirectedfrom=MSDN
-                // // retrieved: 2022_02_05
+                // link: https://stackoverflow.com/questions/57872910/the-linq-expression-could-not-be-translated-and-will-be-evaluated-locally
+                // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities?redirectedfrom=MSDN
+                // retrieved: 2022_02_05
 
                 predicate: f => exact
                     ? f.Name.Contains(substring)

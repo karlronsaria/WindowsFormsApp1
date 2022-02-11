@@ -15,8 +15,13 @@ namespace WindowsFormsApp1
         {
             StartingDirectory = STARTING_DIRECTORY,
             MostRecentJsonFile = $@"{STARTING_DIRECTORY}\__NEW_2021_12_11_153848\db.json",
-            SqliteConnectionString = @"Data Source=D:\Databases\Sample9.db",
-            MssqlConnectionString = @"Server=(localdb)\mssqllocaldb;Database=WindowsFormsApp1;Trusted_Connection=True;MultipleActiveResultSets=true",
+            SqliteConnectionString =
+                  @"Data Source=D:\Databases\Sample9.db",
+            MssqlConnectionString =
+                  @"Server=(localdb)\mssqllocaldb;"
+                + @"Database=WindowsFormsApp1;"
+                + @"Trusted_Connection=True;"
+                + @"MultipleActiveResultSets=true;",
             DataSource = DataSource.Mssql,
         };
 

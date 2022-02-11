@@ -5,29 +5,18 @@ using System.Text.RegularExpressions;
 
 namespace Infrastructure
 {
-    public class PersistentConnector<ContextT> :
+    public class PersistentConnector :
         IData<Application.Root>,
         MyForms.IDataReader,
         MyForms.IDataWriter
-        where ContextT : Persistent.Context, new()
     {
-        private readonly Persistent.EncapsulatedContext<ContextT>
+        private readonly Persistent.EncapsulatedContext<Persistent.Context>
         _context;
 
-        public PersistentConnector(ContextT context)
+        public PersistentConnector(Persistent.Context context)
         {
-            _context = new Persistent.EncapsulatedContext<ContextT>(context);
+            _context = new Persistent.EncapsulatedContext<Persistent.Context>(context);
         }
-
-        /*
-        public PersistentConnector(
-                string connectionString = Persistent.Context.DEFAULT_CONNECTION_STRING,
-                bool reset = false
-            )
-        {
-            _context = new Persistent.EncapsulatedContext(connectionString, reset);
-        }
-        */
 
         public Application.Root
         Get()
@@ -197,15 +186,6 @@ namespace Infrastructure
 
             foreach (string name in names)
             {
-                /*
-                _context.Add(
-                    new Persistent.Document()
-                    {
-                        Name = name,
-                    }
-                );
-                */
-
                 var doc = _context.Documents(
                     predicate: e => e.Name == name,
                     selector: e => e
@@ -269,15 +249,6 @@ namespace Infrastructure
 
             foreach (string name in names)
             {
-                /*
-                _context.Add(
-                    new Persistent.Document()
-                    {
-                        Name = name,
-                    }
-                );
-                */
-
                 var doc = _context.Documents(
                     predicate: e => e.Name == name,
                     selector: e => e

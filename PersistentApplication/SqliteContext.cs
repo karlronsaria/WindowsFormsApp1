@@ -4,7 +4,8 @@ namespace Persistent
 {
     public class SqliteContext : Context
     {
-        public const string DEFAULT_CONNECTION_STRING = @"Data Source=D:\Databases\Sample2.db";
+        public const string DEFAULT_CONNECTION_STRING
+            = @"Data Source=D:\Databases\Sample2.db";
 
         public SqliteContext()
         {

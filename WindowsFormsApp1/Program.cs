@@ -15,7 +15,9 @@ namespace WindowsFormsApp1
         {
             StartingDirectory = STARTING_DIRECTORY,
             MostRecentJsonFile = $@"{STARTING_DIRECTORY}\__NEW_2021_12_11_153848\db.json",
-            ConnectionString = @"Data Source=D:\Databases\Sample9.db",
+            SqliteConnectionString = @"Data Source=D:\Databases\Sample9.db",
+            MssqlConnectionString = @"Server=(localdb)\mssqllocaldb;Database=WindowsFormsApp1;Trusted_Connection=True;MultipleActiveResultSets=true",
+            DataSource = DataSource.Mssql,
         };
 
         static Settings mySettings;
@@ -28,12 +30,26 @@ namespace WindowsFormsApp1
         {
             mySettings = Settings.Read(SETTINGS_FILE);
             Settings.Complete(mySettings, DEFAULT_SETTINGS);
+            Persistent.Context context;
 
-            var context = new Persistent.SqliteContext(
-                connectionString: mySettings.ConnectionString
-            );
+            switch (mySettings.DataSource)
+            {
+                case DataSource.Sqlite:
+                    context = new Persistent.SqliteContext(
+                        connectionString: mySettings.SqliteConnectionString
+                    );
+                    break;
+                case DataSource.Mssql:
+                    context = new Persistent.MssqlContext(
+                        connectionString: mySettings.MssqlConnectionString
+                    );
+                    break;
+                default:
+                    context = new Persistent.Context();
+                    break;
+            }
 
-            var dataConnector = new Infrastructure.PersistentConnector<Persistent.SqliteContext>(
+            var dataConnector = new Infrastructure.PersistentConnector(
                 context: context
             );
 
@@ -41,7 +57,7 @@ namespace WindowsFormsApp1
 
             MyForms.IDataConnector myData
                 = new Infrastructure.FrameworkConnector<
-                    PersistentConnector<Persistent.SqliteContext>,
+                    PersistentConnector,
                     JsonFileConnector,
                     Application.Root
                 >(

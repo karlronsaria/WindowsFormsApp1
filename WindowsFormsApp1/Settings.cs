@@ -1,10 +1,18 @@
 ﻿namespace Infrastructure
 {
+    public enum DataSource
+    {
+        Sqlite,
+        Mssql,
+    }
+
     public class Settings
     {
         public string StartingDirectory { get; set; }
         public string MostRecentJsonFile { get; set; }
-        public string ConnectionString { get; set; }
+        public string SqliteConnectionString { get; set; }
+        public string MssqlConnectionString { get; set; }
+        public DataSource DataSource { get; set; }
 
         public static Settings Read(string filePath)
         {
@@ -12,7 +20,7 @@
             {
                 return NewtonsoftJsonData.Db<Settings>.FromFile(filePath);
             }
-            catch (System.Exception _)
+            catch (System.Exception)
             {
                 return new Settings();
             }

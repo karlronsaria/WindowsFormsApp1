@@ -80,6 +80,24 @@ namespace Persistent
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Document>()
+                .HasKey(e => e.Id);
+            modelBuilder.Entity<Document>()
+                .Property(e => e.Id)
+                .ValueGeneratedNever();
+
+            modelBuilder.Entity<Date>()
+                .HasKey(e => e.Id);
+            modelBuilder.Entity<Date>()
+                .Property(e => e.Id)
+                .ValueGeneratedNever();
+
+            modelBuilder.Entity<Tag>()
+                .HasKey(e => e.Id);
+            modelBuilder.Entity<Tag>()
+                .Property(e => e.Id)
+                .ValueGeneratedNever();
+
             modelBuilder.Entity<DocumentTag>()
                 .HasKey(dt => new { dt.DocumentId, dt.TagId });
             modelBuilder.Entity<DocumentTag>()

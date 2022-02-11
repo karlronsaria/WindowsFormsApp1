@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDataApplication", "Si
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistentApplication", "PersistentApplication\PersistentApplication.csproj", "{BDBCA2BC-0651-4AB1-9D3C-A9CA61FE7484}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MssqlApplication", "MssqlApplication\MssqlApplication.csproj", "{501054AE-2111-476C-A2F3-38714C997A53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{BDBCA2BC-0651-4AB1-9D3C-A9CA61FE7484}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDBCA2BC-0651-4AB1-9D3C-A9CA61FE7484}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDBCA2BC-0651-4AB1-9D3C-A9CA61FE7484}.Release|Any CPU.Build.0 = Release|Any CPU
+		{501054AE-2111-476C-A2F3-38714C997A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{501054AE-2111-476C-A2F3-38714C997A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{501054AE-2111-476C-A2F3-38714C997A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{501054AE-2111-476C-A2F3-38714C997A53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

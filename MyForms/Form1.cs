@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace MyForms
 {
+    [System.ComponentModel.DesignerCategory("Form")]
     public partial class Form1 : Form
     {
         public enum LayoutType : int
@@ -18,7 +19,28 @@ namespace MyForms
         }
 
         public string Directory { get; set; }
+
         public string MostRecentJsonFile { get; set; }
+
+        public string StatusLine
+        {
+            get => statusBar1.Text;
+
+            set
+            {
+                var myMethod = new Func<TextBox, bool>(c =>
+                {
+                    c.Text = value;
+                    return true;
+                });
+
+                MyForms.Forms.InvokeIfHandled(
+                    statusBar1,
+                    s => myMethod.Invoke(s as TextBox),
+                    IsHandleCreated
+                );
+            }
+        }
 
         internal class LayoutDictionary :
             Dictionary<LayoutType, MasterPane> { }
@@ -208,166 +230,33 @@ namespace MyForms
         public delegate System.Collections.Generic.IEnumerable<string>
         GetCollection(string str);
 
-        public enum SearchMode : int
-        {
-            Exact,
-            Regex,
-            Document,
-            Tag,
-            Date,
-        }
-
-        private bool
-        GetSearchModes(string inputText, out string newText, out HashSet<SearchMode> modes)
-        {
-            Match modesCapture;
-
-            bool hasModes;
-            bool exact = false;
-            bool document = false;
-            bool tag = false;
-
-            modesCapture = Regex.Match(
-                input: inputText,
-                pattern: @"^\s*(?<modes>\w+(\s*,\s*\w+)*)\s*\:\s*(?<searchstr>.*)$"
-            );
-
-            hasModes = modesCapture.Success;
-            modes = new HashSet<SearchMode>();
-
-            if (hasModes)
-            {
-                var capturedModes =
-                    from mode in modesCapture.Groups["modes"].Value.Split(',')
-                    select mode.Trim().ToLowerInvariant();
-
-                inputText = modesCapture.Groups["searchstr"].Value.Trim();
-
-                foreach (var mode in capturedModes)
-                {
-                    switch (mode)
-                    {
-                        case "r":
-                        case "re":
-                        case "regex":
-                            modes.Add(SearchMode.Regex);
-                            break;
-                        case "e":
-                        case "ex":
-                        case "exact":
-                            exact = true;
-                            modes.Add(SearchMode.Exact);
-                            break;
-                        case "doc":
-                        case "document":
-                        case "documents":
-                            document = true;
-                            modes.Add(SearchMode.Document);
-                            break;
-                        case "tag":
-                        case "tags":
-                            tag = true;
-                            modes.Add(SearchMode.Tag);
-                            break;
-                        case "date":
-                        case "dates":
-                            modes.Clear();
-                            modes.Add(SearchMode.Date);
-                            newText = inputText;
-                            return true;
-                    }
-                }
-            }
-
-            if (!document && !tag)
-            {
-                modes.Add(SearchMode.Document);
-                modes.Add(SearchMode.Tag);
-            }
-
-            if (!exact)
-            {
-                Match exactCapture = Regex.Match(
-                    input: inputText,
-                    pattern: "(?<=^\\s*\")(?<exacttext>.*)(?=\"\\s*$)"
-                );
-
-                if (exactCapture.Success)
-                {
-                    modes.Add(SearchMode.Exact);
-                    inputText = exactCapture.Groups["exacttext"].Value;
-                    hasModes = true;
-                }
-            }
-
-            newText = inputText;
-            return hasModes;
-        }
-
-        private static string
-        GetStatusMessage(HashSet<SearchMode> modes, string searchStr)
-        {
-            string modeStatus = String.Join(
-                separator: " ",
-                values: (
-                    from mode in modes
-                    select $"<{mode.ToString().ToLower()}>"
-                )
-            );
-
-            string queryStatus = $"Query: {searchStr}";
-            modeStatus = $"Modes: {modeStatus}";
-
-            if (!string.IsNullOrEmpty(queryStatus) && !string.IsNullOrEmpty(modeStatus))
-                return $"{modeStatus}   {queryStatus}";
-            else if (!string.IsNullOrEmpty(modeStatus))
-                return $"{modeStatus}";
-            else if (!string.IsNullOrEmpty(queryStatus))
-                return $"{queryStatus}";
-
-            return "";
-        }
-
-        private void SetStatusText(string text)
-        {
-            var myMethod = new Func<TextBox, bool>(c =>
-            {
-                c.Text = text;
-                return true;
-            });
-
-            MyForms.Forms.InvokeIfHandled(
-                statusBar1,
-                s => myMethod.Invoke(s as TextBox),
-                IsHandleCreated
-            );
-        }
-
         private async Task
         ChangeResultsAsync(
                 CancellationToken myCancellationToken,
                 LayoutType mainPanelKey,
                 string text,
-                HashSet<SearchMode> modes
+                HashSet<Searches.Mode> modes
             )
         {
             MainPanels[mainPanelKey].Clear();
 
-            if (text.Length == 0)
+            if (!modes.Contains(Searches.Mode.All) && text.Length == 0)
                 return;
 
             GetCollection collectionHandler;
 
             try
             {
-                if (modes.Contains(SearchMode.Document))
+                if (modes.Contains(Searches.Mode.Document))
                 {
-                    if (modes.Contains(SearchMode.Regex))
+                    if (modes.Contains(Searches.Mode.All))
+                        collectionHandler = str => _database.GetNames();
+                    else if (modes.Contains(Searches.Mode.Regex))
                         collectionHandler = str => _database.GetNamesMatchingPattern(str);
                     else
                         collectionHandler = str => _database.GetNamesMatchingSubstring(
                             substring: str,
-                            exact: modes.Contains(SearchMode.Exact)
+                            exact: modes.Contains(Searches.Mode.Exact)
                         );
 
                     foreach (string item in collectionHandler(text))
@@ -387,14 +276,16 @@ namespace MyForms
                     }
                 }
 
-                if (modes.Contains(SearchMode.Tag))
+                if (modes.Contains(Searches.Mode.Tag))
                 {
-                    if (modes.Contains(SearchMode.Regex))
+                    if (modes.Contains(Searches.Mode.All))
+                        collectionHandler = str => _database.GetTags();
+                    else if (modes.Contains(Searches.Mode.Regex))
                         collectionHandler = str => _database.GetTagsMatchingPattern(str);
                     else
                         collectionHandler = str => _database.GetTagsMatchingSubstring(
                             substring: str,
-                            exact: modes.Contains(SearchMode.Exact)
+                            exact: modes.Contains(Searches.Mode.Exact)
                         );
 
                     foreach (string item in collectionHandler(text))
@@ -414,27 +305,44 @@ namespace MyForms
                     }
                 }
 
-                if (modes.Contains(SearchMode.Date))
+                if (modes.Contains(Searches.Mode.Date))
                 {
-                    foreach (string item in _database.GetNamesMatchingDate(
-                            date: text,
-                            format: Formats.DATE_FORMAT,
-                            pattern: Formats.DATE_PATTERN_NONCAPTURE
-                        ))
-                    {
-                        myCancellationToken.ThrowIfCancellationRequested();
-                        var mySearchResult = new SearchResult() { Text = item };
-                        mySearchResult.Click += DocumentSearchResult_ClickAsync;
-                        mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
+                    if (modes.Contains(Searches.Mode.All))
+                        foreach (string item in _database.GetDates())
+                        {
+                            myCancellationToken.ThrowIfCancellationRequested();
+                            var mySearchResult = new SearchResult() { Text = item };
+                            mySearchResult.Click += DateSearchResult_ClickAsync;
+                            mySearchResult.DoubleClick += DateSearchResult_DoubleClickAsync;
 
-                        await Task.Run(() =>
-                            MainPanels[LayoutType.Search]
-                                .AddInOrder<SearchResultLayout>(
-                                    key: MasterPane.SublayoutType.Documents,
-                                    mySearchResult: mySearchResult
-                                )
-                        );
-                    }
+                            await Task.Run(() =>
+                                MainPanels[LayoutType.Search]
+                                    .AddInOrder<SearchResultLayout>(
+                                        key: MasterPane.SublayoutType.Dates,
+                                        mySearchResult: mySearchResult
+                                    )
+                            );
+                        }
+                    else
+                        foreach (string item in _database.GetNamesMatchingDate(
+                                date: text,
+                                format: Formats.DATE_FORMAT,
+                                pattern: Formats.DATE_PATTERN_NONCAPTURE
+                            ))
+                        {
+                            myCancellationToken.ThrowIfCancellationRequested();
+                            var mySearchResult = new SearchResult() { Text = item };
+                            mySearchResult.Click += DocumentSearchResult_ClickAsync;
+                            mySearchResult.DoubleClick += DocumentSearchResult_DoubleClickAsync;
+
+                            await Task.Run(() =>
+                                MainPanels[LayoutType.Search]
+                                    .AddInOrder<SearchResultLayout>(
+                                        key: MasterPane.SublayoutType.Documents,
+                                        mySearchResult: mySearchResult
+                                    )
+                            );
+                        }
                 }
             }
             catch (OperationCanceledException) { }

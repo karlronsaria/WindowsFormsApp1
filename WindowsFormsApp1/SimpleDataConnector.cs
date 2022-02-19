@@ -300,5 +300,20 @@ namespace Infrastructure
         {
             throw new System.NotImplementedException();
         }
+
+        public IEnumerable<string> GetNames()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<string> GetTags()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<string> GetDates()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

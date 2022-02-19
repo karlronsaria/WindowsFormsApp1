@@ -46,6 +46,21 @@ namespace Infrastructure
             _json.Set(_data.Get(), filePath);
         }
 
+        public IEnumerable<string> GetNames()
+        {
+            return _data.GetNames();
+        }
+
+        public IEnumerable<string> GetTags()
+        {
+            return _data.GetTags();
+        }
+
+        public IEnumerable<string> GetDates()
+        {
+            return _data.GetDates();
+        }
+
         public IEnumerable<string> GetDatesMatchingName(string name, string format)
         {
             return _data.GetDatesMatchingName(name, format);

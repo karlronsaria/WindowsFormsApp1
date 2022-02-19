@@ -6,10 +6,7 @@ using System.Windows.Forms;
 
 namespace MyForms
 {
-    // link: https://social.msdn.microsoft.com/Forums/windows/en-US/19be830d-12ff-4a03-9893-0733ca67bd85/how-do-i-prevent-the-designer-from-trying-to-design-my-partial-component?forum=winformsdesigner
-    // retrieved: 2022_02_07
-    [System.ComponentModel.DesignerCategory("")]
-    public partial class Form1 : Form
+    public partial class Form1
     {
         private EventHandler _setValuesButton_onClick = delegate { };
 
@@ -35,7 +32,7 @@ namespace MyForms
                     _database.SetFromJson(dialog.FileName);
                     MostRecentJsonFile = dialog.FileName;
                     await Task.Run(() => this.SearchBox_TextChangedAsync(null, null));
-                    statusBar1.Text = $"Imported from file: {dialog.FileName}";
+                    StatusLine = $"Imported from file: {dialog.FileName}";
                 }
                 catch (Exception ex)
                 {
@@ -65,7 +62,7 @@ namespace MyForms
             {
                 _database.ToJson(newPath);
                 MostRecentJsonFile = newPath;
-                statusBar1.Text = $"Saved to file: {newPath}";
+                StatusLine = $"Saved to file: {newPath}";
             }
         }
 
@@ -79,7 +76,7 @@ namespace MyForms
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 _database.ToJson(dialog.FileName);
-                statusBar1.Text = $"Saved to file: {dialog.FileName}";
+                StatusLine = $"Saved to file: {dialog.FileName}";
             }
         }
 
@@ -205,12 +202,14 @@ namespace MyForms
         {
             string text = searchBox1.Text;
             SearchBoxChanged = Forms.NewCancellationSource(SearchBoxChanged);
-            GetSearchModes(text, out string newText, out var modes);
+            Searches.GetModes(text, out string newText, out var modes);
 
             if (text.Length > 0)
-                SetStatusText("");
+                StatusLine = "";
 
-            var statusBarTask = Task.Run(() => SetStatusText(GetStatusMessage(modes, newText)));
+            var statusBarTask = Task.Run(
+                () => StatusLine = Searches.GetStatusMessage(modes, newText)
+            );
 
             try
             {

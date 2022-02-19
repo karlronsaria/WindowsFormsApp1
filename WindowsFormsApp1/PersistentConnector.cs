@@ -44,6 +44,33 @@ namespace Infrastructure
         }
 
         public IEnumerable<string>
+        GetNames()
+        {
+            return _context.Documents(
+                predicate: f => true,
+                selector: f => f.Name
+            );
+        }
+
+        public IEnumerable<string>
+        GetTags()
+        {
+            return _context.Tags(
+                predicate: f => true,
+                selector: f => f.Name
+            );
+        }
+
+        public IEnumerable<string>
+        GetDates()
+        {
+            return _context.Dates(
+                predicate: f => true,
+                selector: f => f.DateString
+            );
+        }
+
+        public IEnumerable<string>
         GetDatesMatchingName(string name, string format)
         {
             return _context.DocumentDates(
@@ -94,10 +121,30 @@ namespace Infrastructure
         public IEnumerable<string>
         GetNamesMatchingPattern(string pattern)
         {
+            /*
             return _context.Documents(
+                // TODO
+                // error:
+                //   The LINQ expression could not be translated. Either rewrite the query in a
+                //   form that can be translated, or switch to client evaluation explicitly by
+                //   inserting a call to either AsEnumerable(), AsAsyncEnumerable(), ToList(), or
+                //   ToListAsync(). See https://go.microsoft.com/fwlink/?linkid=2101038 for more
+                //   information.
+                // link: https://stackoverflow.com/questions/5720987/how-to-simulate-regular-expressions-in-linq-to-sql
+                // link: https://www.codeproject.com/Articles/42764/Regular-Expressions-in-MS-SQL-Server-2005-2008
+                // link: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/how-to-call-custom-database-functions?redirectedfrom=MSDN
+                // retrieved: 2022_02_19
                 predicate: f => Regex.IsMatch(f.Name, pattern),
                 selector: f => f.Name
             );
+            */
+
+            return _context
+                .Documents(e => true, e => e)
+                .ToList()
+                .Where(e => Regex.IsMatch(e.Name, pattern))
+                .Select(e => e.Name)
+                ;
         }
 
         public IEnumerable<string>
@@ -137,10 +184,19 @@ namespace Infrastructure
         public IEnumerable<string>
         GetTagsMatchingPattern(string pattern)
         {
+            /*
             return _context.Tags(
                 predicate: f => Regex.IsMatch(f.Name, pattern),
                 selector: f => f.Name
             );
+            */
+
+            return _context
+                .Tags(e => true, e => e)
+                .ToList()
+                .Where(e => Regex.IsMatch(e.Name, pattern))
+                .Select(e => e.Name)
+                ;
         }
 
         public IEnumerable<string>

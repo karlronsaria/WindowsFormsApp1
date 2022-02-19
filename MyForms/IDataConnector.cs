@@ -4,6 +4,10 @@ namespace MyForms
 {
     public interface IDataReader
     {
+        IEnumerable<string> GetNames();
+        IEnumerable<string> GetTags();
+        IEnumerable<string> GetDates();
+
         IEnumerable<string> GetNamesMatchingSubstring(string substring, bool exact = true);
         IEnumerable<string> GetNamesMatchingPattern(string pattern);
         IEnumerable<string> GetTagsMatchingSubstring(string substring, bool exact = true);
